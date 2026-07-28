@@ -28,16 +28,11 @@ final class Application
 
     public function run(): void
     {
-        $this->router->get(
-            '/',
-            [
-                \App\Http\Controllers\HomeController::class,
-                'index'
-            ]
-        );
+        $routes = require dirname(__DIR__, 2) . '/routes/web.php';
+
+        $routes($this->router);
 
         $this->router->dispatch($this->request);
     }
-
-
 }
+
