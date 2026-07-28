@@ -4,29 +4,34 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-class Router
+use App\Http\Request;
+
+final class Router
 {
     private array $routes = [];
 
-    public function get(string $path, callable $handler): void
+    public function get(string $uri, callable $callback): void
     {
-        $this->routes['GET'][$path] = $handler;
+        $this->routes['GET'][$uri] = $callback;
     }
 
-    public function dispatch(): void
+    public function post(string $uri, callable $callback): void
     {
-        $method = $_SERVER['REQUEST_METHOD'];
-        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $this->routes['POST'][$uri] = $callback;
+    }
 
-        if (isset($this->routes[$method][$uri])) {
-            ($this->routes[$method][$uri])();
+    public function dispatch(Request $request): void
+    {
+        $method = $request->method();
+        $uri = $request->uri();
+
+        if (!isset($this->routes[$method][$uri])) {
+            http_response_code(404);
+            echo "404 Not Found";
             return;
         }
 
-        http_response_code(404);
-
-        echo "<h1>404</h1>";
-        echo "<p>Page not found</p>";
+        ($this->routes[$method][$uri])();
     }
 }
 

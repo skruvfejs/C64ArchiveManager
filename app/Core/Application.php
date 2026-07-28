@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Http\Request;
+
 final class Application
 {
     private Config $config;
+    private Router $router;
+    private Request $request;
 
     public function __construct()
     {
@@ -17,23 +21,25 @@ final class Application
         date_default_timezone_set(
             $this->config->get('app.timezone', 'UTC')
         );
+
+        $this->router = new Router();
+        $this->request = new Request();
     }
 
     public function run(): void
     {
-        echo '<h1>'
-            . htmlspecialchars(
-                $this->config->get('app.name')
-            )
-            . '</h1>';
+        $this->router->get('/', function (): void {
+            echo '<h1>' .
+                htmlspecialchars($this->config->get('app.name')) .
+                '</h1>';
 
-        echo '<p>Framework initialized successfully.</p>';
+            echo '<p>Router fungerar!</p>';
 
-        echo '<p>Version '
-            . htmlspecialchars(
-                $this->config->get('app.version')
-            )
-            . '</p>';
+            echo '<p>Version ' .
+                htmlspecialchars($this->config->get('app.version')) .
+                '</p>';
+        });
+
+        $this->router->dispatch($this->request);
     }
 }
-
