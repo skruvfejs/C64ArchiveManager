@@ -1,0 +1,13 @@
+{
+	"name": "c64archive/manager",
+	"description": "Commodore 64 Archive Manager",
+	"type": "project",
+	"license": "MIT",
+	"require": {},
+	"autoload": {
+		"psr-4": {
+			"App\\": "app/"
+		}
+	}
+}
+
