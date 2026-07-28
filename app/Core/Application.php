@@ -4,43 +4,36 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-class Application
+final class Application
 {
-    private Router $router;
+    private Config $config;
 
     public function __construct()
     {
-        $this->router = new Router();
+        $this->config = new Config(
+            dirname(__DIR__, 2) . '/config'
+        );
+
+        date_default_timezone_set(
+            $this->config->get('app.timezone', 'UTC')
+        );
     }
 
     public function run(): void
     {
-        $this->router->get('/', function () {
+        echo '<h1>'
+            . htmlspecialchars(
+                $this->config->get('app.name')
+            )
+            . '</h1>';
 
-            echo "<!DOCTYPE html>";
+        echo '<p>Framework initialized successfully.</p>';
 
-            echo "<html>";
-
-            echo "<head>";
-
-            echo "<meta charset='utf-8'>";
-
-            echo "<title>C64 Archive Manager</title>";
-
-            echo "</head>";
-
-            echo "<body>";
-
-            echo "<h1>C64 Archive Manager</h1>";
-
-            echo "<p>Router fungerar.</p>";
-
-            echo "</body>";
-
-            echo "</html>";
-
-        });
-
-        $this->router->dispatch();
+        echo '<p>Version '
+            . htmlspecialchars(
+                $this->config->get('app.version')
+            )
+            . '</p>';
     }
 }
+
