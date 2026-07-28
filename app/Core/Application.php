@@ -28,18 +28,16 @@ final class Application
 
     public function run(): void
     {
-        $this->router->get('/', function (): void {
-            echo '<h1>' .
-                htmlspecialchars($this->config->get('app.name')) .
-                '</h1>';
-
-            echo '<p>Router fungerar!</p>';
-
-            echo '<p>Version ' .
-                htmlspecialchars($this->config->get('app.version')) .
-                '</p>';
-        });
+        $this->router->get(
+            '/',
+            [
+                \App\Http\Controllers\HomeController::class,
+                'index'
+            ]
+        );
 
         $this->router->dispatch($this->request);
     }
+
+
 }
