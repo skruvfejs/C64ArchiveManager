@@ -29,17 +29,19 @@ final class Application
         $this->router = new Router();
         $this->request = new Request();
         $this->database = new Database($this->config);
+
+        // Gör databasen tillgänglig för controllers
+        $this->router->setDatabase($this->database);
     }
 
     public function run(): void
     {
-        // Ladda alla webbroutes
+        // Ladda routes
         $routes = require dirname(__DIR__, 2) . '/routes/web.php';
 
         $routes($this->router);
 
-        // Kör rätt route
+        // Kör applikationen
         $this->router->dispatch($this->request);
     }
 }
-
