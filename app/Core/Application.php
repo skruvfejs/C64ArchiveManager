@@ -59,7 +59,7 @@ final class Application
         $this->container->singleton(
             \App\Models\User::class,
             fn (Container $c) => new \App\Models\User(
-                 $c->get(Database::class)
+                $c->get(Database::class)
             )
         );
 
@@ -87,4 +87,3 @@ final class Application
         );
     }
 }
-
