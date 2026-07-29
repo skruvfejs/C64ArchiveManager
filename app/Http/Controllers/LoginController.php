@@ -4,101 +4,77 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Core\Database;
-use App\Core\Request;
-use App\Core\Response;
-use App\Core\Session;
-use PDO;
+use App\Core\Auth;
+use App\Core\View;
+use App\Models\User;
 
 final class LoginController extends Controller
 {
-    private PDO $pdo;
-    private Session $session;
-
-    public function __construct(Database $database)
-    {
-        $this->pdo = $database->pdo();
-        $this->session = new Session();
+    public function __construct(
+        private readonly User $users,
+        private readonly Auth $auth,
+        private readonly View $view
+    ) {
     }
 
-    public function index(Request $request, Response $response): void
+    public function index(): void
     {
-        $this->view('auth/login', [
-            'title' => 'Login'
-        ]);
+        if ($this->auth->check()) {
+            header('Location: /');
+            exit;
+        }
+
+        $this->view->render(
+            'auth/login',
+            [
+                'title' => 'Logga in'
+            ]
+        );
     }
 
-    public function login(Request $request, Response $response): void
+    public function login(): void
     {
         $username = trim($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';
 
         if ($username === '' || $password === '') {
 
-            $this->view('auth/login', [
-                'title' => 'Login',
-                'error' => 'Username and password are required.'
-            ]);
+            $this->showError(
+                'Användarnamn och lösenord måste anges.'
+            );
 
             return;
         }
 
-        $stmt = $this->pdo->prepare("
-            SELECT *
-            FROM users
-            WHERE username = ?
-              AND active = 1
-            LIMIT 1
-        ");
+        $user = $this->users->findByUsername($username);
 
-        $stmt->execute([$username]);
+        if (
+            $user === null ||
+            !password_verify($password, $user['password'])
+        ) {
 
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$user) {
-
-            $this->view('auth/login', [
-                'title' => 'Login',
-                'error' => 'Invalid username or password.'
-            ]);
+            $this->showError(
+                'Felaktigt användarnamn eller lösenord.'
+            );
 
             return;
         }
 
-        if (!password_verify($password, $user['password'])) {
-
-            $this->view('auth/login', [
-                'title' => 'Login',
-                'error' => 'Invalid username or password.'
-            ]);
-
-            return;
-        }
-
-        $this->session->regenerate();
-
-        $this->session->set('user', [
-            'id'       => $user['id'],
-            'role_id'  => $user['role_id'],
-            'username' => $user['username'],
-            'name'     => trim(
-                ($user['first_name'] ?? '') . ' ' .
-                ($user['last_name'] ?? '')
-            )
-        ]);
+        $this->auth->login($user);
 
         header('Location: /');
-
         exit;
     }
 
-    public function logout(Request $request, Response $response): void
+    private function showError(string $message): void
     {
-        $this->session->destroy();
-
-        header('Location: /login');
-
-        exit;
+        $this->view->render(
+            'auth/login',
+            [
+                'title' => 'Logga in',
+                'error' => $message
+            ]
+        );
     }
 }
 

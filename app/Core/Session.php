@@ -9,22 +9,8 @@ final class Session
     public function __construct()
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start([
-                'cookie_httponly' => true,
-                'cookie_samesite' => 'Lax',
-                'use_strict_mode' => true,
-            ]);
+            session_start();
         }
-    }
-
-    public function set(string $key, mixed $value): void
-    {
-        $_SESSION[$key] = $value;
-    }
-
-    public function get(string $key, mixed $default = null): mixed
-    {
-        return $_SESSION[$key] ?? $default;
     }
 
     public function has(string $key): bool
@@ -32,9 +18,24 @@ final class Session
         return array_key_exists($key, $_SESSION);
     }
 
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return $_SESSION[$key] ?? $default;
+    }
+
+    public function set(string $key, mixed $value): void
+    {
+        $_SESSION[$key] = $value;
+    }
+
     public function remove(string $key): void
     {
         unset($_SESSION[$key]);
+    }
+
+    public function clear(): void
+    {
+        $_SESSION = [];
     }
 
     public function regenerate(): void
@@ -44,6 +45,10 @@ final class Session
 
     public function destroy(): void
     {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            return;
+        }
+
         $_SESSION = [];
 
         if (ini_get('session.use_cookies')) {
@@ -64,3 +69,5 @@ final class Session
         session_destroy();
     }
 }
+
+

@@ -5,71 +5,97 @@ declare(strict_types=1);
 namespace App\Core;
 
 use App\Http\Request;
-use ReflectionClass;
 use RuntimeException;
 
 final class Router
 {
     private array $routes = [];
-    private ?Database $database = null;
 
-    public function setDatabase(Database $database): void
-    {
-        $this->database = $database;
+    public function __construct(
+        private readonly Container $container
+    ) {
     }
 
-    public function get(string $uri, callable|array $callback): void
-    {
-        $this->routes['GET'][$uri] = $callback;
+    public function get(
+        string $uri,
+        callable|array $callback,
+        array $middleware = []
+    ): void {
+        $this->routes['GET'][$uri] = [
+            'callback'   => $callback,
+            'middleware' => $middleware,
+        ];
     }
 
-    public function post(string $uri, callable|array $callback): void
-    {
-        $this->routes['POST'][$uri] = $callback;
+    public function post(
+        string $uri,
+        callable|array $callback,
+        array $middleware = []
+    ): void {
+        $this->routes['POST'][$uri] = [
+            'callback'   => $callback,
+            'middleware' => $middleware,
+        ];
     }
 
     public function dispatch(Request $request): void
     {
-        $httpMethod = $request->method();
-        $uri = $request->uri();
+        $method = $request->method();
+        $uri    = $request->uri();
 
-        if (!isset($this->routes[$httpMethod][$uri])) {
+        if (!isset($this->routes[$method][$uri])) {
             http_response_code(404);
             echo '404 Not Found';
             return;
         }
 
-        $callback = $this->routes[$httpMethod][$uri];
+        $route = $this->routes[$method][$uri];
+
+        foreach ($route['middleware'] as $middlewareClass) {
+
+            $middleware = $this->container->make($middlewareClass);
+
+            if (!method_exists($middleware, 'handle')) {
+                throw new RuntimeException(
+                    sprintf(
+                        'Middleware "%s" must implement handle().',
+                        $middlewareClass
+                    )
+                );
+            }
+
+            $middleware->handle();
+        }
+
+        $callback = $route['callback'];
 
         if (is_callable($callback)) {
             $callback();
             return;
         }
 
-        if (is_array($callback) && count($callback) === 2) {
+        if (
+            is_array($callback)
+            && count($callback) === 2
+        ) {
 
-            [$class, $method] = $callback;
+            [$controllerClass, $controllerMethod] = $callback;
 
-            $reflection = new ReflectionClass($class);
+            $controller = $this->container->make(
+                $controllerClass
+            );
 
-            if (
-                $reflection->hasMethod('__construct') &&
-                $reflection->getConstructor()?->getNumberOfParameters() > 0
-            ) {
-
-                if ($this->database === null) {
-                    throw new RuntimeException('Database has not been configured in Router.');
-                }
-
-                $controller = $reflection->newInstance($this->database);
-
-            } else {
-
-                $controller = new $class();
-
+            if (!method_exists($controller, $controllerMethod)) {
+                throw new RuntimeException(
+                    sprintf(
+                        'Method "%s::%s" does not exist.',
+                        $controllerClass,
+                        $controllerMethod
+                    )
+                );
             }
 
-            $controller->$method();
+            $controller->$controllerMethod();
 
             return;
         }
@@ -77,3 +103,4 @@ final class Router
         throw new RuntimeException('Invalid route callback.');
     }
 }
+

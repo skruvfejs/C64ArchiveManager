@@ -8,40 +8,83 @@ use App\Http\Request;
 
 final class Application
 {
-    private Config $config;
+    private Container $container;
     private Router $router;
-    private Request $request;
-    private Database $database;
 
     public function __construct()
     {
-        // Ladda konfiguration
-        $this->config = new Config(
-            dirname(__DIR__, 2) . '/config'
+        $this->container = new Container();
+
+        /*
+         * Config
+         */
+        $this->container->singleton(
+            Config::class,
+            fn () => new Config(
+                dirname(__DIR__, 2) . '/config'
+            )
         );
 
-        // Sätt tidszon
+        /*
+         * Timezone
+         */
         date_default_timezone_set(
-            $this->config->get('app.timezone', 'UTC')
+            $this->container
+                ->get(Config::class)
+                ->get('app.timezone', 'UTC')
         );
 
-        // Initiera kärnobjekt
-        $this->router = new Router();
-        $this->request = new Request();
-        $this->database = new Database($this->config);
+        /*
+         * Core services
+         */
+        $this->container->singleton(
+            Database::class,
+            fn (Container $c) => new Database(
+                $c->get(Config::class)
+            )
+        );
 
-        // Gör databasen tillgänglig för controllers
-        $this->router->setDatabase($this->database);
+        $this->container->singleton(
+            Session::class,
+            fn () => new Session()
+        );
+
+        $this->container->singleton(
+            Auth::class,
+            fn (Container $c) => new Auth(
+                $c->get(Session::class)
+            )
+        );
+
+        $this->container->singleton(
+            \App\Models\User::class,
+            fn (Container $c) => new \App\Models\User(
+                 $c->get(Database::class)
+            )
+        );
+
+        $this->container->singleton(
+            View::class,
+            fn () => new View()
+        );
+
+        $this->container->singleton(
+            Request::class,
+            fn () => new Request()
+        );
+
+        $this->router = new Router($this->container);
     }
 
     public function run(): void
     {
-        // Ladda routes
         $routes = require dirname(__DIR__, 2) . '/routes/web.php';
 
         $routes($this->router);
 
-        // Kör applikationen
-        $this->router->dispatch($this->request);
+        $this->router->dispatch(
+            $this->container->get(Request::class)
+        );
     }
 }
+
