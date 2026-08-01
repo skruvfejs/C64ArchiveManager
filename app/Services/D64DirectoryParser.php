@@ -127,14 +127,16 @@ final class D64DirectoryParser
                             $data[$offset + 2]
                         )
                     );
+
+
                     $entry->setBlocks(
                         ord(
-                            $data[$offset + 30]
+                            $data[$offset + 28]
                         )
                         |
                         (
                             ord(
-                                $data[$offset + 31]
+                                $data[$offset + 29]
                             )
                             << 8
                         )
@@ -194,6 +196,8 @@ final class D64DirectoryParser
             default => '???'
         };
     }
+
+
     private function open(
         string $filename
     ) {
@@ -332,4 +336,3 @@ final class D64DirectoryParser
         };
     }
 }
-
