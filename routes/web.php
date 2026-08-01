@@ -6,6 +6,7 @@ use App\Core\Router;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DiskController;
+use App\Http\Controllers\FileController;
 
 
 return function (Router $router): void {
@@ -42,6 +43,15 @@ return function (Router $router): void {
         '/disk',
         [
             DiskController::class,
+            'index'
+        ]
+    );
+
+
+    $router->get(
+        '/file',
+        [
+            FileController::class,
             'index'
         ]
     );

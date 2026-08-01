@@ -85,9 +85,11 @@
                 </td>
 
                 <td>
-                    <?= htmlspecialchars(
-                        $entry->getFilename()
-                    ) ?>
+                    <a href="/file?id=<?= $entry->getId() ?>">
+                        <?= htmlspecialchars(
+                            $entry->getFilename()
+                        ) ?>
+                    </a>
                 </td>
 
                 <td>
