@@ -9,96 +9,108 @@
 
 <?php foreach ($files as $file): ?>
 
-    <div>
-
-        <h3>
-            <?= htmlspecialchars($file->getFilename()) ?>
-            (<?= htmlspecialchars($file->getFormat()) ?>)
-        </h3>
+    <h3>
+        <?= htmlspecialchars($file->getFilename()) ?>
+        (<?= htmlspecialchars($file->getFormat()) ?>)
+    </h3>
 
 
-        <table border="1" cellpadding="5">
+    <table border="1" cellpadding="5">
+
+        <tr>
+            <th>Disk name</th>
+            <td>
+                <?= htmlspecialchars(
+                    $file->getDiskName() ?? ''
+                ) ?>
+            </td>
+        </tr>
+
+        <tr>
+            <th>Disk ID</th>
+            <td>
+                <?= htmlspecialchars(
+                    $file->getDiskId() ?? ''
+                ) ?>
+            </td>
+        </tr>
+
+        <tr>
+            <th>Format</th>
+            <td>
+                <?= htmlspecialchars(
+                    $file->getFormat()
+                ) ?>
+            </td>
+        </tr>
+
+
+        <tr>
+            <th>Files on disk</th>
+            <td>
+                <?= count($directories[$file->getId()] ?? []) ?>
+           </td>
+       </tr>
+
+
+        <tr>
+            <th>Size</th>
+            <td>
+                <?= $file->getSize() ?> bytes
+            </td>
+        </tr>
+
+    </table>
+
+
+    <br>
+
+
+    <table border="1" cellpadding="5">
+
+        <tr>
+            <th>Filename</th>
+            <th>Type</th>
+            <th>Track</th>
+            <th>Sector</th>
+            <th>Blocks</th>
+        </tr>
+
+
+        <?php foreach ($directories[$file->getId()] ?? [] as $entry): ?>
 
             <tr>
-                <th>Disk name</th>
+
                 <td>
                     <?= htmlspecialchars(
-                        $file->getDiskName() ?? ''
+                        $entry->getFilename()
                     ) ?>
                 </td>
-            </tr>
 
-            <tr>
-                <th>Disk ID</th>
                 <td>
                     <?= htmlspecialchars(
-                        $file->getDiskId() ?? ''
+                        $entry->getFiletype()
                     ) ?>
                 </td>
-            </tr>
 
-            <tr>
-                <th>Format</th>
                 <td>
-                    <?= htmlspecialchars(
-                        $file->getFormat()
-                    ) ?>
+                    <?= $entry->getStartTrack() ?>
                 </td>
+
+                <td>
+                    <?= $entry->getStartSector() ?>
+                </td>
+
+                <td>
+                    <?= $entry->getBlocks() ?>
+                </td>
+
             </tr>
 
-        </table>
+        <?php endforeach; ?>
 
 
-        <br>
-
-
-        <table border="1" cellpadding="5">
-
-            <tr>
-                <th>Filename</th>
-                <th>Type</th>
-                <th>Track</th>
-                <th>Sector</th>
-                <th>Blocks</th>
-            </tr>
-
-
-            <?php foreach ($directories[$file->getId()] ?? [] as $entry): ?>
-
-                <tr>
-
-                    <td>
-                        <?= htmlspecialchars(
-                            $entry->getFilename()
-                        ) ?>
-                    </td>
-
-                    <td>
-                        <?= htmlspecialchars(
-                            $entry->getFiletype()
-                        ) ?>
-                    </td>
-
-                    <td>
-                        <?= $entry->getStartTrack() ?>
-                    </td>
-
-                    <td>
-                        <?= $entry->getStartSector() ?>
-                    </td>
-
-                    <td>
-                        <?= $entry->getBlocks() ?>
-                    </td>
-
-                </tr>
-
-            <?php endforeach; ?>
-
-
-        </table>
-
-    </div>
+    </table>
 
 
 <?php endforeach; ?>
