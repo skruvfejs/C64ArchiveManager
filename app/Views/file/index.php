@@ -1,3 +1,14 @@
+<?php if (!empty($releaseId)): ?>
+
+<p>
+    <a href="/disk?id=<?= $releaseId ?>">
+        ← Back to Disk Explorer
+    </a>
+</p>
+
+<?php endif; ?>
+
+
 <h1><?= $title ?></h1>
 
 

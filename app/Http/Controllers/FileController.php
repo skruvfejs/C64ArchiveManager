@@ -68,7 +68,10 @@ final class FileController extends Controller
                     $entry,
 
                 'releaseFile' =>
-                    $releaseFile
+                    $releaseFile,
+
+                'releaseId' =>
+                    $releaseFile?->getReleaseId()
             ]
         );
     }
