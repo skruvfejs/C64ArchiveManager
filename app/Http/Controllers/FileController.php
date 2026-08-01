@@ -7,11 +7,13 @@ namespace App\Http\Controllers;
 use App\Core\View;
 use App\Http\Request;
 use App\Repositories\DirectoryEntryRepository;
+use App\Repositories\ReleaseFileRepository;
 
 final class FileController extends Controller
 {
     public function __construct(
         private DirectoryEntryRepository $entries,
+        private ReleaseFileRepository $files,
         private Request $request
     ) {
     }
@@ -47,6 +49,12 @@ final class FileController extends Controller
         }
 
 
+        $releaseFile =
+            $this->files->findById(
+                $entry->getReleaseFileId()
+            );
+
+
         $view = new View();
 
 
@@ -57,7 +65,10 @@ final class FileController extends Controller
                     'C64 File Details',
 
                 'entry' =>
-                    $entry
+                    $entry,
+
+                'releaseFile' =>
+                    $releaseFile
             ]
         );
     }

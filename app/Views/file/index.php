@@ -28,6 +28,58 @@
     </tr>
 
 
+    <?php if ($releaseFile !== null): ?>
+
+    <tr>
+        <th>Disk</th>
+        <td>
+            <?= htmlspecialchars(
+                $releaseFile->getFilename()
+            ) ?>
+        </td>
+    </tr>
+
+
+    <tr>
+        <th>Format</th>
+        <td>
+            <?= htmlspecialchars(
+                $releaseFile->getFormat()
+            ) ?>
+        </td>
+    </tr>
+
+
+    <tr>
+        <th>Disk name</th>
+        <td>
+            <?= htmlspecialchars(
+                $releaseFile->getDiskName() ?? ''
+            ) ?>
+        </td>
+    </tr>
+
+
+    <tr>
+        <th>Disk ID</th>
+        <td>
+            <?= htmlspecialchars(
+                $releaseFile->getDiskId() ?? ''
+            ) ?>
+        </td>
+    </tr>
+
+
+    <tr>
+        <th>Size</th>
+        <td>
+            <?= $releaseFile->getSize() ?> bytes
+        </td>
+    </tr>
+
+    <?php endif; ?>
+
+
     <tr>
         <th>Directory position</th>
         <td>
