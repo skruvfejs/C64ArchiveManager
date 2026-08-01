@@ -20,6 +20,8 @@ final class ReleaseFileRepository extends Repository
                 release_id,
                 filename,
                 format,
+                disk_name,
+                disk_id,
                 path,
                 size,
                 crc32,
@@ -31,6 +33,8 @@ final class ReleaseFileRepository extends Repository
                 :release_id,
                 :filename,
                 :format,
+                :disk_name,
+                :disk_id,
                 :path,
                 :size,
                 :crc32,
@@ -51,6 +55,12 @@ final class ReleaseFileRepository extends Repository
 
             'format' =>
                 $file->getFormat(),
+
+            'disk_name' =>
+                $file->getDiskName(),
+
+            'disk_id' =>
+                $file->getDiskId(),
 
             'path' =>
                 $file->getPath(),
@@ -185,6 +195,14 @@ final class ReleaseFileRepository extends Repository
 
             ->setFormat(
                 $row['format']
+            )
+
+            ->setDiskName(
+                $row['disk_name'] ?? null
+            )
+
+            ->setDiskId(
+                $row['disk_id'] ?? null
             )
 
             ->setPath(

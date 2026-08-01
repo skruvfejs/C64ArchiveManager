@@ -33,6 +33,7 @@ final class D64ImporterService
     ): int {
 
         if (!is_file($filename)) {
+
             throw new RuntimeException(
                 'D64 file not found.'
             );
@@ -46,6 +47,7 @@ final class D64ImporterService
         $header =
             $this->parser
                  ->readHeader($filename);
+
 
 
         /*
@@ -89,6 +91,14 @@ final class D64ImporterService
                 basename($filename)
             )
             ->setFormat('D64')
+            ->setDiskName(
+                $header['disk_name'] !== ''
+                    ? $header['disk_name']
+                    : basename($filename)
+            )
+            ->setDiskId(
+                $header['disk_id'] ?? null
+            )
             ->setPath($filename)
             ->setSize(
                 filesize($filename)

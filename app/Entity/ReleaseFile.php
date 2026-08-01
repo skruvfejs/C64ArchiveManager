@@ -14,6 +14,10 @@ final class ReleaseFile
 
     private string $format = '';
 
+    private ?string $diskName = null;
+
+    private ?string $diskId = null;
+
     private string $path = '';
 
     private int $size = 0;
@@ -80,6 +84,34 @@ final class ReleaseFile
     public function setFormat(string $format): self
     {
         $this->format = $format;
+
+        return $this;
+    }
+
+
+    public function getDiskName(): ?string
+    {
+        return $this->diskName;
+    }
+
+
+    public function setDiskName(?string $diskName): self
+    {
+        $this->diskName = $diskName;
+
+        return $this;
+    }
+
+
+    public function getDiskId(): ?string
+    {
+        return $this->diskId;
+    }
+
+
+    public function setDiskId(?string $diskId): self
+    {
+        $this->diskId = $diskId;
 
         return $this;
     }

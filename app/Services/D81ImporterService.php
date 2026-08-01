@@ -31,6 +31,7 @@ final class D81ImporterService
     ): int {
 
         if (!is_file($filename)) {
+
             throw new RuntimeException(
                 'D81 file not found.'
             );
@@ -86,6 +87,14 @@ final class D81ImporterService
                 basename($filename)
             )
             ->setFormat('D81')
+            ->setDiskName(
+                $header['disk_name'] !== ''
+                    ? $header['disk_name']
+                    : basename($filename)
+            )
+            ->setDiskId(
+                $header['disk_id'] ?? null
+            )
             ->setPath($filename)
             ->setSize(
                 filesize($filename)
