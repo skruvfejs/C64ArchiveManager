@@ -44,14 +44,12 @@
             </td>
         </tr>
 
-
         <tr>
             <th>Files on disk</th>
             <td>
                 <?= count($directories[$file->getId()] ?? []) ?>
-           </td>
-       </tr>
-
+            </td>
+        </tr>
 
         <tr>
             <th>Size</th>
@@ -69,6 +67,7 @@
     <table border="1" cellpadding="5">
 
         <tr>
+            <th>#</th>
             <th>Filename</th>
             <th>Type</th>
             <th>Track</th>
@@ -80,6 +79,10 @@
         <?php foreach ($directories[$file->getId()] ?? [] as $entry): ?>
 
             <tr>
+
+                <td>
+                    <?= $entry->getDirectoryPosition() ?>
+                </td>
 
                 <td>
                     <?= htmlspecialchars(
