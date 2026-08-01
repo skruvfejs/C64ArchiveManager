@@ -34,6 +34,8 @@ final class D81DirectoryParser
 
             $entries = [];
 
+            $position = 0;
+
             $track =
                 self::TRACK_START;
 
@@ -109,8 +111,15 @@ final class D81DirectoryParser
                             )
                             << 8
                         );
+
+
                     $entry =
                         new DirectoryEntry();
+
+
+                    $entry->setDirectoryPosition(
+                        $position
+                    );
 
 
                     $entry->setFilename(
@@ -156,11 +165,15 @@ final class D81DirectoryParser
 
                     $entries[] =
                         $entry;
+
+
+                    $position++;
                 }
 
 
                 $track =
                     $nextTrack;
+
 
                 $sector =
                     $nextSector;
@@ -193,6 +206,8 @@ final class D81DirectoryParser
             default => '???'
         };
     }
+
+
     private function open(
         string $filename
     ) {

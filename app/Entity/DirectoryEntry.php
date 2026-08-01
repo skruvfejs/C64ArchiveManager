@@ -12,6 +12,8 @@ final class DirectoryEntry
 
     private string $filename = '';
 
+    private ?int $directoryPosition = null;
+
     private string $filetype = '';
 
     private ?int $startTrack = null;
@@ -70,6 +72,22 @@ final class DirectoryEntry
     ): self {
 
         $this->filename = $filename;
+
+        return $this;
+    }
+
+
+    public function getDirectoryPosition(): ?int
+    {
+        return $this->directoryPosition;
+    }
+
+
+    public function setDirectoryPosition(
+        ?int $directoryPosition
+    ): self {
+
+        $this->directoryPosition = $directoryPosition;
 
         return $this;
     }
@@ -182,5 +200,3 @@ final class DirectoryEntry
         return $this->updatedAt;
     }
 }
-
-

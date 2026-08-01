@@ -32,6 +32,8 @@ final class D64DirectoryParser
 
             $entries = [];
 
+            $position = 0;
+
             $track =
                 self::DIRECTORY_TRACK;
 
@@ -90,6 +92,11 @@ final class D64DirectoryParser
                         new DirectoryEntry();
 
 
+                    $entry->setDirectoryPosition(
+                        $position
+                    );
+
+
                     $entry->setFilename(
                         $this->decoder->decode(
                             substr(
@@ -120,7 +127,6 @@ final class D64DirectoryParser
                             $data[$offset + 2]
                         )
                     );
-
                     $entry->setBlocks(
                         ord(
                             $data[$offset + 30]
@@ -147,11 +153,15 @@ final class D64DirectoryParser
 
                     $entries[] =
                         $entry;
+
+
+                    $position++;
                 }
 
 
                 $track =
                     $nextTrack;
+
 
                 $sector =
                     $nextSector;
@@ -184,8 +194,6 @@ final class D64DirectoryParser
             default => '???'
         };
     }
-
-
     private function open(
         string $filename
     ) {
@@ -215,6 +223,7 @@ final class D64DirectoryParser
 
         return $fp;
     }
+
 
     private function readSector(
         $fp,

@@ -19,6 +19,7 @@ final class DirectoryEntryRepository extends Repository
             (
                 release_file_id,
                 filename,
+                directory_position,
                 filetype,
                 start_track,
                 start_sector,
@@ -30,6 +31,7 @@ final class DirectoryEntryRepository extends Repository
             (
                 :release_file_id,
                 :filename,
+                :directory_position,
                 :filetype,
                 :start_track,
                 :start_sector,
@@ -48,6 +50,9 @@ final class DirectoryEntryRepository extends Repository
 
             'filename' =>
                 $entry->getFilename(),
+
+            'directory_position' =>
+                $entry->getDirectoryPosition(),
 
             'filetype' =>
                 $entry->getFiletype(),
@@ -125,7 +130,7 @@ final class DirectoryEntryRepository extends Repository
             SELECT *
             FROM directory_entries
             WHERE release_file_id = :release_file_id
-            ORDER BY filename
+            ORDER BY directory_position
             '
         );
 
@@ -185,6 +190,12 @@ final class DirectoryEntryRepository extends Repository
 
             ->setFilename(
                 $row['filename']
+            )
+
+            ->setDirectoryPosition(
+                $row['directory_position'] !== null
+                    ? (int) $row['directory_position']
+                    : null
             )
 
             ->setFiletype(

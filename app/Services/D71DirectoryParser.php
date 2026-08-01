@@ -31,6 +31,8 @@ final class D71DirectoryParser
 
             $entries = [];
 
+            $position = 0;
+
             $track = 18;
             $sector = 1;
 
@@ -90,6 +92,8 @@ final class D71DirectoryParser
                                 16
                             )
                         );
+
+
                     $blocks =
                         ord(
                             $data[$offset + 30]
@@ -105,6 +109,11 @@ final class D71DirectoryParser
 
                     $entry =
                         new DirectoryEntry();
+
+
+                    $entry->setDirectoryPosition(
+                        $position
+                    );
 
 
                     $entry
@@ -126,7 +135,8 @@ final class D71DirectoryParser
                             ord(
                                 $data[$offset + 2]
                             )
-                        )
+                        );
+                    $entry
 
                         ->setBlocks($blocks)
 
@@ -141,11 +151,15 @@ final class D71DirectoryParser
 
                     $entries[] =
                         $entry;
+
+
+                    $position++;
                 }
 
 
                 $track =
                     $nextTrack;
+
 
                 $sector =
                     $nextSector;
