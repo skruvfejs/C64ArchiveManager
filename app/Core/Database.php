@@ -6,6 +6,7 @@ namespace App\Core;
 
 use PDO;
 use PDOException;
+use RuntimeException;
 
 final class Database
 {
@@ -13,11 +14,11 @@ final class Database
 
     public function __construct(Config $config)
     {
-        $host = $config->get('database.host');
-        $port = $config->get('database.port');
-        $db   = $config->get('database.database');
-        $user = $config->get('database.username');
-        $pass = $config->get('database.password');
+        $host    = $config->get('database.host');
+        $port    = $config->get('database.port');
+        $db      = $config->get('database.database');
+        $user    = $config->get('database.username');
+        $pass    = $config->get('database.password');
         $charset = $config->get('database.charset');
 
         $dsn = sprintf(
@@ -34,13 +35,16 @@ final class Database
                 $user,
                 $pass,
                 [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false,
+                    PDO::ATTR_EMULATE_PREPARES   => false,
                 ]
             );
         } catch (PDOException $e) {
-            die('Database connection failed: ' . $e->getMessage());
+            throw new RuntimeException(
+                'Unable to connect to the database.',
+                previous: $e
+            );
         }
     }
 

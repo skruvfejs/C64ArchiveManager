@@ -9,11 +9,14 @@ use App\Http\Request;
 final class Application
 {
     private Container $container;
+
     private Router $router;
+
 
     public function __construct()
     {
         $this->container = new Container();
+
 
         /*
          * Config
@@ -25,6 +28,7 @@ final class Application
             )
         );
 
+
         /*
          * Timezone
          */
@@ -33,6 +37,7 @@ final class Application
                 ->get(Config::class)
                 ->get('app.timezone', 'UTC')
         );
+
 
         /*
          * Core services
@@ -44,10 +49,23 @@ final class Application
             )
         );
 
+
+        /*
+         * Database transaction
+         */
+        $this->container->singleton(
+            DatabaseTransaction::class,
+            fn (Container $c) => new DatabaseTransaction(
+                $c->get(Database::class)->pdo()
+            )
+        );
+
+
         $this->container->singleton(
             Session::class,
             fn () => new Session()
         );
+
 
         $this->container->singleton(
             Auth::class,
@@ -56,6 +74,7 @@ final class Application
             )
         );
 
+
         $this->container->singleton(
             \App\Models\User::class,
             fn (Container $c) => new \App\Models\User(
@@ -63,27 +82,42 @@ final class Application
             )
         );
 
+
         $this->container->singleton(
             View::class,
             fn () => new View()
         );
+
 
         $this->container->singleton(
             Request::class,
             fn () => new Request()
         );
 
-        $this->router = new Router($this->container);
+
+        $this->router = new Router(
+            $this->container
+        );
     }
+
 
     public function run(): void
     {
-        $routes = require dirname(__DIR__, 2) . '/routes/web.php';
+        $routes =
+            require dirname(__DIR__, 2) . '/routes/web.php';
+
 
         $routes($this->router);
+
 
         $this->router->dispatch(
             $this->container->get(Request::class)
         );
+    }
+
+
+    public function container(): Container
+    {
+        return $this->container;
     }
 }

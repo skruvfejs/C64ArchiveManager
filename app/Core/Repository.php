@@ -11,9 +11,9 @@ abstract class Repository
 {
     protected PDO $pdo;
 
-    public function __construct(PDO $pdo)
+    public function __construct(Database $database)
     {
-        $this->pdo = $pdo;
+        $this->pdo = $database->pdo();
     }
 
     protected function prepare(string $sql): PDOStatement
@@ -21,24 +21,45 @@ abstract class Repository
         return $this->pdo->prepare($sql);
     }
 
+    protected function fetchOne(PDOStatement $statement): ?array
+    {
+        $row = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $row === false ? null : $row;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    protected function fetchAll(PDOStatement $statement): array
+    {
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     protected function lastInsertId(): int
     {
         return (int) $this->pdo->lastInsertId();
     }
 
-    protected function beginTransaction(): bool
+    protected function beginTransaction(): void
     {
-        return $this->pdo->beginTransaction();
+        $this->pdo->beginTransaction();
     }
 
-    protected function commit(): bool
+    protected function commit(): void
     {
-        return $this->pdo->commit();
+        $this->pdo->commit();
     }
 
-    protected function rollBack(): bool
+    protected function rollBack(): void
     {
-        return $this->pdo->rollBack();
+        if ($this->pdo->inTransaction()) {
+            $this->pdo->rollBack();
+        }
+    }
+
+    protected function inTransaction(): bool
+    {
+        return $this->pdo->inTransaction();
     }
 }
-

@@ -6,7 +6,6 @@ namespace App\Repositories;
 
 use App\Core\Repository;
 use App\Models\Entry;
-use PDO;
 
 final class EntryRepository extends Repository
 {
@@ -14,20 +13,22 @@ final class EntryRepository extends Repository
     {
         $stmt = $this->prepare(
             'SELECT *
-             FROM entries
-             WHERE id = :id
-             LIMIT 1'
+               FROM entries
+              WHERE id = :id
+              LIMIT 1'
         );
 
         $stmt->execute([
             'id' => $id,
         ]);
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $this->fetchOne($stmt);
 
-        return $row === false
-            ? null
-            : $this->hydrate($row);
+        if ($row === null) {
+            return null;
+        }
+
+        return $this->hydrate($row);
     }
 
     /**
@@ -37,19 +38,16 @@ final class EntryRepository extends Repository
     {
         $stmt = $this->prepare(
             'SELECT *
-             FROM entries
-             ORDER BY title'
+               FROM entries
+           ORDER BY title'
         );
 
         $stmt->execute();
 
-        $entries = [];
-
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $entries[] = $this->hydrate($row);
-        }
-
-        return $entries;
+        return array_map(
+            fn(array $row): Entry => $this->hydrate($row),
+            $this->fetchAll($stmt)
+        );
     }
 
     /**
@@ -59,22 +57,35 @@ final class EntryRepository extends Repository
     {
         $stmt = $this->prepare(
             'SELECT *
-             FROM entries
-             WHERE title LIKE :search
-             ORDER BY title'
+               FROM entries
+              WHERE title LIKE :search
+           ORDER BY title'
         );
 
         $stmt->execute([
             'search' => '%' . $search . '%',
         ]);
 
-        $entries = [];
+        return array_map(
+            fn(array $row): Entry => $this->hydrate($row),
+            $this->fetchAll($stmt)
+        );
+    }
 
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $entries[] = $this->hydrate($row);
-        }
+    public function exists(int $id): bool
+    {
+        $stmt = $this->prepare(
+            'SELECT 1
+               FROM entries
+              WHERE id = :id
+              LIMIT 1'
+        );
 
-        return $entries;
+        $stmt->execute([
+            'id' => $id,
+        ]);
+
+        return $this->fetchOne($stmt) !== null;
     }
 
     public function create(Entry $entry): int
@@ -116,15 +127,15 @@ final class EntryRepository extends Repository
     {
         $stmt = $this->prepare(
             'UPDATE entries
-             SET
-                entry_type_id = :entry_type_id,
-                title = :title,
-                year = :year,
-                publisher = :publisher,
-                developer = :developer,
-                notes = :notes,
-                updated_at = NOW()
-             WHERE id = :id'
+                SET
+                    entry_type_id = :entry_type_id,
+                    title = :title,
+                    year = :year,
+                    publisher = :publisher,
+                    developer = :developer,
+                    notes = :notes,
+                    updated_at = NOW()
+              WHERE id = :id'
         );
 
         return $stmt->execute([
@@ -142,28 +153,13 @@ final class EntryRepository extends Repository
     {
         $stmt = $this->prepare(
             'DELETE
-             FROM entries
-             WHERE id = :id'
+               FROM entries
+              WHERE id = :id'
         );
 
         return $stmt->execute([
             'id' => $id,
         ]);
-    }
-
-    public function exists(int $id): bool
-    {
-        $stmt = $this->prepare(
-            'SELECT 1
-             FROM entries
-             WHERE id = :id'
-        );
-
-        $stmt->execute([
-            'id' => $id,
-        ]);
-
-        return $stmt->fetchColumn() !== false;
     }
 
     private function hydrate(array $row): Entry
@@ -172,7 +168,11 @@ final class EntryRepository extends Repository
             ->setId((int) $row['id'])
             ->setEntryTypeId((int) $row['entry_type_id'])
             ->setTitle($row['title'])
-            ->setYear($row['year'] !== null ? (int) $row['year'] : null)
+            ->setYear(
+                $row['year'] !== null
+                    ? (int) $row['year']
+                    : null
+            )
             ->setPublisher($row['publisher'])
             ->setDeveloper($row['developer'])
             ->setNotes($row['notes'])
@@ -180,3 +180,4 @@ final class EntryRepository extends Repository
             ->setUpdatedAt($row['updated_at']);
     }
 }
+
