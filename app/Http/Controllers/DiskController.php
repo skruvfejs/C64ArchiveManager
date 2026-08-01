@@ -51,6 +51,12 @@ final class DiskController extends Controller
         }
 
 
+        $search =
+            trim(
+                (string) $this->request->query('search', '')
+            );
+
+
         $files =
             $this->files->findByRelease($id);
 
@@ -60,14 +66,39 @@ final class DiskController extends Controller
 
         foreach ($files as $file) {
 
-            $directories[$file->getId()] =
+            $entries =
                 $this->entries->findByReleaseFile(
                     $file->getId()
                 );
+
+
+            if ($search !== '') {
+
+                $entries =
+                    array_filter(
+                        $entries,
+                        function ($entry) use ($search): bool {
+
+                            return stripos(
+                                $entry->getFilename(),
+                                $search
+                            ) !== false;
+
+                        }
+                    );
+
+                $entries =
+                    array_values($entries);
+            }
+
+
+            $directories[$file->getId()] =
+                $entries;
         }
 
 
         $view = new View();
+
 
         $view->render(
             'disk/index',
@@ -82,9 +113,11 @@ final class DiskController extends Controller
                     $files,
 
                 'directories' =>
-                    $directories
+                    $directories,
+
+                'search' =>
+                    $search
             ]
         );
     }
 }
-

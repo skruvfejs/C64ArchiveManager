@@ -82,7 +82,7 @@
 
 
     <tr>
-        <th>Size</th>
+        <th>Disk image size</th>
         <td>
             <?= $releaseFile->getSize() ?> bytes
         </td>
@@ -119,6 +119,14 @@
         <th>Blocks</th>
         <td>
             <?= $entry->getBlocks() ?>
+        </td>
+    </tr>
+
+
+    <tr>
+        <th>Approx size</th>
+        <td>
+            <?= $entry->getBlocks() * 254 ?> bytes
         </td>
     </tr>
 

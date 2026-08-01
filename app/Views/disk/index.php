@@ -1,3 +1,43 @@
+<form method="get" action="/disk">
+
+    <input
+        type="hidden"
+        name="id"
+        value="<?= $release->getId() ?>"
+    >
+
+
+    <label>
+        Search:
+    </label>
+
+
+    <input
+        type="text"
+        name="search"
+        value="<?= htmlspecialchars($search ?? '') ?>"
+    >
+
+
+    <button type="submit">
+        Search
+    </button>
+
+
+    <?php if (!empty($search)): ?>
+
+        <a href="/disk?id=<?= $release->getId() ?>">
+            Clear
+        </a>
+
+    <?php endif; ?>
+
+</form>
+
+
+<br>
+
+
 <h1><?= $title ?></h1>
 
 
@@ -26,6 +66,7 @@
             </td>
         </tr>
 
+
         <tr>
             <th>Disk ID</th>
             <td>
@@ -34,6 +75,7 @@
                 ) ?>
             </td>
         </tr>
+
 
         <tr>
             <th>Format</th>
@@ -44,12 +86,14 @@
             </td>
         </tr>
 
+
         <tr>
             <th>Files on disk</th>
             <td>
                 <?= count($directories[$file->getId()] ?? []) ?>
             </td>
         </tr>
+
 
         <tr>
             <th>Size</th>
@@ -84,6 +128,7 @@
                     <?= $entry->getDirectoryPosition() ?>
                 </td>
 
+
                 <td>
                     <a href="/file?id=<?= $entry->getId() ?>">
                         <?= htmlspecialchars(
@@ -92,19 +137,23 @@
                     </a>
                 </td>
 
+
                 <td>
                     <?= htmlspecialchars(
                         $entry->getFiletype()
                     ) ?>
                 </td>
 
+
                 <td>
                     <?= $entry->getStartTrack() ?>
                 </td>
 
+
                 <td>
                     <?= $entry->getStartSector() ?>
                 </td>
+
 
                 <td>
                     <?= $entry->getBlocks() ?>
