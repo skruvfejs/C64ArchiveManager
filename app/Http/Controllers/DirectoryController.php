@@ -8,6 +8,7 @@ use App\Core\View;
 use App\Repositories\ReleaseRepository;
 use App\Repositories\ReleaseFileRepository;
 use App\Repositories\DirectoryEntryRepository;
+use App\Services\DiskGeometry;
 use App\Http\Request;
 
 final class DirectoryController extends Controller
@@ -16,6 +17,7 @@ final class DirectoryController extends Controller
         private ReleaseRepository $releases,
         private ReleaseFileRepository $files,
         private DirectoryEntryRepository $entries,
+        private DiskGeometry $geometry,
         private Request $request
     ) {
     }
@@ -91,14 +93,9 @@ final class DirectoryController extends Controller
 
 
             $total =
-                match ($file->getFormat()) {
-
-                    'D64' => 683,
-                    'D71' => 1366,
-                    'D81' => 3200,
-
-                    default => 0
-                };
+                $this->geometry->totalBlocks(
+                    $file->getFormat()
+                );
 
 
             $totalBlocks[$file->getId()] =
