@@ -83,8 +83,25 @@ final class D81DirectoryParser
                         );
 
 
+                    $startTrack =
+                        ord(
+                            $data[$offset + 1]
+                        );
+
+
+                    $startSector =
+                        ord(
+                            $data[$offset + 2]
+                        );
+
+
+                    /*
+                     * Hoppa över tomma/ogiltiga katalogposter
+                     */
                     if (
-                        ($type & 0x07) === 0
+                        ($type & 0x07) === 0 ||
+                        $startTrack === 0 ||
+                        $startSector === 0
                     ) {
                         continue;
                     }
@@ -135,16 +152,12 @@ final class D81DirectoryParser
 
 
                     $entry->setStartTrack(
-                        ord(
-                            $data[$offset + 1]
-                        )
+                        $startTrack
                     );
 
 
                     $entry->setStartSector(
-                        ord(
-                            $data[$offset + 2]
-                        )
+                        $startSector
                     );
 
 
@@ -282,4 +295,3 @@ final class D81DirectoryParser
         return $data;
     }
 }
-
