@@ -9,6 +9,7 @@ use App\Http\Controllers\DiskController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\DirectoryController;
 use App\Http\Controllers\DiskInfoController;
+use App\Http\Controllers\ImportController;
 
 
 return function (Router $router): void {
@@ -76,5 +77,31 @@ return function (Router $router): void {
         ]
     );
 
-};
 
+    $router->get(
+        '/import',
+        [
+            ImportController::class,
+            'index'
+        ]
+    );
+
+
+    $router->post(
+        '/import',
+        [
+            ImportController::class,
+            'upload'
+        ]
+    );
+
+
+    $router->post(
+        '/import/force',
+        [
+            ImportController::class,
+            'force'
+        ]
+    );
+
+};

@@ -27,7 +27,8 @@ final class ImporterService
 
     public function import(
         string $filename,
-        int $entryId
+        int $entryId,
+        bool $forceDuplicate = false
     ): int {
 
         $format =
@@ -50,13 +51,15 @@ final class ImporterService
                     function () use (
                         $filename,
                         $entryId,
-                        $format
+                        $format,
+                        $forceDuplicate
                     ): int {
 
                         return $this->doImport(
                             $filename,
                             $entryId,
-                            $format
+                            $format,
+                            $forceDuplicate
                         );
                     }
                 );
@@ -90,16 +93,19 @@ final class ImporterService
     private function doImport(
         string $filename,
         int $entryId,
-        string $format
+        string $format,
+        bool $forceDuplicate = false
     ): int {
 
         return match ($format) {
+
 
             'D64' =>
                 $this->d64Importer
                      ->import(
                          $filename,
-                         $entryId
+                         $entryId,
+                         $forceDuplicate
                      ),
 
 
@@ -107,7 +113,8 @@ final class ImporterService
                 $this->t64Importer
                      ->import(
                          $filename,
-                         $entryId
+                         $entryId,
+                         $forceDuplicate
                      ),
 
 
@@ -115,7 +122,8 @@ final class ImporterService
                 $this->d71Importer
                      ->import(
                          $filename,
-                         $entryId
+                         $entryId,
+                         $forceDuplicate
                      ),
 
 
@@ -123,7 +131,8 @@ final class ImporterService
                 $this->d81Importer
                      ->import(
                          $filename,
-                         $entryId
+                         $entryId,
+                         $forceDuplicate
                      ),
 
 
@@ -131,7 +140,8 @@ final class ImporterService
                 $this->prgImporter
                      ->import(
                          $filename,
-                         $entryId
+                         $entryId,
+                         $forceDuplicate
                      ),
 
 

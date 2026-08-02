@@ -54,6 +54,42 @@ final class ReleaseRepository extends Repository
     }
 
 
+    public function existsByEntryNameVersion(
+        int $entryId,
+        string $name,
+        string $version
+    ): bool {
+
+        $stmt = $this->prepare(
+            '
+            SELECT COUNT(*)
+            FROM releases
+            WHERE entry_id = :entry_id
+            AND name = :name
+            AND version = :version
+            LIMIT 1
+            '
+        );
+
+
+        $stmt->execute([
+
+            'entry_id' =>
+                $entryId,
+
+            'name' =>
+                $name,
+
+            'version' =>
+                $version
+
+        ]);
+
+
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
+
     public function findById(
         int $id
     ): ?Release {
@@ -87,6 +123,7 @@ final class ReleaseRepository extends Repository
 
         return $this->hydrate($row);
     }
+
 
 
     /**

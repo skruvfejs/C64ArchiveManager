@@ -27,7 +27,8 @@ final class D81ImporterService
 
     public function import(
         string $filename,
-        int $entryId
+        int $entryId,
+        bool $forceDuplicate = false
     ): int {
 
         if (!is_file($filename)) {
@@ -60,13 +61,21 @@ final class D81ImporterService
 
         /*
          * Finns samma disk redan?
+         *
+         * Vid force-import ignoreras MD5.
          */
 
-        $existingReleaseFile =
-            $this->releaseFileRepository
-                 ->findByMd5(
-                     $checksum['md5']
-                 );
+        $existingReleaseFile = null;
+
+
+        if (!$forceDuplicate) {
+
+            $existingReleaseFile =
+                $this->releaseFileRepository
+                     ->findByMd5(
+                         $checksum['md5']
+                     );
+        }
 
 
         if ($existingReleaseFile !== null) {
@@ -89,13 +98,26 @@ final class D81ImporterService
             $release = new Release();
 
 
+            $diskName =
+                $header['disk_name'] !== ''
+                    ? $header['disk_name']
+                    : basename($filename);
+
+
+            if ($forceDuplicate) {
+
+                $diskName =
+                    $this->createDuplicateName(
+                        $entryId,
+                        $diskName,
+                        'D81'
+                    );
+            }
+
+
             $release
                 ->setEntryId($entryId)
-                ->setName(
-                    $header['disk_name'] !== ''
-                        ? $header['disk_name']
-                        : basename($filename)
-                )
+                ->setName($diskName)
                 ->setVersion('D81');
 
 
@@ -119,9 +141,7 @@ final class D81ImporterService
                 )
                 ->setFormat('D81')
                 ->setDiskName(
-                    $header['disk_name'] !== ''
-                        ? $header['disk_name']
-                        : basename($filename)
+                    $diskName
                 )
                 ->setDiskId(
                     $header['disk_id'] ?? null
@@ -145,8 +165,6 @@ final class D81ImporterService
                 $this->releaseFileRepository
                      ->create($releaseFile);
         }
-
-
 
         /*
          * Läs katalog
@@ -197,7 +215,45 @@ final class D81ImporterService
         }
 
 
+
         return $releaseId;
+    }
+
+
+    private function createDuplicateName(
+        int $entryId,
+        string $name,
+        string $version
+    ): string {
+
+        $duplicateName =
+            $name . ' (duplicate)';
+
+
+        $counter = 2;
+
+
+        while (
+            $this->releaseRepository
+                 ->existsByEntryNameVersion(
+                     $entryId,
+                     $duplicateName,
+                     $version
+                 )
+        ) {
+
+            $duplicateName =
+                $name
+                . ' (duplicate '
+                . $counter
+                . ')';
+
+
+            $counter++;
+        }
+
+
+        return $duplicateName;
     }
 }
 
