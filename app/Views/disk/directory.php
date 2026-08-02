@@ -87,6 +87,13 @@ BLOCKS FREE:
 
 
 <p>
+    <a href="/disk/info?id=<?= $release->getId() ?>">
+        → Disk Information
+    </a>
+</p>
+
+
+<p>
     <a href="/disk?id=<?= $release->getId() ?>">
         ← Back to Disk Explorer
     </a>

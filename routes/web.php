@@ -8,6 +8,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DiskController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\DirectoryController;
+use App\Http\Controllers\DiskInfoController;
 
 
 return function (Router $router): void {
@@ -53,6 +54,15 @@ return function (Router $router): void {
         '/disk/directory',
         [
             DirectoryController::class,
+            'index'
+        ]
+    );
+
+
+    $router->get(
+        '/disk/info',
+        [
+            DiskInfoController::class,
             'index'
         ]
     );
