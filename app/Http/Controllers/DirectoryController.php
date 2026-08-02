@@ -61,6 +61,8 @@ final class DirectoryController extends Controller
 
         $blocksFree = [];
 
+        $totalBlocks = [];
+
 
         foreach ($files as $file) {
 
@@ -99,6 +101,10 @@ final class DirectoryController extends Controller
                 };
 
 
+            $totalBlocks[$file->getId()] =
+                $total;
+
+
             $blocksFree[$file->getId()] =
                 $total > 0
                     ? $total - $used
@@ -128,8 +134,12 @@ final class DirectoryController extends Controller
                     $blocksUsed,
 
                 'blocksFree' =>
-                    $blocksFree
+                    $blocksFree,
+
+                'totalBlocks' =>
+                    $totalBlocks
             ]
         );
     }
 }
+

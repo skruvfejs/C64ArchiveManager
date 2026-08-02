@@ -50,6 +50,7 @@ final class D71DirectoryParser
                 $nextTrack =
                     ord($data[0]);
 
+
                 $nextSector =
                     ord($data[1]);
 

@@ -8,13 +8,7 @@
 
 <?php foreach ($files as $file): ?>
 
-    <h3>
-        <?= htmlspecialchars($file->getFilename()) ?>
-        (<?= htmlspecialchars($file->getFormat()) ?>)
-    </h3>
-
-
-    <pre>
+<pre>
 
 0 "<?= htmlspecialchars(
     $file->getDiskName() ?? ''
@@ -23,27 +17,49 @@
 ) ?>
 
 
-<?php foreach ($directories[$file->getId()] ?? [] as $entry): ?>
-
-<?= str_pad(
-    (string) $entry->getBlocks(),
-    4,
-    ' ',
-    STR_PAD_LEFT
-) ?>
- "<?= htmlspecialchars(
-    $entry->getFilename()
-) ?>"
- <?= $entry->getFiletype() ?>
+DISK:
+<?= htmlspecialchars($file->getFilename()) ?>
 
 
-<?php endforeach; ?>
+FORMAT:
+<?= htmlspecialchars($file->getFormat()) ?>
+
+
+TOTAL BLOCKS:
+<?= $totalBlocks[$file->getId()] ?? 0 ?>
+
+
+<?php foreach ($directories[$file->getId()] ?? [] as $entry): ?><?php
+
+    $line =
+        str_pad(
+            (string) $entry->getBlocks(),
+            4,
+            ' ',
+            STR_PAD_LEFT
+        )
+        . ' "'
+        . $entry->getFilename()
+        . '"';
+
+
+    echo str_pad(
+        $line,
+        28,
+        ' '
+    );
+
+
+    echo $entry->getFiletype();
+
+    echo PHP_EOL;
+
+?><?php endforeach; ?>
 
 
 <?= count(
     $directories[$file->getId()] ?? []
-) ?>
- FILES
+) ?> FILES
 
 
 BLOCKS USED:
@@ -54,7 +70,7 @@ BLOCKS FREE:
 <?= $blocksFree[$file->getId()] ?? 0 ?>
 
 
-    </pre>
+</pre>
 
 
 <?php endforeach; ?>
