@@ -57,33 +57,61 @@ final class ReleaseRepository extends Repository
     public function existsByEntryNameVersion(
         int $entryId,
         string $name,
-        string $version
+        ?string $version
     ): bool {
 
-        $stmt = $this->prepare(
-            '
-            SELECT COUNT(*)
-            FROM releases
-            WHERE entry_id = :entry_id
-            AND name = :name
-            AND version = :version
-            LIMIT 1
-            '
-        );
+        if ($version === null) {
+
+            $stmt = $this->prepare(
+                '
+                SELECT COUNT(*)
+                FROM releases
+                WHERE entry_id = :entry_id
+                AND name = :name
+                AND version IS NULL
+                LIMIT 1
+                '
+            );
 
 
-        $stmt->execute([
+            $stmt->execute([
 
-            'entry_id' =>
-                $entryId,
+                'entry_id' =>
+                    $entryId,
 
-            'name' =>
-                $name,
+                'name' =>
+                    $name
 
-            'version' =>
-                $version
+            ]);
 
-        ]);
+
+        } else {
+
+            $stmt = $this->prepare(
+                '
+                SELECT COUNT(*)
+                FROM releases
+                WHERE entry_id = :entry_id
+                AND name = :name
+                AND version = :version
+                LIMIT 1
+                '
+            );
+
+
+            $stmt->execute([
+
+                'entry_id' =>
+                    $entryId,
+
+                'name' =>
+                    $name,
+
+                'version' =>
+                    $version
+
+            ]);
+        }
 
 
         return (int) $stmt->fetchColumn() > 0;
@@ -123,12 +151,6 @@ final class ReleaseRepository extends Repository
 
         return $this->hydrate($row);
     }
-
-
-
-    /**
-     * @return Release[]
-     */
     public function findByEntry(
         int $entryId
     ): array {

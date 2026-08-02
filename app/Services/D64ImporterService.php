@@ -28,7 +28,8 @@ final class D64ImporterService
 
     public function import(
         string $filename,
-        int $entryId
+        int $entryId,
+        bool $forceDuplicate = false
     ): int {
 
         if (!is_file($filename)) {
@@ -48,6 +49,7 @@ final class D64ImporterService
                  ->readHeader($filename);
 
 
+
         /*
          * Beräkna checksum först
          */
@@ -60,13 +62,21 @@ final class D64ImporterService
 
         /*
          * Finns redan samma disk?
+         *
+         * Vid force-import ignoreras MD5.
          */
 
-        $existingReleaseFile =
-            $this->releaseFileRepository
-                 ->findByMd5(
-                     $checksum['md5']
-                 );
+        $existingReleaseFile = null;
+
+
+        if (!$forceDuplicate) {
+
+            $existingReleaseFile =
+                $this->releaseFileRepository
+                     ->findByMd5(
+                         $checksum['md5']
+                     );
+        }
 
 
         if ($existingReleaseFile !== null) {
@@ -89,16 +99,31 @@ final class D64ImporterService
             $release = new Release();
 
 
+            $diskName =
+                $header['disk_name'] !== ''
+                    ? $header['disk_name']
+                    : basename($filename);
+
+
+            $version =
+                $header['dos_type'] ?? null;
+
+
+            if ($forceDuplicate) {
+
+                $diskName =
+                    $this->createDuplicateName(
+                        $entryId,
+                        $diskName,
+                        $version
+                    );
+            }
+
+
             $release
                 ->setEntryId($entryId)
-                ->setName(
-                    $header['disk_name'] !== ''
-                        ? $header['disk_name']
-                        : basename($filename)
-                )
-                ->setVersion(
-                    $header['dos_type'] ?? null
-                );
+                ->setName($diskName)
+                ->setVersion($version);
 
 
             $releaseId =
@@ -121,9 +146,7 @@ final class D64ImporterService
                 )
                 ->setFormat('D64')
                 ->setDiskName(
-                    $header['disk_name'] !== ''
-                        ? $header['disk_name']
-                        : basename($filename)
+                    $diskName
                 )
                 ->setDiskId(
                     $header['disk_id'] ?? null
@@ -147,8 +170,6 @@ final class D64ImporterService
                 $this->releaseFileRepository
                      ->create($releaseFile);
         }
-
-
 
         /*
          * Läs katalog
@@ -178,9 +199,7 @@ final class D64ImporterService
                      );
 
 
-
             if ($existing !== null) {
-
 
                 $entry->setId(
                     $existing->getId()
@@ -201,7 +220,44 @@ final class D64ImporterService
         }
 
 
+
         return $releaseId;
     }
-}
 
+
+    private function createDuplicateName(
+        int $entryId,
+        string $name,
+        ?string $version
+    ): string {
+
+        $duplicateName =
+            $name . ' (duplicate)';
+
+
+        $counter = 2;
+
+
+        while (
+            $this->releaseRepository
+                 ->existsByEntryNameVersion(
+                     $entryId,
+                     $duplicateName,
+                     $version
+                 )
+        ) {
+
+            $duplicateName =
+                $name
+                . ' (duplicate '
+                . $counter
+                . ')';
+
+
+            $counter++;
+        }
+
+
+        return $duplicateName;
+    }
+}
