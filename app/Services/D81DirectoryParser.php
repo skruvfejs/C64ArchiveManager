@@ -102,12 +102,12 @@ final class D81DirectoryParser
 
                     $blocks =
                         ord(
-                            $data[$offset + 30]
+                            $data[$offset + 28]
                         )
                         |
                         (
                             ord(
-                                $data[$offset + 31]
+                                $data[$offset + 29]
                             )
                             << 8
                         );
