@@ -96,12 +96,12 @@ final class D71DirectoryParser
 
                     $blocks =
                         ord(
-                            $data[$offset + 30]
+                            $data[$offset + 28]
                         )
                         |
                         (
                             ord(
-                                $data[$offset + 31]
+                                $data[$offset + 29]
                             )
                             << 8
                         );
@@ -136,8 +136,9 @@ final class D71DirectoryParser
                                 $data[$offset + 2]
                             )
                         );
-                    $entry
 
+
+                    $entry
                         ->setBlocks($blocks)
 
                         ->setLocked(
@@ -192,6 +193,8 @@ final class D71DirectoryParser
             default => '???'
         };
     }
+
+
     private function open(
         string $filename
     ) {
