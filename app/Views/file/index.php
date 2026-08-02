@@ -13,122 +13,115 @@
 
 
 <h2>
-    File details
+    C64 File Details
 </h2>
 
 
 <table border="1" cellpadding="5">
 
-    <tr>
-        <th>Filename</th>
-        <td>
-            <?= htmlspecialchars(
-                $entry->getFilename()
-            ) ?>
-        </td>
-    </tr>
+<tr>
+    <th>Filename</th>
+    <td>
+        <?= htmlspecialchars(
+            $entry->getFilename()
+        ) ?>
+    </td>
+</tr>
 
 
-    <tr>
-        <th>Type</th>
-        <td>
-            <?= htmlspecialchars(
-                $entry->getFiletype()
-            ) ?>
-        </td>
-    </tr>
+<tr>
+    <th>Type</th>
+    <td>
+        <?= htmlspecialchars(
+            $entry->getFiletype()
+        ) ?>
+    </td>
+</tr>
 
 
-    <?php if ($releaseFile !== null): ?>
+<?php if ($releaseFile !== null): ?>
 
-    <tr>
-        <th>Disk</th>
-        <td>
-            <?= htmlspecialchars(
-                $releaseFile->getFilename()
-            ) ?>
-        </td>
-    </tr>
-
-
-    <tr>
-        <th>Format</th>
-        <td>
-            <?= htmlspecialchars(
-                $releaseFile->getFormat()
-            ) ?>
-        </td>
-    </tr>
+<tr>
+    <th>Disk</th>
+    <td>
+        <?= htmlspecialchars(
+            $releaseFile->getFilename()
+        ) ?>
+    </td>
+</tr>
 
 
-    <tr>
-        <th>Disk name</th>
-        <td>
-            <?= htmlspecialchars(
-                $releaseFile->getDiskName() ?? ''
-            ) ?>
-        </td>
-    </tr>
+<tr>
+    <th>Format</th>
+    <td>
+        <?= htmlspecialchars(
+            $releaseFile->getFormat()
+        ) ?>
+    </td>
+</tr>
 
 
-    <tr>
-        <th>Disk ID</th>
-        <td>
-            <?= htmlspecialchars(
-                $releaseFile->getDiskId() ?? ''
-            ) ?>
-        </td>
-    </tr>
+<tr>
+    <th>Disk name</th>
+    <td>
+        <?= htmlspecialchars(
+            $releaseFile->getDiskName() ?? ''
+        ) ?>
+    </td>
+</tr>
 
 
-    <tr>
-        <th>Disk image size</th>
-        <td>
-            <?= $releaseFile->getSize() ?> bytes
-        </td>
-    </tr>
+<tr>
+    <th>Disk ID</th>
+    <td>
+        <?= htmlspecialchars(
+            $releaseFile->getDiskId() ?? ''
+        ) ?>
+    </td>
+</tr>
 
-    <?php endif; ?>
-
-
-    <tr>
-        <th>Directory position</th>
-        <td>
-            <?= $entry->getDirectoryPosition() ?>
-        </td>
-    </tr>
+<?php endif; ?>
 
 
-    <tr>
-        <th>Start track</th>
-        <td>
-            <?= $entry->getStartTrack() ?>
-        </td>
-    </tr>
+<tr>
+    <th>Directory position</th>
+    <td>
+        <?= $entry->getDirectoryPosition() ?>
+    </td>
+</tr>
 
 
-    <tr>
-        <th>Start sector</th>
-        <td>
-            <?= $entry->getStartSector() ?>
-        </td>
-    </tr>
+<tr>
+    <th>Start track</th>
+    <td>
+        <?= $entry->getStartTrack() ?>
+    </td>
+</tr>
 
 
-    <tr>
-        <th>Blocks</th>
-        <td>
-            <?= $entry->getBlocks() ?>
-        </td>
-    </tr>
+<tr>
+    <th>Start sector</th>
+    <td>
+        <?= $entry->getStartSector() ?>
+    </td>
+</tr>
 
 
-    <tr>
-        <th>Approx size</th>
-        <td>
-            <?= $entry->getBlocks() * 254 ?> bytes
-        </td>
-    </tr>
+<tr>
+    <th>Blocks</th>
+    <td>
+        <?= $entry->getBlocks() ?>
+    </td>
+</tr>
+
+
+<tr>
+    <th>Estimated size</th>
+    <td>
+        <?= $entry->getBlocks() * 254 ?> bytes
+    </td>
+</tr>
+
 
 </table>
 

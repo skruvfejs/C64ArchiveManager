@@ -154,6 +154,106 @@ final class DirectoryEntryRepository extends Repository
     }
 
 
+    public function findExisting(
+        int $releaseFileId,
+        string $filename,
+        ?int $directoryPosition
+    ): ?DirectoryEntry {
+
+        $stmt = $this->prepare(
+            '
+            SELECT *
+            FROM directory_entries
+            WHERE release_file_id = :release_file_id
+            AND filename = :filename
+            AND directory_position = :directory_position
+            LIMIT 1
+            '
+        );
+
+
+        $stmt->execute([
+
+            'release_file_id' =>
+                $releaseFileId,
+
+            'filename' =>
+                $filename,
+
+            'directory_position' =>
+                $directoryPosition
+
+        ]);
+
+
+        $row =
+            $this->fetchOne($stmt);
+
+
+        if ($row === null) {
+
+            return null;
+        }
+
+
+        return $this->hydrate($row);
+    }
+
+
+    public function update(
+        DirectoryEntry $entry
+    ): bool {
+
+        $stmt = $this->prepare(
+            '
+            UPDATE directory_entries
+            SET
+                filename = :filename,
+                filetype = :filetype,
+                start_track = :start_track,
+                start_sector = :start_sector,
+                blocks = :blocks,
+                locked = :locked,
+                closed = :closed
+            WHERE id = :id
+            '
+        );
+
+
+        return $stmt->execute([
+
+            'id' =>
+                $entry->getId(),
+
+            'filename' =>
+                $entry->getFilename(),
+
+            'filetype' =>
+                $entry->getFiletype(),
+
+            'start_track' =>
+                $entry->getStartTrack(),
+
+            'start_sector' =>
+                $entry->getStartSector(),
+
+            'blocks' =>
+                $entry->getBlocks(),
+
+            'locked' =>
+                $entry->isLocked()
+                    ? 1
+                    : 0,
+
+            'closed' =>
+                $entry->isClosed()
+                    ? 1
+                    : 0
+
+        ]);
+    }
+
+
     public function delete(
         int $id
     ): bool {

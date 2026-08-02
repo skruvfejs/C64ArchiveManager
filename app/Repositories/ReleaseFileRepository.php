@@ -155,6 +155,42 @@ final class ReleaseFileRepository extends Repository
     }
 
 
+    public function findByMd5(
+        string $md5
+    ): ?ReleaseFile {
+
+        $stmt = $this->prepare(
+            '
+            SELECT *
+            FROM release_files
+            WHERE md5 = :md5
+            LIMIT 1
+            '
+        );
+
+
+        $stmt->execute([
+
+            'md5' =>
+                $md5
+
+        ]);
+
+
+        $row =
+            $this->fetchOne($stmt);
+
+
+        if ($row === null) {
+
+            return null;
+        }
+
+
+        return $this->hydrate($row);
+    }
+
+
     public function delete(
         int $id
     ): bool {
