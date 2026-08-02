@@ -49,29 +49,7 @@ final class D71ImporterService
 
 
         /*
-         * Skapa release
-         */
-
-        $release = new Release();
-
-        $release
-            ->setEntryId($entryId)
-            ->setName(
-                $header['disk_name'] !== ''
-                    ? $header['disk_name']
-                    : basename($filename)
-            )
-            ->setVersion('D71');
-
-
-        $releaseId =
-            $this->releaseRepository
-                 ->create($release);
-
-
-
-        /*
-         * Skapa release_file
+         * Beräkna checksum
          */
 
         $checksum =
@@ -79,40 +57,98 @@ final class D71ImporterService
                  ->all($filename);
 
 
-        $releaseFile = new ReleaseFile();
 
-        $releaseFile
-            ->setReleaseId($releaseId)
-            ->setFilename(
-                basename($filename)
-            )
-            ->setFormat('D71')
-            ->setDiskName(
-                $header['disk_name'] !== ''
-                    ? $header['disk_name']
-                    : basename($filename)
-            )
-            ->setDiskId(
-                $header['disk_id'] ?? null
-            )
-            ->setPath($filename)
-            ->setSize(
-                filesize($filename)
-            )
-            ->setCrc32(
-                $checksum['crc32']
-            )
-            ->setMd5(
-                $checksum['md5']
-            )
-            ->setSha1(
-                $checksum['sha1']
-            );
+        /*
+         * Finns samma disk redan?
+         */
 
-
-        $releaseFileId =
+        $existingReleaseFile =
             $this->releaseFileRepository
-                 ->create($releaseFile);
+                 ->findByMd5(
+                     $checksum['md5']
+                 );
+
+
+        if ($existingReleaseFile !== null) {
+
+            /*
+             * Återanvänd befintlig disk
+             */
+
+            $releaseFileId =
+                $existingReleaseFile->getId();
+
+
+            $releaseId =
+                $existingReleaseFile->getReleaseId();
+
+
+        } else {
+
+
+            /*
+             * Skapa ny release
+             */
+
+            $release = new Release();
+
+
+            $release
+                ->setEntryId($entryId)
+                ->setName(
+                    $header['disk_name'] !== ''
+                        ? $header['disk_name']
+                        : basename($filename)
+                )
+                ->setVersion('D71');
+
+
+            $releaseId =
+                $this->releaseRepository
+                     ->create($release);
+
+
+
+            /*
+             * Skapa ny release_file
+             */
+
+            $releaseFile = new ReleaseFile();
+
+
+            $releaseFile
+                ->setReleaseId($releaseId)
+                ->setFilename(
+                    basename($filename)
+                )
+                ->setFormat('D71')
+                ->setDiskName(
+                    $header['disk_name'] !== ''
+                        ? $header['disk_name']
+                        : basename($filename)
+                )
+                ->setDiskId(
+                    $header['disk_id'] ?? null
+                )
+                ->setPath($filename)
+                ->setSize(
+                    filesize($filename)
+                )
+                ->setCrc32(
+                    $checksum['crc32']
+                )
+                ->setMd5(
+                    $checksum['md5']
+                )
+                ->setSha1(
+                    $checksum['sha1']
+                );
+
+
+            $releaseFileId =
+                $this->releaseFileRepository
+                     ->create($releaseFile);
+        }
 
 
 
@@ -125,7 +161,9 @@ final class D71ImporterService
                  ->readDirectory($filename);
 
 
+
         foreach ($entries as $entry) {
+
 
             $entry
                 ->setReleaseFileId(
@@ -133,8 +171,34 @@ final class D71ImporterService
                 );
 
 
-            $this->directoryEntryRepository
-                 ->create($entry);
+            $existing =
+                $this->directoryEntryRepository
+                     ->findExisting(
+                         $releaseFileId,
+                         $entry->getFilename(),
+                         $entry->getDirectoryPosition()
+                     );
+
+
+            if ($existing !== null) {
+
+
+                $entry->setId(
+                    $existing->getId()
+                );
+
+
+                $this->directoryEntryRepository
+                     ->update($entry);
+
+
+            } else {
+
+
+                $this->directoryEntryRepository
+                     ->create($entry);
+
+            }
         }
 
 
