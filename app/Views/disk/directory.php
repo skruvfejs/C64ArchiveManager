@@ -25,6 +25,16 @@ FORMAT:
 <?= htmlspecialchars($file->getFormat()) ?>
 
 
+TYPE:
+<?= htmlspecialchars(
+    $diskTypes[$file->getId()] ?? ''
+) ?>
+
+
+TRACKS:
+<?= $tracks[$file->getId()] ?? 0 ?>
+
+
 TOTAL BLOCKS:
 <?= $totalBlocks[$file->getId()] ?? 0 ?>
 

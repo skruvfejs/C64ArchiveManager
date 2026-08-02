@@ -24,5 +24,43 @@ final class DiskGeometry
             default => 0
         };
     }
+
+
+    public function tracks(
+        string $format
+    ): int {
+
+        return match (
+            strtoupper($format)
+        ) {
+
+            'D64' => 35,
+
+            'D71' => 70,
+
+            'D81' => 80,
+
+            default => 0
+        };
+    }
+
+
+    public function diskType(
+        string $format
+    ): string {
+
+        return match (
+            strtoupper($format)
+        ) {
+
+            'D64' => '1541',
+
+            'D71' => '1571',
+
+            'D81' => '1581',
+
+            default => 'Unknown'
+        };
+    }
 }
 

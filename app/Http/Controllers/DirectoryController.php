@@ -65,6 +65,10 @@ final class DirectoryController extends Controller
 
         $totalBlocks = [];
 
+        $diskTypes = [];
+
+        $tracks = [];
+
 
         foreach ($files as $file) {
 
@@ -92,14 +96,30 @@ final class DirectoryController extends Controller
                 $used;
 
 
+            $format =
+                $file->getFormat();
+
+
             $total =
                 $this->geometry->totalBlocks(
-                    $file->getFormat()
+                    $format
                 );
 
 
             $totalBlocks[$file->getId()] =
                 $total;
+
+
+            $diskTypes[$file->getId()] =
+                $this->geometry->diskType(
+                    $format
+                );
+
+
+            $tracks[$file->getId()] =
+                $this->geometry->tracks(
+                    $format
+                );
 
 
             $blocksFree[$file->getId()] =
@@ -134,7 +154,13 @@ final class DirectoryController extends Controller
                     $blocksFree,
 
                 'totalBlocks' =>
-                    $totalBlocks
+                    $totalBlocks,
+
+                'diskTypes' =>
+                    $diskTypes,
+
+                'tracks' =>
+                    $tracks
             ]
         );
     }
