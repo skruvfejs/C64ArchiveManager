@@ -1,3 +1,8 @@
+<?php
+$currentSort = $sort ?? '';
+?>
+
+
 <form method="get" action="/disk">
 
     <input
@@ -19,12 +24,45 @@
     >
 
 
+    <label>
+        Sort:
+    </label>
+
+
+    <select name="sort">
+
+        <option value=""
+            <?= $currentSort === '' ? 'selected' : '' ?>>
+            Original order
+        </option>
+
+
+        <option value="name"
+            <?= $currentSort === 'name' ? 'selected' : '' ?>>
+            Filename
+        </option>
+
+
+        <option value="blocks"
+            <?= $currentSort === 'blocks' ? 'selected' : '' ?>>
+            Blocks
+        </option>
+
+
+        <option value="track"
+            <?= $currentSort === 'track' ? 'selected' : '' ?>>
+            Track
+        </option>
+
+    </select>
+
+
     <button type="submit">
         Search
     </button>
 
 
-    <?php if (!empty($search)): ?>
+    <?php if (!empty($search) || !empty($sort)): ?>
 
         <a href="/disk?id=<?= $release->getId() ?>">
             Clear

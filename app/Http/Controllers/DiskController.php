@@ -57,6 +57,10 @@ final class DiskController extends Controller
             );
 
 
+        $sort =
+            (string) $this->request->query('sort', '');
+
+
         $files =
             $this->files->findByRelease($id);
 
@@ -87,8 +91,67 @@ final class DiskController extends Controller
                         }
                     );
 
+
                 $entries =
                     array_values($entries);
+            }
+
+
+            switch ($sort) {
+
+                case 'name':
+
+                    usort(
+                        $entries,
+                        function ($a, $b): int {
+
+                            return strcasecmp(
+                                $a->getFilename(),
+                                $b->getFilename()
+                            );
+
+                        }
+                    );
+
+                    break;
+
+
+                case 'blocks':
+
+                    usort(
+                        $entries,
+                        function ($a, $b): int {
+
+                            return $a->getBlocks()
+                                <=>
+                                $b->getBlocks();
+
+                        }
+                    );
+
+                    break;
+
+
+                case 'track':
+
+                    usort(
+                        $entries,
+                        function ($a, $b): int {
+
+                            return [
+                                $a->getStartTrack(),
+                                $a->getStartSector()
+                            ]
+                            <=>
+                            [
+                                $b->getStartTrack(),
+                                $b->getStartSector()
+                            ];
+
+                        }
+                    );
+
+                    break;
             }
 
 
@@ -116,7 +179,10 @@ final class DiskController extends Controller
                     $directories,
 
                 'search' =>
-                    $search
+                    $search,
+
+                'sort' =>
+                    $sort
             ]
         );
     }
