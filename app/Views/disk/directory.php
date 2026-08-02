@@ -9,7 +9,6 @@
 <?php foreach ($files as $file): ?>
 
 <pre>
-
 0 "<?= htmlspecialchars(
     $file->getDiskName() ?? ''
 ) ?>" <?= htmlspecialchars(
@@ -38,49 +37,65 @@ TRACKS:
 TOTAL BLOCKS:
 <?= $totalBlocks[$file->getId()] ?? 0 ?>
 
-
-<?php foreach ($directories[$file->getId()] ?? [] as $entry): ?><?php
-
-    $line =
-        str_pad(
-            (string) $entry->getBlocks(),
-            4,
-            ' ',
-            STR_PAD_LEFT
-        )
-        . ' "'
-        . $entry->getFilename()
-        . '"';
+</pre>
 
 
-    echo str_pad(
-        $line,
-        28,
-        ' '
-    );
+<table>
+    <thead>
+        <tr>
+            <th>BLOCKS</th>
+            <th>FILE</th>
+            <th>TYPE</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+<?php foreach ($directories[$file->getId()] ?? [] as $entry): ?>
+
+        <tr>
+            <td>
+                <?= $entry->getBlocks() ?>
+            </td>
+
+            <td>
+                <a href="/file?id=<?= $entry->getId() ?>">
+                    <?= htmlspecialchars(
+                        $entry->getFilename()
+                    ) ?>
+                </a>
+            </td>
+
+            <td>
+                <?= htmlspecialchars(
+                    $entry->getFiletype()
+                ) ?>
+            </td>
+        </tr>
+
+<?php endforeach; ?>
+
+    </tbody>
+</table>
 
 
-    echo $entry->getFiletype();
-
-    echo PHP_EOL;
-
-?><?php endforeach; ?>
-
-
+<p>
 <?= count(
     $directories[$file->getId()] ?? []
 ) ?> FILES
+</p>
 
 
+<p>
 BLOCKS USED:
 <?= $blocksUsed[$file->getId()] ?? 0 ?>
+</p>
 
 
+<p>
 BLOCKS FREE:
 <?= $blocksFree[$file->getId()] ?? 0 ?>
-
-
-</pre>
+</p>
 
 
 <?php endforeach; ?>
