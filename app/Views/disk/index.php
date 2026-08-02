@@ -143,6 +143,13 @@ $currentSort = $sort ?? '';
     </table>
 
 
+    <p>
+        <a href="/disk/directory?id=<?= $release->getId() ?>">
+            C64 Directory
+        </a>
+    </p>
+
+
     <br>
 
 

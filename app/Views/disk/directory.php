@@ -40,13 +40,18 @@
 <?php endforeach; ?>
 
 
-BLOCKS USED:
-<?= array_sum(
-    array_map(
-        fn($e) => $e->getBlocks(),
-        $directories[$file->getId()] ?? []
-    )
+<?= count(
+    $directories[$file->getId()] ?? []
 ) ?>
+ FILES
+
+
+BLOCKS USED:
+<?= $blocksUsed[$file->getId()] ?? 0 ?>
+
+
+BLOCKS FREE:
+<?= $blocksFree[$file->getId()] ?? 0 ?>
 
 
     </pre>

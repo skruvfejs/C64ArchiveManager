@@ -57,13 +57,52 @@ final class DirectoryController extends Controller
 
         $directories = [];
 
+        $blocksUsed = [];
+
+        $blocksFree = [];
+
 
         foreach ($files as $file) {
 
-            $directories[$file->getId()] =
+            $entries =
                 $this->entries->findByReleaseFile(
                     $file->getId()
                 );
+
+
+            $directories[$file->getId()] =
+                $entries;
+
+
+            $used =
+                array_sum(
+                    array_map(
+                        fn($entry): int =>
+                            $entry->getBlocks(),
+                        $entries
+                    )
+                );
+
+
+            $blocksUsed[$file->getId()] =
+                $used;
+
+
+            $total =
+                match ($file->getFormat()) {
+
+                    'D64' => 683,
+                    'D71' => 1366,
+                    'D81' => 3200,
+
+                    default => 0
+                };
+
+
+            $blocksFree[$file->getId()] =
+                $total > 0
+                    ? $total - $used
+                    : 0;
         }
 
 
@@ -83,9 +122,14 @@ final class DirectoryController extends Controller
                     $files,
 
                 'directories' =>
-                    $directories
+                    $directories,
+
+                'blocksUsed' =>
+                    $blocksUsed,
+
+                'blocksFree' =>
+                    $blocksFree
             ]
         );
     }
 }
-
