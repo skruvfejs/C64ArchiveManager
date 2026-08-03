@@ -9,12 +9,16 @@
 <tr>
     <th>Status</th>
     <td>
-        <?php if (!$integrity['valid']): ?>
+        <?php if ($integrity['valid']): ?>
+            <?php if (!$integrity['valid']): ?>
             INVALID
         <?php elseif (($integrity['total_orphan_sectors'] ?? 0) > 0): ?>
             VALID WITH ORPHAN SECTORS
         <?php else: ?>
             VALID
+        <?php endif; ?>
+        <?php else: ?>
+            INVALID
         <?php endif; ?>
     </td>
 </tr>
@@ -52,6 +56,20 @@
 
 
 <br>
+
+<?php if (!empty($comparison)): ?>
+
+<h4>BAM statistics</h4>
+
+<table border="1" cellpadding="5">
+<tr><th>BAM used sectors</th><td><?= $comparison['_summary']['bam_used'] ?? '' ?></td></tr>
+<tr><th>File used sectors</th><td><?= $comparison['_summary']['calculated_used'] ?? '' ?></td></tr>
+<tr><th>Difference</th><td><?= $comparison['_summary']['difference'] ?? '' ?></td></tr>
+</table>
+
+<br>
+
+<?php endif; ?>
 
 <?php endif; ?>
 
