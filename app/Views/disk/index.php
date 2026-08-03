@@ -11,12 +11,12 @@
     <td>
         <?php if ($integrity['valid']): ?>
             <?php if (!$integrity['valid']): ?>
-            INVALID
-        <?php elseif (($integrity['total_orphan_sectors'] ?? 0) > 0): ?>
-            VALID WITH ORPHAN SECTORS
-        <?php else: ?>
-            VALID
-        <?php endif; ?>
+                INVALID
+            <?php elseif (($integrity['total_orphan_sectors'] ?? 0) > 0): ?>
+                VALID WITH ORPHAN SECTORS
+            <?php else: ?>
+                VALID
+            <?php endif; ?>
         <?php else: ?>
             INVALID
         <?php endif; ?>
@@ -31,6 +31,55 @@
 </tr>
 
 </table>
+
+<br>
+
+<?php if (!empty($comparison['_summary'])): ?>
+
+<h4>BAM Statistics</h4>
+
+<table border="1" cellpadding="5">
+
+<tr>
+    <th>BAM used sectors</th>
+    <td><?= $comparison['_summary']['bam_used'] ?></td>
+</tr>
+
+<tr>
+    <th>File used sectors</th>
+    <td><?= $comparison['_summary']['calculated_used'] ?></td>
+</tr>
+
+<tr>
+    <th>Unreferenced sectors</th>
+    <td><?= $comparison['_summary']['difference'] ?></td>
+</tr>
+
+</table>
+
+<br>
+
+<?php endif; ?>
+
+<?php if (!empty($diskMap)): ?>
+
+<h4>Disk Map</h4>
+
+<pre>
+<?php foreach ($diskMap as $track => $map): ?>
+<?= sprintf('%02d', $track) ?> <?= $map . PHP_EOL ?>
+<?php endforeach; ?>
+</pre>
+
+<p>
+<strong>█</strong> Used<br>
+<strong>▒</strong> Unreferenced<br>
+<strong>░</strong> Free
+</p>
+
+<br>
+
+<?php endif; ?>
 
 <?php if (!empty($integrity['warnings'])): ?>
 
@@ -52,124 +101,9 @@
 
 <?php endif; ?>
 
-<br>
-
-<?php if (!empty($comparison['_summary'])): ?>
-
-<h4>BAM Statistics</h4>
-
-<table border="1" cellpadding="5">
-
-<tr>
-    <th>BAM used sectors</th>
-    <td>
-        <?= $comparison['_summary']['bam_used'] ?>
-    </td>
-</tr>
-
-<tr>
-    <th>File used sectors</th>
-    <td>
-        <?= $comparison['_summary']['calculated_used'] ?>
-    </td>
-</tr>
-
-<tr>
-    <th>Unreferenced sectors</th>
-    <td>
-        <?= $comparison['_summary']['difference'] ?>
-    </td>
-</tr>
-
-</table>
-
-<br>
-
-<?php endif; ?>
-
-<?php endif; ?>
-
-<?php if (!empty($trackUsage)): ?>
-
-<h3>
-    Track usage
-</h3>
-
-<table border="1" cellpadding="5">
-
-<tr>
-    <th>Track</th>
-    <th>Used blocks</th>
-</tr>
-
-<?php foreach ($trackUsage as $track => $blocks): ?>
-
-<tr>
-
-<td>
-    <?= $track ?>
-</td>
-
-<td>
-    <?= $blocks ?>
-</td>
-
-</tr>
-
-<?php endforeach; ?>
-
-</table>
-
-<br>
-
-<?php endif; ?>
-<?php if (!empty($trackLayout)): ?>
-
-<h3>
-    Track layout
-</h3>
-
-<table border="1" cellpadding="5">
-
-<tr>
-    <th>Track</th>
-    <th>Used</th>
-    <th>Free</th>
-    <th>Total</th>
-</tr>
-
-<?php foreach ($trackLayout as $track => $data): ?>
-
-<tr>
-
-<td>
-    <?= $track ?>
-</td>
-
-<td>
-    <?= $data['used'] ?>
-</td>
-
-<td>
-    <?= $data['total'] - $data['used'] ?>
-</td>
-
-<td>
-    <?= $data['total'] ?>
-</td>
-
-</tr>
-
-<?php endforeach; ?>
-
-</table>
-
-<br>
-
 <?php endif; ?>
 
 <?php foreach ($files as $file): ?>
-
 <h3>
     <?= htmlspecialchars($file->getFilename()) ?>
     (<?= htmlspecialchars($file->getFormat()) ?>)
@@ -207,7 +141,9 @@
 <tr>
     <th>Files on disk</th>
     <td>
-        <?= count($directories[$file->getId()] ?? []) ?>
+        <?= count(
+            $directories[$file->getId()] ?? []
+        ) ?>
     </td>
 </tr>
 
@@ -240,7 +176,11 @@
     <th>Blocks</th>
     <th>Status</th>
 </tr>
-<?php foreach ($directories[$file->getId()] ?? [] as $entry): ?>
+
+<?php foreach (
+    $directories[$file->getId()] ?? []
+    as $entry
+): ?>
 
 <tr>
 
@@ -275,7 +215,6 @@
 </td>
 
 <td>
-
 <?php if ($entry->isLocked()): ?>
 
     LOCKED

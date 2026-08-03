@@ -13,7 +13,6 @@ use App\Services\C64BamBuilder;
 use App\Services\C64BamReader;
 use App\Services\C64BamComparator;
 use App\Services\C64DiskIntegrityChecker;
-use App\Services\C64DiskMapBuilder;
 use App\Http\Request;
 
 final class DiskController extends Controller
@@ -68,8 +67,6 @@ final class DiskController extends Controller
         $integrity = null;
 
         $comparison = null;
-
-        $diskMap = null;
 
         foreach ($files as $file) {
 
@@ -217,15 +214,6 @@ final class DiskController extends Controller
                         $calculated
                     );
 
-                $diskMapBuilder =
-                    new C64DiskMapBuilder();
-
-                $diskMap =
-                    $diskMapBuilder->build(
-                        $realBam,
-                        $comparison
-                    );
-
                 $checker =
                     new C64DiskIntegrityChecker();
 
@@ -263,10 +251,7 @@ final class DiskController extends Controller
                     $integrity,
 
                 'comparison' =>
-                    $comparison,
-
-                'diskMap' =>
-                    $diskMap
+                    $comparison
             ]
         );
     }

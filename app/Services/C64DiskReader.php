@@ -295,4 +295,22 @@ final class C64DiskReader
         return $tracks;
     }
 
+
+    /**
+     * Get number of tracks on the current disk.
+     */
+    public function getTrackCount(): int
+    {
+        return count($this->tracks);
+    }
+
+    /**
+     * Get number of sectors for a track.
+     */
+    public function getSectorsPerTrack(
+        int $track
+    ): int {
+        return $this->tracks[$track] ?? 0;
+    }
+
 }
