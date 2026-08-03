@@ -9,10 +9,12 @@
 <tr>
     <th>Status</th>
     <td>
-        <?php if ($integrity['valid']): ?>
-            VALID
-        <?php else: ?>
+        <?php if (!$integrity['valid']): ?>
             INVALID
+        <?php elseif (($integrity['total_orphan_sectors'] ?? 0) > 0): ?>
+            VALID WITH ORPHAN SECTORS
+        <?php else: ?>
+            VALID
         <?php endif; ?>
     </td>
 </tr>
