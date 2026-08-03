@@ -13,12 +13,11 @@ use App\Services\C64BamBuilder;
 use App\Services\C64BamReader;
 use App\Services\C64BamComparator;
 use App\Services\C64DiskIntegrityChecker;
+use App\Services\C64DiskMapBuilder;
 use App\Http\Request;
-
 
 final class DiskController extends Controller
 {
-
     public function __construct(
         private ReleaseRepository $releases,
         private ReleaseFileRepository $files,
@@ -27,13 +26,10 @@ final class DiskController extends Controller
     ) {
     }
 
-
     public function index(): void
     {
-
         $id =
             (int) $this->request->query('id');
-
 
         if ($id <= 0) {
 
@@ -44,10 +40,8 @@ final class DiskController extends Controller
             return;
         }
 
-
         $release =
             $this->releases->findById($id);
-
 
         if ($release === null) {
 
@@ -58,22 +52,16 @@ final class DiskController extends Controller
             return;
         }
 
-
         $search =
             trim(
                 (string) $this->request->query('search', '')
             );
 
-
         $sort =
             (string) $this->request->query('sort', '');
 
-
-
         $files =
             $this->files->findByRelease($id);
-
-
 
         $directories = [];
 
@@ -81,16 +69,14 @@ final class DiskController extends Controller
 
         $comparison = null;
 
-
+        $diskMap = null;
 
         foreach ($files as $file) {
-
 
             $entries =
                 $this->entries->findByReleaseFile(
                     $file->getId()
                 );
-
 
             if ($search !== '') {
 
@@ -103,19 +89,14 @@ final class DiskController extends Controller
                                 $entry->getFilename(),
                                 $search
                             ) !== false;
-
                         }
                     );
-
 
                 $entries =
                     array_values($entries);
             }
 
-
-
             switch ($sort) {
-
 
                 case 'name':
 
@@ -127,13 +108,10 @@ final class DiskController extends Controller
                                 $a->getFilename(),
                                 $b->getFilename()
                             );
-
                         }
                     );
 
                     break;
-
-
 
                 case 'blocks':
 
@@ -144,13 +122,10 @@ final class DiskController extends Controller
                             return $a->getBlocks()
                                 <=>
                                 $b->getBlocks();
-
                         }
                     );
 
                     break;
-
-
 
                 case 'track':
 
@@ -167,20 +142,14 @@ final class DiskController extends Controller
                                 $b->getStartTrack(),
                                 $b->getStartSector()
                             ];
-
                         }
                     );
 
                     break;
             }
 
-
-
             $directories[$file->getId()] =
                 $entries;
-
-
-
             /*
              * Run C64 integrity check
              * on first disk image.
@@ -189,12 +158,10 @@ final class DiskController extends Controller
                 $integrity === null
             ) {
 
-
                 $reader =
                     new C64DiskReader(
                         $file->getPath()
                     );
-
 
                 $builder =
                     new C64BamBuilder(
@@ -203,7 +170,6 @@ final class DiskController extends Controller
                         )
                     );
 
-
                 /*
                  * Reserve:
                  * Track 18 sector 0 BAM
@@ -211,10 +177,7 @@ final class DiskController extends Controller
                  */
                 $builder->reserveD64SystemTracks();
 
-
-
                 foreach ($entries as $entry) {
-
 
                     if (
                         $entry->getStartTrack() <= 0
@@ -223,42 +186,30 @@ final class DiskController extends Controller
                         continue;
                     }
 
-
-
                     $chain =
                         $reader->readFileChain(
                             $entry->getStartTrack(),
                             $entry->getStartSector()
                         );
 
-
                     $builder->addSectors(
                         $chain
                     );
                 }
 
-
-
                 $calculated =
                     $builder->getLayout();
-
-
 
                 $bamReader =
                     new C64BamReader(
                         $file->getPath()
                     );
 
-
                 $realBam =
                     $bamReader->read();
 
-
-
                 $comparator =
                     new C64BamComparator();
-
-
 
                 $comparison =
                     $comparator->compare(
@@ -266,12 +217,17 @@ final class DiskController extends Controller
                         $calculated
                     );
 
+                $diskMapBuilder =
+                    new C64DiskMapBuilder();
 
+                $diskMap =
+                    $diskMapBuilder->build(
+                        $realBam,
+                        $comparison
+                    );
 
                 $checker =
                     new C64DiskIntegrityChecker();
-
-
 
                 $integrity =
                     $checker->check(
@@ -280,46 +236,37 @@ final class DiskController extends Controller
             }
         }
 
-
-
         $view =
             new View();
-
-
 
         $view->render(
             'disk/index',
             [
-
                 'title' =>
                     'C64 Disk Explorer',
-
 
                 'release' =>
                     $release,
 
-
                 'files' =>
                     $files,
-
 
                 'directories' =>
                     $directories,
 
-
                 'search' =>
                     $search,
 
-
                 'sort' =>
                     $sort,
-
-
                 'integrity' =>
                     $integrity,
 
                 'comparison' =>
-                    $comparison
+                    $comparison,
+
+                'diskMap' =>
+                    $diskMap
             ]
         );
     }
