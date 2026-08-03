@@ -27,6 +27,13 @@ final class C64BamComparator
         $result = [];
 
 
+        $bamUsedTotal = 0;
+        $calculatedUsedTotal = 0;
+        $extraUsedTotal = 0;
+        $missingTotal = 0;
+        $tracksWithDifferences = 0;
+
+
 
         foreach (
             $bam as $track => $info
@@ -141,9 +148,25 @@ final class C64BamComparator
                     'match' =>
                         $difference === 0
                 ];
+
+            $bamUsedTotal += $bamUsed;
+            $calculatedUsedTotal += $calcUsed;
+            $extraUsedTotal += max(0, $difference);
+            $missingTotal += max(0, -$difference);
+
+            if ($difference !== 0) {
+                $tracksWithDifferences++;
+            }
         }
 
-
+        $result['_summary'] = [
+            'bam_used' => $bamUsedTotal,
+            'calculated_used' => $calculatedUsedTotal,
+            'extra_used' => $extraUsedTotal,
+            'missing' => $missingTotal,
+            'difference' => $bamUsedTotal - $calculatedUsedTotal,
+            'tracks_with_differences' => $tracksWithDifferences,
+        ];
 
         return $result;
     }
