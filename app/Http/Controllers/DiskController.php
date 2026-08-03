@@ -8,10 +8,17 @@ use App\Core\View;
 use App\Repositories\ReleaseRepository;
 use App\Repositories\ReleaseFileRepository;
 use App\Repositories\DirectoryEntryRepository;
+use App\Services\C64DiskReader;
+use App\Services\C64BamBuilder;
+use App\Services\C64BamReader;
+use App\Services\C64BamComparator;
+use App\Services\C64DiskIntegrityChecker;
 use App\Http\Request;
+
 
 final class DiskController extends Controller
 {
+
     public function __construct(
         private ReleaseRepository $releases,
         private ReleaseFileRepository $files,
@@ -23,6 +30,7 @@ final class DiskController extends Controller
 
     public function index(): void
     {
+
         $id =
             (int) $this->request->query('id');
 
@@ -61,14 +69,20 @@ final class DiskController extends Controller
             (string) $this->request->query('sort', '');
 
 
+
         $files =
             $this->files->findByRelease($id);
 
 
+
         $directories = [];
+
+        $integrity = null;
+
 
 
         foreach ($files as $file) {
+
 
             $entries =
                 $this->entries->findByReleaseFile(
@@ -97,7 +111,9 @@ final class DiskController extends Controller
             }
 
 
+
             switch ($sort) {
+
 
                 case 'name':
 
@@ -116,6 +132,7 @@ final class DiskController extends Controller
                     break;
 
 
+
                 case 'blocks':
 
                     usort(
@@ -130,6 +147,7 @@ final class DiskController extends Controller
                     );
 
                     break;
+
 
 
                 case 'track':
@@ -155,34 +173,148 @@ final class DiskController extends Controller
             }
 
 
+
             $directories[$file->getId()] =
                 $entries;
+
+
+
+            /*
+             * Run C64 integrity check
+             * on first disk image.
+             */
+            if (
+                $integrity === null
+            ) {
+
+
+                $reader =
+                    new C64DiskReader(
+                        $file->getPath()
+                    );
+
+
+                $builder =
+                    new C64BamBuilder(
+                        strtoupper(
+                            $file->getFormat()
+                        )
+                    );
+
+
+                /*
+                 * Reserve:
+                 * Track 18 sector 0 BAM
+                 * Track 18 directory sectors
+                 */
+                $builder->reserveD64SystemTracks();
+
+
+
+                foreach ($entries as $entry) {
+
+
+                    if (
+                        $entry->getStartTrack() <= 0
+                    ) {
+
+                        continue;
+                    }
+
+
+
+                    $chain =
+                        $reader->readFileChain(
+                            $entry->getStartTrack(),
+                            $entry->getStartSector()
+                        );
+
+
+                    $builder->addSectors(
+                        $chain
+                    );
+                }
+
+
+
+                $calculated =
+                    $builder->getLayout();
+
+
+
+                $bamReader =
+                    new C64BamReader(
+                        $file->getPath()
+                    );
+
+
+                $realBam =
+                    $bamReader->read();
+
+
+
+                $comparator =
+                    new C64BamComparator();
+
+
+
+                $comparison =
+                    $comparator->compare(
+                        $realBam,
+                        $calculated
+                    );
+
+
+
+                $checker =
+                    new C64DiskIntegrityChecker();
+
+
+
+                $integrity =
+                    $checker->check(
+                        $comparison
+                    );
+            }
         }
 
 
-        $view = new View();
+
+        $view =
+            new View();
+
 
 
         $view->render(
             'disk/index',
             [
+
                 'title' =>
                     'C64 Disk Explorer',
+
 
                 'release' =>
                     $release,
 
+
                 'files' =>
                     $files,
+
 
                 'directories' =>
                     $directories,
 
+
                 'search' =>
                     $search,
 
+
                 'sort' =>
-                    $sort
+                    $sort,
+
+
+                'integrity' =>
+                    $integrity
             ]
         );
     }
