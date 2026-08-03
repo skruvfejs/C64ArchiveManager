@@ -10,6 +10,8 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\DirectoryController;
 use App\Http\Controllers\DiskInfoController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\EntryController;
+use App\Http\Controllers\ReleaseController;
 
 
 return function (Router $router): void {
@@ -103,5 +105,21 @@ return function (Router $router): void {
             'force'
         ]
     );
+
+$router->get(
+    '/entry',
+    [
+        EntryController::class,
+        'index'
+    ]
+);
+
+$router->get(
+    '/release',
+    [
+        ReleaseController::class,
+        'index'
+    ]
+);
 
 };

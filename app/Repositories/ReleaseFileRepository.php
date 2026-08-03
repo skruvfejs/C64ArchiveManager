@@ -84,6 +84,7 @@ final class ReleaseFileRepository extends Repository
     }
 
 
+
     public function findById(
         int $id
     ): ?ReleaseFile {
@@ -99,9 +100,7 @@ final class ReleaseFileRepository extends Repository
 
 
         $stmt->execute([
-
             'id' => $id
-
         ]);
 
 
@@ -117,6 +116,7 @@ final class ReleaseFileRepository extends Repository
 
         return $this->hydrate($row);
     }
+
 
 
     /**
@@ -155,6 +155,7 @@ final class ReleaseFileRepository extends Repository
     }
 
 
+
     public function findByMd5(
         string $md5
     ): ?ReleaseFile {
@@ -191,6 +192,46 @@ final class ReleaseFileRepository extends Repository
     }
 
 
+
+    /**
+     * Find all files with same MD5 checksum.
+     *
+     * @return ReleaseFile[]
+     */
+    public function findAllByMd5(
+        string $md5
+    ): array {
+
+        $stmt = $this->prepare(
+            '
+            SELECT *
+            FROM release_files
+            WHERE md5 = :md5
+            ORDER BY release_id
+            '
+        );
+
+
+        $stmt->execute([
+
+            'md5' =>
+                $md5
+
+        ]);
+
+
+        return array_map(
+
+            fn(array $row): ReleaseFile =>
+                $this->hydrate($row),
+
+            $this->fetchAll($stmt)
+
+        );
+    }
+
+
+
     public function delete(
         int $id
     ): bool {
@@ -209,6 +250,7 @@ final class ReleaseFileRepository extends Repository
 
         ]);
     }
+
 
 
     private function hydrate(
@@ -262,4 +304,3 @@ final class ReleaseFileRepository extends Repository
             );
     }
 }
-
