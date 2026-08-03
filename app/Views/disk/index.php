@@ -23,7 +23,6 @@
     </td>
 </tr>
 
-
 <tr>
     <th>Orphan sectors</th>
     <td>
@@ -32,7 +31,6 @@
 </tr>
 
 </table>
-
 
 <?php if (!empty($integrity['warnings'])): ?>
 
@@ -54,17 +52,35 @@
 
 <?php endif; ?>
 
-
 <br>
 
-<?php if (!empty($comparison)): ?>
+<?php if (!empty($comparison['_summary'])): ?>
 
-<h4>BAM statistics</h4>
+<h4>BAM Statistics</h4>
 
 <table border="1" cellpadding="5">
-<tr><th>BAM used sectors</th><td><?= $comparison['_summary']['bam_used'] ?? '' ?></td></tr>
-<tr><th>File used sectors</th><td><?= $comparison['_summary']['calculated_used'] ?? '' ?></td></tr>
-<tr><th>Difference</th><td><?= $comparison['_summary']['difference'] ?? '' ?></td></tr>
+
+<tr>
+    <th>BAM used sectors</th>
+    <td>
+        <?= $comparison['_summary']['bam_used'] ?>
+    </td>
+</tr>
+
+<tr>
+    <th>File used sectors</th>
+    <td>
+        <?= $comparison['_summary']['calculated_used'] ?>
+    </td>
+</tr>
+
+<tr>
+    <th>Unreferenced sectors</th>
+    <td>
+        <?= $comparison['_summary']['difference'] ?>
+    </td>
+</tr>
+
 </table>
 
 <br>
@@ -73,13 +89,11 @@
 
 <?php endif; ?>
 
-
 <?php if (!empty($trackUsage)): ?>
 
 <h3>
     Track usage
 </h3>
-
 
 <table border="1" cellpadding="5">
 
@@ -87,7 +101,6 @@
     <th>Track</th>
     <th>Used blocks</th>
 </tr>
-
 
 <?php foreach ($trackUsage as $track => $blocks): ?>
 
@@ -103,24 +116,18 @@
 
 </tr>
 
-
 <?php endforeach; ?>
-
 
 </table>
 
 <br>
 
 <?php endif; ?>
-
-
-
 <?php if (!empty($trackLayout)): ?>
 
 <h3>
     Track layout
 </h3>
-
 
 <table border="1" cellpadding="5">
 
@@ -131,9 +138,7 @@
     <th>Total</th>
 </tr>
 
-
 <?php foreach ($trackLayout as $track => $data): ?>
-
 
 <tr>
 
@@ -141,16 +146,13 @@
     <?= $track ?>
 </td>
 
-
 <td>
     <?= $data['used'] ?>
 </td>
 
-
 <td>
     <?= $data['total'] - $data['used'] ?>
 </td>
-
 
 <td>
     <?= $data['total'] ?>
@@ -158,34 +160,25 @@
 
 </tr>
 
-
 <?php endforeach; ?>
 
-
 </table>
-
 
 <br>
 
 <?php endif; ?>
 
-
-
 <?php foreach ($files as $file): ?>
-
 
 <h3>
     <?= htmlspecialchars($file->getFilename()) ?>
     (<?= htmlspecialchars($file->getFormat()) ?>)
 </h3>
 
-
 <table border="1" cellpadding="5">
-
 
 <tr>
     <th>Disk name</th>
-
     <td>
         <?= htmlspecialchars(
             $file->getDiskName() ?? ''
@@ -193,10 +186,8 @@
     </td>
 </tr>
 
-
 <tr>
     <th>Disk ID</th>
-
     <td>
         <?= htmlspecialchars(
             $file->getDiskId() ?? ''
@@ -204,10 +195,8 @@
     </td>
 </tr>
 
-
 <tr>
     <th>Format</th>
-
     <td>
         <?= htmlspecialchars(
             $file->getFormat()
@@ -215,28 +204,22 @@
     </td>
 </tr>
 
-
 <tr>
     <th>Files on disk</th>
-
     <td>
         <?= count($directories[$file->getId()] ?? []) ?>
     </td>
 </tr>
 
-
 <tr>
     <th>Size</th>
-
     <td>
         <?= $file->getSize() ?>
         bytes
     </td>
 </tr>
 
-
 </table>
-
 
 <p>
     <a href="/disk/directory?id=<?= $release->getId() ?>">
@@ -244,13 +227,9 @@
     </a>
 </p>
 
-
 <br>
 
-
-
 <table border="1" cellpadding="5">
-
 
 <tr>
     <th>#</th>
@@ -261,18 +240,13 @@
     <th>Blocks</th>
     <th>Status</th>
 </tr>
-
-
-
 <?php foreach ($directories[$file->getId()] ?? [] as $entry): ?>
-
 
 <tr>
 
 <td>
     <?= $entry->getDirectoryPosition() ?>
 </td>
-
 
 <td>
     <a href="/file?id=<?= $entry->getId() ?>">
@@ -282,28 +256,23 @@
     </a>
 </td>
 
-
 <td>
     <?= htmlspecialchars(
         $entry->getFiletype()
     ) ?>
 </td>
 
-
 <td>
     <?= $entry->getStartTrack() ?>
 </td>
-
 
 <td>
     <?= $entry->getStartSector() ?>
 </td>
 
-
 <td>
     <?= $entry->getBlocks() ?>
 </td>
-
 
 <td>
 
@@ -323,14 +292,10 @@
 
 </td>
 
-
 </tr>
-
 
 <?php endforeach; ?>
 
-
 </table>
-
 
 <?php endforeach; ?>
