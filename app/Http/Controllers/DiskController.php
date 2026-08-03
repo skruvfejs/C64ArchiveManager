@@ -79,6 +79,8 @@ final class DiskController extends Controller
 
         $integrity = null;
 
+        $comparison = null;
+
 
 
         foreach ($files as $file) {
@@ -314,7 +316,10 @@ final class DiskController extends Controller
 
 
                 'integrity' =>
-                    $integrity
+                    $integrity,
+
+                'comparison' =>
+                    $comparison
             ]
         );
     }
