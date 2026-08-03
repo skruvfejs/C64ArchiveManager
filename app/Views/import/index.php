@@ -24,6 +24,11 @@
 
     <select name="entry_id">
 
+        <option value="">
+            -- Skapa automatiskt --
+        </option>
+
+
         <?php foreach ($entries as $entry): ?>
 
             <option value="<?= $entry->getId() ?>">
@@ -39,6 +44,7 @@
     </select>
 
 
+
     <p>
         Disk image:
     </p>
@@ -50,6 +56,7 @@
     >
 
 
+
     <p>
 
         <button type="submit">
@@ -57,6 +64,7 @@
         </button>
 
     </p>
+
 
 </form>
 

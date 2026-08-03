@@ -9,175 +9,372 @@ use App\Models\Entry;
 
 final class EntryRepository extends Repository
 {
-    public function findById(int $id): ?Entry
-    {
+    public function findById(
+        int $id
+    ): ?Entry {
+
         $stmt = $this->prepare(
-            'SELECT *
-               FROM entries
-              WHERE id = :id
-              LIMIT 1'
+            '
+            SELECT *
+            FROM entries
+            WHERE id = :id
+            LIMIT 1
+            '
         );
 
+
         $stmt->execute([
-            'id' => $id,
+
+            'id' => $id
+
         ]);
 
-        $row = $this->fetchOne($stmt);
+
+        $row =
+            $this->fetchOne($stmt);
+
 
         if ($row === null) {
+
             return null;
         }
 
+
         return $this->hydrate($row);
     }
+
+
+
+    public function findByTitle(
+        string $title
+    ): ?Entry {
+
+        $stmt = $this->prepare(
+            '
+            SELECT *
+            FROM entries
+            WHERE title = :title
+            LIMIT 1
+            '
+        );
+
+
+        $stmt->execute([
+
+            'title' => $title
+
+        ]);
+
+
+        $row =
+            $this->fetchOne($stmt);
+
+
+        if ($row === null) {
+
+            return null;
+        }
+
+
+        return $this->hydrate($row);
+    }
+
+
+
+    public function findBySortTitle(
+        string $sortTitle
+    ): ?Entry {
+
+        $stmt = $this->prepare(
+            '
+            SELECT *
+            FROM entries
+            WHERE sort_title = :sort_title
+            LIMIT 1
+            '
+        );
+
+
+        $stmt->execute([
+
+            'sort_title' =>
+                $sortTitle
+
+        ]);
+
+
+        $row =
+            $this->fetchOne($stmt);
+
+
+        if ($row === null) {
+
+            return null;
+        }
+
+
+        return $this->hydrate($row);
+    }
+
+
 
     /**
      * @return Entry[]
      */
     public function findAll(): array
     {
+
         $stmt = $this->prepare(
-            'SELECT *
-               FROM entries
-           ORDER BY title'
+            '
+            SELECT *
+            FROM entries
+            ORDER BY title
+            '
         );
+
 
         $stmt->execute();
 
+
         return array_map(
-            fn(array $row): Entry => $this->hydrate($row),
+
+            fn(array $row): Entry =>
+                $this->hydrate($row),
+
             $this->fetchAll($stmt)
+
         );
     }
-
     /**
      * @return Entry[]
      */
-    public function search(string $search): array
-    {
+    public function search(
+        string $search
+    ): array {
+
         $stmt = $this->prepare(
-            'SELECT *
-               FROM entries
-              WHERE title LIKE :search
-           ORDER BY title'
+            '
+            SELECT *
+            FROM entries
+            WHERE title LIKE :search
+            ORDER BY title
+            '
         );
 
+
         $stmt->execute([
-            'search' => '%' . $search . '%',
+
+            'search' =>
+                '%' . $search . '%'
+
         ]);
 
+
         return array_map(
-            fn(array $row): Entry => $this->hydrate($row),
+
+            fn(array $row): Entry =>
+                $this->hydrate($row),
+
             $this->fetchAll($stmt)
+
         );
     }
 
-    public function exists(int $id): bool
-    {
+
+
+    public function exists(
+        int $id
+    ): bool {
+
         $stmt = $this->prepare(
-            'SELECT 1
-               FROM entries
-              WHERE id = :id
-              LIMIT 1'
+            '
+            SELECT 1
+            FROM entries
+            WHERE id = :id
+            LIMIT 1
+            '
         );
 
+
         $stmt->execute([
-            'id' => $id,
+
+            'id' => $id
+
         ]);
+
 
         return $this->fetchOne($stmt) !== null;
     }
 
-    public function create(Entry $entry): int
-    {
+
+
+    public function create(
+        Entry $entry
+    ): int {
+
         $stmt = $this->prepare(
-            'INSERT INTO entries
+            '
+            INSERT INTO entries
             (
                 entry_type_id,
                 title,
+                sort_title,
                 year,
-                publisher,
-                developer,
-                notes
+                description,
+                status
             )
             VALUES
             (
                 :entry_type_id,
                 :title,
+                :sort_title,
                 :year,
-                :publisher,
-                :developer,
-                :notes
-            )'
+                :description,
+                :status
+            )
+            '
         );
 
+
         $stmt->execute([
-            'entry_type_id' => $entry->getEntryTypeId(),
-            'title'         => $entry->getTitle(),
-            'year'          => $entry->getYear(),
-            'publisher'     => $entry->getPublisher(),
-            'developer'     => $entry->getDeveloper(),
-            'notes'         => $entry->getNotes(),
+
+            'entry_type_id' =>
+                $entry->getEntryTypeId(),
+
+            'title' =>
+                $entry->getTitle(),
+
+            'sort_title' =>
+                $entry->getSortTitle(),
+
+            'year' =>
+                $entry->getYear(),
+
+            'description' =>
+                $entry->getDescription(),
+
+            'status' =>
+                $entry->getStatus()
+
         ]);
+
 
         return $this->lastInsertId();
     }
 
-    public function update(Entry $entry): bool
-    {
+
+
+    public function update(
+        Entry $entry
+    ): bool {
+
         $stmt = $this->prepare(
-            'UPDATE entries
-                SET
-                    entry_type_id = :entry_type_id,
-                    title = :title,
-                    year = :year,
-                    publisher = :publisher,
-                    developer = :developer,
-                    notes = :notes,
-                    updated_at = NOW()
-              WHERE id = :id'
+            '
+            UPDATE entries
+            SET
+                entry_type_id = :entry_type_id,
+                title = :title,
+                sort_title = :sort_title,
+                year = :year,
+                description = :description,
+                status = :status,
+                updated_at = NOW()
+            WHERE id = :id
+            '
         );
 
+
         return $stmt->execute([
-            'id'            => $entry->getId(),
-            'entry_type_id' => $entry->getEntryTypeId(),
-            'title'         => $entry->getTitle(),
-            'year'          => $entry->getYear(),
-            'publisher'     => $entry->getPublisher(),
-            'developer'     => $entry->getDeveloper(),
-            'notes'         => $entry->getNotes(),
+
+            'id' =>
+                $entry->getId(),
+
+            'entry_type_id' =>
+                $entry->getEntryTypeId(),
+
+            'title' =>
+                $entry->getTitle(),
+
+            'sort_title' =>
+                $entry->getSortTitle(),
+
+            'year' =>
+                $entry->getYear(),
+
+            'description' =>
+                $entry->getDescription(),
+
+            'status' =>
+                $entry->getStatus()
+
         ]);
     }
 
-    public function delete(int $id): bool
-    {
+
+
+    public function delete(
+        int $id
+    ): bool {
+
         $stmt = $this->prepare(
-            'DELETE
-               FROM entries
-              WHERE id = :id'
+            '
+            DELETE FROM entries
+            WHERE id = :id
+            '
         );
 
+
         return $stmt->execute([
-            'id' => $id,
+
+            'id' => $id
+
         ]);
     }
 
-    private function hydrate(array $row): Entry
-    {
+
+
+    private function hydrate(
+        array $row
+    ): Entry {
+
         return (new Entry())
-            ->setId((int) $row['id'])
-            ->setEntryTypeId((int) $row['entry_type_id'])
-            ->setTitle($row['title'])
+
+            ->setId(
+                (int) $row['id']
+            )
+
+            ->setEntryTypeId(
+                (int) $row['entry_type_id']
+            )
+
+            ->setTitle(
+                $row['title']
+            )
+
+            ->setSortTitle(
+                $row['sort_title']
+            )
+
             ->setYear(
                 $row['year'] !== null
                     ? (int) $row['year']
                     : null
             )
-            ->setPublisher($row['publisher'])
-            ->setDeveloper($row['developer'])
-            ->setNotes($row['notes'])
-            ->setCreatedAt($row['created_at'])
-            ->setUpdatedAt($row['updated_at']);
+
+            ->setDescription(
+                $row['description']
+            )
+
+            ->setStatus(
+                (int) $row['status']
+            )
+
+            ->setCreatedAt(
+                $row['created_at']
+            )
+
+            ->setUpdatedAt(
+                $row['updated_at']
+            );
     }
 }
-

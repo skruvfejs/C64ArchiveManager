@@ -20,20 +20,52 @@ final class ImporterService
         private D71ImporterService $d71Importer,
         private D81ImporterService $d81Importer,
         private PrgImporterService $prgImporter,
-        private P00Parser $p00Parser
+        private P00Parser $p00Parser,
+
+        private EntryResolverService $entryResolver,
+        private DiskHeaderService $diskHeaderService
     ) {
     }
 
 
+
     public function import(
         string $filename,
-        int $entryId,
+        ?int $entryId,
         bool $forceDuplicate = false
     ): int {
+
 
         $format =
             $this->formatDetector
                  ->detect($filename);
+
+
+
+        /*
+         * Hämta Entry-namn från diskens header
+         *
+         * Ex:
+         * disk08a.d64
+         *
+         * blir:
+         * DISK 08
+         */
+        $entryTitle =
+            $this->diskHeaderService
+                 ->getName(
+                     $filename
+                 );
+
+
+
+        $entryId =
+            $this->entryResolver
+                 ->resolve(
+                     $entryId,
+                     $entryTitle
+                 );
+
 
 
         $logId =
@@ -44,7 +76,9 @@ final class ImporterService
                  );
 
 
+
         try {
+
 
             $releaseId =
                 $this->transaction->run(
@@ -65,6 +99,7 @@ final class ImporterService
                 );
 
 
+
             $this->importLogService
                  ->success(
                      $logId,
@@ -73,6 +108,7 @@ final class ImporterService
 
 
             return $releaseId;
+
 
 
         } catch (Throwable $e) {
@@ -90,6 +126,7 @@ final class ImporterService
     }
 
 
+
     private function doImport(
         string $filename,
         int $entryId,
@@ -97,10 +134,12 @@ final class ImporterService
         bool $forceDuplicate = false
     ): int {
 
+
         return match ($format) {
 
 
             'D64' =>
+
                 $this->d64Importer
                      ->import(
                          $filename,
@@ -109,7 +148,9 @@ final class ImporterService
                      ),
 
 
+
             'T64' =>
+
                 $this->t64Importer
                      ->import(
                          $filename,
@@ -118,7 +159,9 @@ final class ImporterService
                      ),
 
 
+
             'D71' =>
+
                 $this->d71Importer
                      ->import(
                          $filename,
@@ -127,7 +170,9 @@ final class ImporterService
                      ),
 
 
+
             'D81' =>
+
                 $this->d81Importer
                      ->import(
                          $filename,
@@ -136,7 +181,9 @@ final class ImporterService
                      ),
 
 
+
             'PRG' =>
+
                 $this->prgImporter
                      ->import(
                          $filename,
@@ -145,19 +192,25 @@ final class ImporterService
                      ),
 
 
+
             'P00' =>
+
                 $this->importP00(
                     $filename,
                     $entryId
                 ),
 
 
+
             default =>
+
                 throw new RuntimeException(
-                    "Unsupported format: $format"
+                    'Unsupported format: '
+                    . $format
                 )
         };
     }
+
 
 
     private function importP00(
@@ -165,14 +218,17 @@ final class ImporterService
         int $entryId
     ): int {
 
+
         $info =
             $this->p00Parser
                  ->parse($filename);
 
 
+
         $data =
             $this->p00Parser
                  ->extractPrg($filename);
+
 
 
         return $this->prgImporter
@@ -183,4 +239,3 @@ final class ImporterService
                     );
     }
 }
-

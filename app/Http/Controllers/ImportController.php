@@ -8,6 +8,7 @@ use App\Core\View;
 use App\Http\Request;
 use App\Repositories\EntryRepository;
 use App\Repositories\ReleaseFileRepository;
+use App\Repositories\ReleaseRepository;
 use App\Services\ChecksumService;
 use App\Services\ImporterService;
 
@@ -17,10 +18,12 @@ final class ImportController extends Controller
         private Request $request,
         private EntryRepository $entries,
         private ReleaseFileRepository $files,
+        private ReleaseRepository $releases,
         private ChecksumService $checksum,
         private ImporterService $importer
     ) {
     }
+
 
 
     public function index(): void
@@ -34,26 +37,21 @@ final class ImportController extends Controller
     }
 
 
+
     public function upload(): void
     {
-        $entryId =
-            (int) $this->request->post(
+        $entryValue =
+            $this->request->post(
                 'entry_id'
             );
 
 
-        if ($entryId <= 0) {
+        $entryId =
+            $entryValue !== null &&
+            $entryValue !== ''
+                ? (int) $entryValue
+                : null;
 
-            $this->render(
-                'import/index',
-                [
-                    'message' =>
-                        'Ingen entry vald.'
-                ]
-            );
-
-            return;
-        }
 
 
         if (!isset($_FILES['disk'])) {
@@ -68,6 +66,7 @@ final class ImportController extends Controller
 
             return;
         }
+
 
 
         if (
@@ -87,15 +86,18 @@ final class ImportController extends Controller
         }
 
 
+
         $original =
             basename(
                 $_FILES['disk']['name']
             );
 
 
+
         $targetDir =
             dirname(__DIR__, 3)
             . '/storage/imports';
+
 
 
         if (!is_dir($targetDir)) {
@@ -108,10 +110,12 @@ final class ImportController extends Controller
         }
 
 
+
         $target =
             $targetDir
             . '/'
             . $original;
+
 
 
         move_uploaded_file(
@@ -120,9 +124,11 @@ final class ImportController extends Controller
         );
 
 
+
         $checksum =
             $this->checksum
                  ->all($target);
+
 
 
         $existing =
@@ -130,6 +136,7 @@ final class ImportController extends Controller
                  ->findByMd5(
                      $checksum['md5']
                  );
+
 
 
         if ($existing !== null) {
@@ -162,6 +169,7 @@ final class ImportController extends Controller
         }
 
 
+
         $releaseId =
             $this->importer
                  ->import(
@@ -170,23 +178,67 @@ final class ImportController extends Controller
                  );
 
 
+
+        $release =
+            $this->releases
+                 ->findById(
+                     $releaseId
+                 );
+
+
+        $entryName =
+            'Okänd';
+
+
+
+        if ($release !== null) {
+
+            $entry =
+                $this->entries
+                     ->findById(
+                         $release->getEntryId()
+                     );
+
+
+            if ($entry !== null) {
+
+                $entryName =
+                    $entry->getTitle();
+            }
+        }
+
+
+
         $this->render(
             'import/index',
             [
                 'message' =>
-                    'Import OK. Release ID: '
+                    'Import OK.<br>'
+                    . 'Release ID: '
                     . $releaseId
+                    . '<br>'
+                    . 'Entry: '
+                    . $entryName
             ]
         );
     }
 
 
+
     public function force(): void
     {
-        $entryId =
-            (int) $this->request->post(
+        $entryValue =
+            $this->request->post(
                 'entry_id'
             );
+
+
+        $entryId =
+            $entryValue !== null &&
+            $entryValue !== ''
+                ? (int) $entryValue
+                : null;
+
 
 
         $path =
@@ -195,8 +247,8 @@ final class ImportController extends Controller
             );
 
 
+
         if (
-            $entryId <= 0 ||
             empty($path)
         ) {
 
@@ -210,6 +262,7 @@ final class ImportController extends Controller
 
             return;
         }
+
 
 
         if (!is_file($path)) {
@@ -226,6 +279,7 @@ final class ImportController extends Controller
         }
 
 
+
         $releaseId =
             $this->importer
                  ->import(
@@ -235,15 +289,51 @@ final class ImportController extends Controller
                  );
 
 
+
+        $release =
+            $this->releases
+                 ->findById(
+                     $releaseId
+                 );
+
+
+        $entryName =
+            'Okänd';
+
+
+
+        if ($release !== null) {
+
+            $entry =
+                $this->entries
+                     ->findById(
+                         $release->getEntryId()
+                     );
+
+
+            if ($entry !== null) {
+
+                $entryName =
+                    $entry->getTitle();
+            }
+        }
+
+
+
         $this->render(
             'import/index',
             [
                 'message' =>
-                    'Import OK. Release ID: '
+                    'Import OK.<br>'
+                    . 'Release ID: '
                     . $releaseId
+                    . '<br>'
+                    . 'Entry: '
+                    . $entryName
             ]
         );
     }
+
 
 
     private function render(
