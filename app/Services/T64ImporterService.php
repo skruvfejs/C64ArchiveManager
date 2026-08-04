@@ -22,11 +22,13 @@ final class T64ImporterService
     }
 
 
+
     public function import(
         string $filename,
         int $entryId,
         bool $forceDuplicate = false
     ): ImportResult {
+
 
         if (!is_file($filename)) {
 
@@ -36,9 +38,6 @@ final class T64ImporterService
         }
 
 
-        /*
-         * Läs T64-header
-         */
 
         $header =
             $this->parser
@@ -46,112 +45,121 @@ final class T64ImporterService
 
 
 
-        /*
-         * Beräkna checksum
-         */
-
         $checksum =
             $this->checksumService
                  ->all($filename);
 
 
 
-        /*
-         * Kontrollera om filen redan finns
-         */
-
         $existingReleaseFile = null;
+
 
 
         if (!$forceDuplicate) {
 
             $existingReleaseFile =
                 $this->releaseFileRepository
-                     ->findByMd5(
-                         $checksum['md5']
+                     ->findByMd5AndEntry(
+                         $checksum['md5'],
+                         $entryId
                      );
         }
 
 
 
-        /*
-         * Återanvänd befintlig release
-         */
-
         if ($existingReleaseFile !== null) {
 
-            $releaseId =
-                $existingReleaseFile
-                     ->getReleaseId();
+            return (new ImportResult(
+                0,
+                0
+            ))->setDuplicate([
+
+                'entryId' =>
+                    $entryId,
+
+                'path' =>
+                    $filename,
+
+                'filename' =>
+                    basename($filename),
+
+                'md5' =>
+                    $checksum['md5'],
+
+                'existing' =>
+                    $existingReleaseFile
+
+            ]);
+        }
 
 
-        } else {
+
+        $release =
+            new Release();
 
 
-            /*
-             * Skapa release
-             */
 
-            $release = new Release();
+        $name =
+            $header['description'] !== ''
+                ? $header['description']
+                : basename($filename);
 
+
+
+        $version = 'T64';
+
+
+
+        if ($forceDuplicate) {
 
             $name =
-                $header['description'] !== ''
-                    ? $header['description']
-                    : basename($filename);
-
-
-            if ($forceDuplicate) {
-
-                $name =
-                    $this->createDuplicateName(
-                        $entryId,
-                        $name,
-                        'T64'
-                    );
-            }
-
-
-            $release
-                ->setEntryId($entryId)
-                ->setName($name)
-                ->setVersion('T64');
-
-
-            $releaseId =
-                $this->releaseRepository
-                     ->create($release);
-            /*
-             * Skapa release_file
-             */
-
-            $releaseFile = new ReleaseFile();
-
-
-            $releaseFile
-                ->setReleaseId($releaseId)
-                ->setFilename(
-                    basename($filename)
-                )
-                ->setFormat('T64')
-                ->setPath($filename)
-                ->setSize(
-                    filesize($filename)
-                )
-                ->setCrc32(
-                    $checksum['crc32']
-                )
-                ->setMd5(
-                    $checksum['md5']
-                )
-                ->setSha1(
-                    $checksum['sha1']
+                $this->createDuplicateName(
+                    $entryId,
+                    $name,
+                    $version
                 );
-
-
-            $this->releaseFileRepository
-                 ->create($releaseFile);
         }
+
+
+
+        $release
+            ->setEntryId($entryId)
+            ->setName($name)
+            ->setVersion($version);
+
+
+
+        $releaseId =
+            $this->releaseRepository
+                 ->create($release);
+        $releaseFile = new ReleaseFile();
+
+
+        $releaseFile
+            ->setReleaseId($releaseId)
+            ->setFilename(
+                basename($filename)
+            )
+            ->setFormat('T64')
+            ->setPath($filename)
+            ->setSize(
+                filesize($filename)
+            )
+            ->setCrc32(
+                $checksum['crc32']
+            )
+            ->setMd5(
+                $checksum['md5']
+            )
+            ->setSha1(
+                $checksum['sha1']
+            );
+
+
+
+        $this->releaseFileRepository
+             ->create($releaseFile);
+
 
 
         return new ImportResult(
@@ -168,11 +176,13 @@ final class T64ImporterService
         string $version
     ): string {
 
+
         $duplicateName =
             $name . ' (duplicate)';
 
 
         $counter = 2;
+
 
 
         while (
@@ -184,6 +194,7 @@ final class T64ImporterService
                  )
         ) {
 
+
             $duplicateName =
                 $name
                 . ' (duplicate '
@@ -193,6 +204,7 @@ final class T64ImporterService
 
             $counter++;
         }
+
 
 
         return $duplicateName;

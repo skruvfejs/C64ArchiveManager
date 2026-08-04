@@ -71,6 +71,16 @@ final class ImportController extends Controller
 
 
 
+        error_log(
+            'UPLOAD DEBUG: '
+            . print_r(
+                $_FILES['disk'],
+                true
+            )
+        );
+
+
+
         if (
             $_FILES['disk']['error']
             !== UPLOAD_ERR_OK
@@ -124,9 +134,6 @@ final class ImportController extends Controller
             $_FILES['disk']['tmp_name'],
             $target
         );
-
-
-
         $result =
             $this->importer
                  ->import(
@@ -154,6 +161,9 @@ final class ImportController extends Controller
             $result->getReleaseId()
         );
     }
+
+
+
     private function renderImportResult(
         int $releaseId
     ): void {

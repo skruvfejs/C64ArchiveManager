@@ -26,11 +26,13 @@ final class D71ImporterService
     }
 
 
+
     public function import(
         string $filename,
         int $entryId,
         bool $forceDuplicate = false
     ): ImportResult {
+
 
         if (!is_file($filename)) {
 
@@ -40,9 +42,6 @@ final class D71ImporterService
         }
 
 
-        /*
-         * Läs diskinfo
-         */
 
         $header =
             $this->parser
@@ -50,135 +49,136 @@ final class D71ImporterService
 
 
 
-        /*
-         * Beräkna checksum
-         */
-
         $checksum =
             $this->checksumService
                  ->all($filename);
 
 
 
-        /*
-         * Finns samma disk redan?
-         *
-         * Vid force-import ignoreras MD5.
-         */
-
         $existingReleaseFile = null;
+
 
 
         if (!$forceDuplicate) {
 
             $existingReleaseFile =
                 $this->releaseFileRepository
-                     ->findByMd5(
-                         $checksum['md5']
+                     ->findByMd5AndEntry(
+                         $checksum['md5'],
+                         $entryId
                      );
         }
 
 
+
         if ($existingReleaseFile !== null) {
 
-            /*
-             * Återanvänd befintlig disk
-             */
+            return (new ImportResult(
+                0,
+                0
+            ))->setDuplicate([
 
-            $releaseFileId =
-                $existingReleaseFile->getId();
+                'entryId' =>
+                    $entryId,
 
+                'path' =>
+                    $filename,
 
-            $releaseId =
-                $existingReleaseFile->getReleaseId();
+                'filename' =>
+                    basename($filename),
 
+                'md5' =>
+                    $checksum['md5'],
 
-        } else {
+                'existing' =>
+                    $existingReleaseFile
 
-
-            /*
-             * Skapa ny release
-             */
-
-            $release = new Release();
-
-
-            $diskName =
-                $header['disk_name'] !== ''
-                    ? $header['disk_name']
-                    : basename($filename);
-
-
-            if ($forceDuplicate) {
-
-                $diskName =
-                    $this->createDuplicateName(
-                        $entryId,
-                        $diskName,
-                        'D71'
-                    );
-            }
-
-
-            $release
-                ->setEntryId($entryId)
-                ->setName($diskName)
-                ->setVersion('D71');
-
-
-            $releaseId =
-                $this->releaseRepository
-                     ->create($release);
-
-
-
-            /*
-             * Skapa ny release_file
-             */
-
-            $releaseFile = new ReleaseFile();
-
-
-            $releaseFile
-                ->setReleaseId($releaseId)
-                ->setFilename(
-                    basename($filename)
-                )
-                ->setFormat('D71')
-                ->setDiskName(
-                    $diskName
-                )
-                ->setDiskId(
-                    $header['disk_id'] ?? null
-                )
-                ->setPath($filename)
-                ->setSize(
-                    filesize($filename)
-                )
-                ->setCrc32(
-                    $checksum['crc32']
-                )
-                ->setMd5(
-                    $checksum['md5']
-                )
-                ->setSha1(
-                    $checksum['sha1']
-                );
-
-
-            $releaseFileId =
-                $this->releaseFileRepository
-                     ->create($releaseFile);
+            ]);
         }
 
 
-        /*
-         * Importera katalogposter
-         */
+
+        $release =
+            new Release();
+
+
+
+        $diskName =
+            $header['disk_name'] !== ''
+                ? $header['disk_name']
+                : basename($filename);
+
+
+
+        $version = 'D71';
+
+
+
+        if ($forceDuplicate) {
+
+            $diskName =
+                $this->createDuplicateName(
+                    $entryId,
+                    $diskName,
+                    $version
+                );
+        }
+
+
+
+        $release
+            ->setEntryId($entryId)
+            ->setName($diskName)
+            ->setVersion($version);
+
+
+
+        $releaseId =
+            $this->releaseRepository
+                 ->create($release);
+        $releaseFile = new ReleaseFile();
+
+
+        $releaseFile
+            ->setReleaseId($releaseId)
+            ->setFilename(
+                basename($filename)
+            )
+            ->setFormat('D71')
+            ->setDiskName(
+                $diskName
+            )
+            ->setDiskId(
+                $header['disk_id'] ?? null
+            )
+            ->setPath($filename)
+            ->setSize(
+                filesize($filename)
+            )
+            ->setCrc32(
+                $checksum['crc32']
+            )
+            ->setMd5(
+                $checksum['md5']
+            )
+            ->setSha1(
+                $checksum['sha1']
+            );
+
+
+
+        $releaseFileId =
+            $this->releaseFileRepository
+                 ->create($releaseFile);
+
+
 
         $entries =
             $this->directoryParser
                  ->readDirectory($filename);
+
+
+
         foreach ($entries as $entry) {
 
 
@@ -186,6 +186,7 @@ final class D71ImporterService
                 ->setReleaseFileId(
                     $releaseFileId
                 );
+
 
 
             $existing =
@@ -197,8 +198,8 @@ final class D71ImporterService
                      );
 
 
-            if ($existing !== null) {
 
+            if ($existing !== null) {
 
                 $entry->setId(
                     $existing->getId()
@@ -227,17 +228,20 @@ final class D71ImporterService
     }
 
 
+
     private function createDuplicateName(
         int $entryId,
         string $name,
         string $version
     ): string {
 
+
         $duplicateName =
             $name . ' (duplicate)';
 
 
         $counter = 2;
+
 
 
         while (
@@ -249,6 +253,7 @@ final class D71ImporterService
                  )
         ) {
 
+
             $duplicateName =
                 $name
                 . ' (duplicate '
@@ -258,6 +263,7 @@ final class D71ImporterService
 
             $counter++;
         }
+
 
 
         return $duplicateName;

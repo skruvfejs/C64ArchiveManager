@@ -27,11 +27,13 @@ final class D64ImporterService
     }
 
 
+
     public function import(
         string $filename,
         int $entryId,
         bool $forceDuplicate = false
     ): ImportResult {
+
 
         if (!is_file($filename)) {
 
@@ -41,9 +43,6 @@ final class D64ImporterService
         }
 
 
-        /*
-         * Läs diskmetadata
-         */
 
         $header =
             $this->parser
@@ -51,145 +50,146 @@ final class D64ImporterService
 
 
 
-        /*
-         * Beräkna checksum först
-         */
-
         $checksum =
             $this->checksumService
                  ->all($filename);
 
 
 
-        /*
-         * Finns redan samma disk?
-         *
-         * Vid force-import ignoreras MD5.
-         */
-
         $existingReleaseFile = null;
+
 
 
         if (!$forceDuplicate) {
 
             $existingReleaseFile =
                 $this->releaseFileRepository
-                     ->findByMd5(
-                         $checksum['md5']
+                     ->findByMd5AndEntry(
+                         $checksum['md5'],
+                         $entryId
                      );
         }
 
 
+
         if ($existingReleaseFile !== null) {
 
-            $releaseFileId =
-                $existingReleaseFile->getId();
+            return (new ImportResult(
+                0,
+                0
+            ))->setDuplicate([
+
+                'entryId' =>
+                    $entryId,
+
+                'path' =>
+                    $filename,
+
+                'filename' =>
+                    basename($filename),
+
+                'md5' =>
+                    $checksum['md5'],
+
+                'existing' =>
+                    $existingReleaseFile
+
+            ]);
+        }
 
 
-            $releaseId =
-                $existingReleaseFile->getReleaseId();
+
+        $release =
+            new Release();
 
 
-        } else {
+
+        $diskName =
+            $header['disk_name'] !== ''
+                ? $header['disk_name']
+                : basename($filename);
 
 
-            /*
-             * Skapa ny release
-             */
 
-            $release = new Release();
+        $version = 'D64';
 
+
+
+        if ($forceDuplicate) {
 
             $diskName =
-                $header['disk_name'] !== ''
-                    ? $header['disk_name']
-                    : basename($filename);
-
-
-            $version =
-                $header['dos_type'] ?? null;
-
-
-            if ($forceDuplicate) {
-
-                $diskName =
-                    $this->createDuplicateName(
-                        $entryId,
-                        $diskName,
-                        $version
-                    );
-            }
-
-
-            $release
-                ->setEntryId($entryId)
-                ->setName($diskName)
-                ->setVersion($version);
-
-
-            if (
-                !$forceDuplicate &&
-                $this->releaseRepository
-                     ->existsByEntryNameVersion(
-                         $entryId,
-                         $diskName,
-                         $version
-                     )
-            ) {
-
-                throw new RuntimeException(
-                    'Release already exists.'
+                $this->createDuplicateName(
+                    $entryId,
+                    $diskName,
+                    $version
                 );
-            }
-
-
-            $releaseId =
-                $this->releaseRepository
-                     ->create($release);
-
-
-
-            /*
-             * Skapa ny release_file
-             */
-
-            $releaseFile = new ReleaseFile();
-
-
-            $releaseFile
-                ->setReleaseId($releaseId)
-                ->setFilename(
-                    basename($filename)
-                )
-                ->setFormat('D64')
-                ->setDiskName(
-                    $diskName
-                )
-                ->setDiskId(
-                    $header['disk_id'] ?? null
-                )
-                ->setPath($filename)
-                ->setSize(
-                    filesize($filename)
-                )
-                ->setCrc32(
-                    $checksum['crc32']
-                )
-                ->setMd5(
-                    $checksum['md5']
-                )
-                ->setSha1(
-                    $checksum['sha1']
-                );
-
-
-            $releaseFileId =
-                $this->releaseFileRepository
-                     ->create($releaseFile);
         }
-        /*
-         * Läs katalog
-         */
+
+
+
+        $release
+            ->setEntryId($entryId)
+            ->setName($diskName)
+            ->setVersion($version);
+
+
+
+        if (
+            !$forceDuplicate &&
+            $this->releaseRepository
+                 ->existsByEntryNameVersion(
+                     $entryId,
+                     $diskName,
+                     $version
+                 )
+        ) {
+
+            throw new RuntimeException(
+                'Release already exists.'
+            );
+        }
+
+
+
+        $releaseId =
+            $this->releaseRepository
+                 ->create($release);
+        $releaseFile = new ReleaseFile();
+
+
+        $releaseFile
+            ->setReleaseId($releaseId)
+            ->setFilename(
+                basename($filename)
+            )
+            ->setFormat('D64')
+            ->setDiskName(
+                $diskName
+            )
+            ->setDiskId(
+                $header['disk_id'] ?? null
+            )
+            ->setPath($filename)
+            ->setSize(
+                filesize($filename)
+            )
+            ->setCrc32(
+                $checksum['crc32']
+            )
+            ->setMd5(
+                $checksum['md5']
+            )
+            ->setSha1(
+                $checksum['sha1']
+            );
+
+
+
+        $releaseFileId =
+            $this->releaseFileRepository
+                 ->create($releaseFile);
+
+
 
         $entries =
             $this->directoryParser
@@ -206,6 +206,7 @@ final class D64ImporterService
                 );
 
 
+
             $existing =
                 $this->directoryEntryRepository
                      ->findExisting(
@@ -213,6 +214,7 @@ final class D64ImporterService
                          $entry->getFilename(),
                          $entry->getDirectoryPosition()
                      );
+
 
 
             if ($existing !== null) {
@@ -244,17 +246,20 @@ final class D64ImporterService
     }
 
 
+
     private function createDuplicateName(
         int $entryId,
         string $name,
         ?string $version
     ): string {
 
+
         $duplicateName =
             $name . ' (duplicate)';
 
 
         $counter = 2;
+
 
 
         while (
@@ -266,6 +271,7 @@ final class D64ImporterService
                  )
         ) {
 
+
             $duplicateName =
                 $name
                 . ' (duplicate '
@@ -275,6 +281,7 @@ final class D64ImporterService
 
             $counter++;
         }
+
 
 
         return $duplicateName;
