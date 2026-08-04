@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Core\DatabaseTransaction;
+use App\Entity\ImportResult;
 use RuntimeException;
 use Throwable;
 
@@ -33,7 +34,7 @@ final class ImporterService
         string $filename,
         ?int $entryId,
         bool $forceDuplicate = false
-    ): int {
+    ): ImportResult {
 
 
         $format =
@@ -42,29 +43,53 @@ final class ImporterService
 
 
 
-        /*
-         * Hämta Entry-namn från diskens header
-         *
-         * Ex:
-         * disk08a.d64
-         *
-         * blir:
-         * DISK 08
-         */
-        $entryTitle =
-            $this->diskHeaderService
-                 ->getName(
-                     $filename
-                 );
+        if (
+            in_array(
+                $format,
+                [
+                    'D64',
+                    'D71',
+                    'D81'
+                ],
+                true
+            )
+        ) {
+
+            $entryTitle =
+                $this->diskHeaderService
+                     ->getName(
+                         $filename
+                     );
+
+        } elseif ($format === 'P00') {
+
+            $info =
+                $this->p00Parser
+                     ->parse($filename);
+
+            $entryTitle =
+                $info['name'];
+
+        } else {
+
+            $entryTitle =
+                pathinfo(
+                    $filename,
+                    PATHINFO_FILENAME
+                );
+        }
 
 
 
-        $entryId =
-            $this->entryResolver
-                 ->resolve(
-                     $entryId,
-                     $entryTitle
-                 );
+        if ($entryId === null) {
+
+            $entryId =
+                $this->entryResolver
+                     ->resolve(
+                         null,
+                         $entryTitle
+                     );
+        }
 
 
 
@@ -79,15 +104,14 @@ final class ImporterService
 
         try {
 
-
-            $releaseId =
+            $result =
                 $this->transaction->run(
                     function () use (
                         $filename,
                         $entryId,
                         $format,
                         $forceDuplicate
-                    ): int {
+                    ): ImportResult {
 
                         return $this->doImport(
                             $filename,
@@ -100,19 +124,21 @@ final class ImporterService
 
 
 
-            $this->importLogService
-                 ->success(
-                     $logId,
-                     $releaseId
-                 );
+            if (!$result->isDuplicate()) {
+
+                $this->importLogService
+                     ->success(
+                         $logId,
+                         $result->getReleaseId(),
+                         $result->getFilesImported()
+                     );
+            }
 
 
-            return $releaseId;
-
+            return $result;
 
 
         } catch (Throwable $e) {
-
 
             $this->importLogService
                  ->failed(
@@ -132,12 +158,10 @@ final class ImporterService
         int $entryId,
         string $format,
         bool $forceDuplicate = false
-    ): int {
+    ): ImportResult {
 
 
         return match ($format) {
-
-
             'D64' =>
 
                 $this->d64Importer
@@ -197,7 +221,8 @@ final class ImporterService
 
                 $this->importP00(
                     $filename,
-                    $entryId
+                    $entryId,
+                    $forceDuplicate
                 ),
 
 
@@ -215,8 +240,9 @@ final class ImporterService
 
     private function importP00(
         string $filename,
-        int $entryId
-    ): int {
+        int $entryId,
+        bool $forceDuplicate = false
+    ): ImportResult {
 
 
         $info =
@@ -235,7 +261,9 @@ final class ImporterService
                     ->importData(
                         $data,
                         $info['name'] . '.prg',
-                        $entryId
+                        $filename,
+                        $entryId,
+                        $forceDuplicate
                     );
     }
 }

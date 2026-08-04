@@ -11,6 +11,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\DirectoryController;
 use App\Http\Controllers\DiskInfoController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\ImportLogController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ReleaseController;
 
@@ -116,6 +117,16 @@ return function (Router $router): void {
         ]
     );
 
+
+    $router->get(
+        '/import/logs',
+        [
+            ImportLogController::class,
+            'index'
+        ]
+    );
+
+
 $router->get(
     '/entry',
     [
@@ -133,3 +144,4 @@ $router->get(
 );
 
 };
+

@@ -54,6 +54,7 @@ final class ReleaseRepository extends Repository
     }
 
 
+
     public function existsByEntryNameVersion(
         int $entryId,
         string $name,
@@ -83,7 +84,6 @@ final class ReleaseRepository extends Repository
                     $name
 
             ]);
-
 
         } else {
 
@@ -118,6 +118,81 @@ final class ReleaseRepository extends Repository
     }
 
 
+
+    public function findByEntryNameVersion(
+        int $entryId,
+        string $name,
+        ?string $version
+    ): ?Release {
+
+        if ($version === null) {
+
+            $stmt = $this->prepare(
+                '
+                SELECT *
+                FROM releases
+                WHERE entry_id = :entry_id
+                AND name = :name
+                AND version IS NULL
+                LIMIT 1
+                '
+            );
+
+
+            $stmt->execute([
+
+                'entry_id' =>
+                    $entryId,
+
+                'name' =>
+                    $name
+
+            ]);
+
+        } else {
+
+            $stmt = $this->prepare(
+                '
+                SELECT *
+                FROM releases
+                WHERE entry_id = :entry_id
+                AND name = :name
+                AND version = :version
+                LIMIT 1
+                '
+            );
+
+
+            $stmt->execute([
+
+                'entry_id' =>
+                    $entryId,
+
+                'name' =>
+                    $name,
+
+                'version' =>
+                    $version
+
+            ]);
+        }
+
+
+        $row =
+            $this->fetchOne($stmt);
+
+
+        if ($row === null) {
+
+            return null;
+        }
+
+
+        return $this->hydrate($row);
+    }
+
+
+
     public function findById(
         int $id
     ): ?Release {
@@ -134,7 +209,8 @@ final class ReleaseRepository extends Repository
 
         $stmt->execute([
 
-            'id' => $id
+            'id' =>
+                $id
 
         ]);
 
@@ -151,6 +227,9 @@ final class ReleaseRepository extends Repository
 
         return $this->hydrate($row);
     }
+
+
+
     public function findByEntry(
         int $entryId
     ): array {
@@ -184,6 +263,7 @@ final class ReleaseRepository extends Repository
     }
 
 
+
     public function delete(
         int $id
     ): bool {
@@ -198,10 +278,12 @@ final class ReleaseRepository extends Repository
 
         return $stmt->execute([
 
-            'id' => $id
+            'id' =>
+                $id
 
         ]);
     }
+
 
 
     private function hydrate(
@@ -231,4 +313,3 @@ final class ReleaseRepository extends Repository
             );
     }
 }
-

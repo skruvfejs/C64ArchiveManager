@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Entity\ImportResult;
 use App\Entity\Release;
 use App\Entity\ReleaseFile;
 use App\Repositories\ReleaseRepository;
@@ -30,7 +31,7 @@ final class D64ImporterService
         string $filename,
         int $entryId,
         bool $forceDuplicate = false
-    ): int {
+    ): ImportResult {
 
         if (!is_file($filename)) {
 
@@ -126,6 +127,22 @@ final class D64ImporterService
                 ->setVersion($version);
 
 
+            if (
+                !$forceDuplicate &&
+                $this->releaseRepository
+                     ->existsByEntryNameVersion(
+                         $entryId,
+                         $diskName,
+                         $version
+                     )
+            ) {
+
+                throw new RuntimeException(
+                    'Release already exists.'
+                );
+            }
+
+
             $releaseId =
                 $this->releaseRepository
                      ->create($release);
@@ -170,7 +187,6 @@ final class D64ImporterService
                 $this->releaseFileRepository
                      ->create($releaseFile);
         }
-
         /*
          * Läs katalog
          */
@@ -221,7 +237,10 @@ final class D64ImporterService
 
 
 
-        return $releaseId;
+        return new ImportResult(
+            $releaseId,
+            count($entries)
+        );
     }
 
 

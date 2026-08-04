@@ -153,9 +153,6 @@ final class ReleaseFileRepository extends Repository
 
         );
     }
-
-
-
     public function findByMd5(
         string $md5
     ): ?ReleaseFile {
@@ -174,6 +171,55 @@ final class ReleaseFileRepository extends Repository
 
             'md5' =>
                 $md5
+
+        ]);
+
+
+        $row =
+            $this->fetchOne($stmt);
+
+
+        if ($row === null) {
+
+            return null;
+        }
+
+
+        return $this->hydrate($row);
+    }
+
+
+
+    /**
+     * Hitta fil med samma MD5 inom samma Entry.
+     *
+     * Används för duplicate-kontroll vid import.
+     */
+    public function findByMd5AndEntry(
+        string $md5,
+        int $entryId
+    ): ?ReleaseFile {
+
+        $stmt = $this->prepare(
+            '
+            SELECT rf.*
+            FROM release_files rf
+            INNER JOIN releases r
+                ON r.id = rf.release_id
+            WHERE rf.md5 = :md5
+            AND r.entry_id = :entry_id
+            LIMIT 1
+            '
+        );
+
+
+        $stmt->execute([
+
+            'md5' =>
+                $md5,
+
+            'entry_id' =>
+                $entryId
 
         ]);
 

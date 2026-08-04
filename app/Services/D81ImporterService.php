@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Entity\ImportResult;
 use App\Entity\Release;
 use App\Entity\ReleaseFile;
 use App\Repositories\ReleaseRepository;
@@ -29,7 +30,7 @@ final class D81ImporterService
         string $filename,
         int $entryId,
         bool $forceDuplicate = false
-    ): int {
+    ): ImportResult {
 
         if (!is_file($filename)) {
 
@@ -165,7 +166,6 @@ final class D81ImporterService
                 $this->releaseFileRepository
                      ->create($releaseFile);
         }
-
         /*
          * Läs katalog
          */
@@ -216,7 +216,10 @@ final class D81ImporterService
 
 
 
-        return $releaseId;
+        return new ImportResult(
+            $releaseId,
+            count($entries)
+        );
     }
 
 
@@ -256,4 +259,3 @@ final class D81ImporterService
         return $duplicateName;
     }
 }
-

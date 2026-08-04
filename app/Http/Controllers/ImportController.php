@@ -27,6 +27,7 @@ final class ImportController extends Controller
     }
 
 
+
     public function index(): void
     {
         $this->render(
@@ -36,6 +37,7 @@ final class ImportController extends Controller
             ]
         );
     }
+
 
 
     public function upload(): void
@@ -53,6 +55,7 @@ final class ImportController extends Controller
                 : null;
 
 
+
         if (!isset($_FILES['disk'])) {
 
             $this->render(
@@ -65,6 +68,7 @@ final class ImportController extends Controller
 
             return;
         }
+
 
 
         if (
@@ -84,15 +88,18 @@ final class ImportController extends Controller
         }
 
 
+
         $original =
             basename(
                 $_FILES['disk']['name']
             );
 
 
+
         $targetDir =
             dirname(__DIR__, 3)
             . '/storage/imports';
+
 
 
         if (!is_dir($targetDir)) {
@@ -105,10 +112,12 @@ final class ImportController extends Controller
         }
 
 
+
         $target =
             $targetDir
             . '/'
             . $original;
+
 
 
         move_uploaded_file(
@@ -117,58 +126,32 @@ final class ImportController extends Controller
         );
 
 
-        $checksum =
-            $this->checksum
-                ->all($target);
+
+        $result =
+            $this->importer
+                 ->import(
+                     $target,
+                     $entryId
+                 );
 
 
-        $existing =
-            $this->files
-                ->findByMd5(
-                    $checksum['md5']
-                );
 
+        if ($result->isDuplicate()) {
 
-        if ($existing !== null) {
-
-            $view =
-                new View();
-
+            $view = new View();
 
             $view->render(
                 'import/duplicate',
-                [
-                    'entryId' =>
-                        $entryId,
-
-                    'path' =>
-                        $target,
-
-                    'filename' =>
-                        $original,
-
-                    'md5' =>
-                        $checksum['md5'],
-
-                    'existing' =>
-                        $existing
-                ]
+                $result->getDuplicateData()
             );
 
             return;
         }
 
 
-        $releaseId =
-            $this->importer
-                ->import(
-                    $target,
-                    $entryId
-                );
-
 
         $this->renderImportResult(
-            $releaseId
+            $result->getReleaseId()
         );
     }
     private function renderImportResult(
@@ -177,9 +160,9 @@ final class ImportController extends Controller
 
         $release =
             $this->releases
-                ->findById(
-                    $releaseId
-                );
+                 ->findById(
+                     $releaseId
+                 );
 
 
         $entryName =
@@ -201,13 +184,14 @@ final class ImportController extends Controller
             0;
 
 
+
         if ($release !== null) {
 
             $entry =
                 $this->entries
-                    ->findById(
-                        $release->getEntryId()
-                    );
+                     ->findById(
+                         $release->getEntryId()
+                     );
 
 
             if ($entry !== null) {
@@ -217,11 +201,12 @@ final class ImportController extends Controller
             }
 
 
+
             $files =
                 $this->files
-                    ->findByRelease(
-                        $releaseId
-                    );
+                     ->findByRelease(
+                         $releaseId
+                     );
 
 
             if (count($files) > 0) {
@@ -233,27 +218,32 @@ final class ImportController extends Controller
                 $filename =
                     $file->getFilename();
 
+
                 $format =
                     $file->getFormat();
 
+
                 $md5 =
                     $file->getMd5();
+
 
                 $size =
                     $file->getSize();
 
 
+
                 $entries =
                     $this->directories
-                        ->findByReleaseFile(
-                            $file->getId()
-                        );
+                         ->findByReleaseFile(
+                             $file->getId()
+                         );
 
 
                 $fileCount =
                     count($entries);
             }
         }
+
 
 
         $message =
@@ -263,6 +253,7 @@ final class ImportController extends Controller
             . '<br>'
             . 'Entry: '
             . $entryName;
+
 
 
         if ($filename !== null) {
@@ -280,6 +271,7 @@ final class ImportController extends Controller
                 . '<br>Katalogposter: '
                 . $fileCount;
         }
+
 
 
         $this->render(
@@ -308,10 +300,12 @@ final class ImportController extends Controller
                 : null;
 
 
+
         $path =
             $this->request->post(
                 'path'
             );
+
 
 
         if (empty($path)) {
@@ -328,6 +322,7 @@ final class ImportController extends Controller
         }
 
 
+
         if (!is_file($path)) {
 
             $this->render(
@@ -342,17 +337,33 @@ final class ImportController extends Controller
         }
 
 
-        $releaseId =
+
+        $result =
             $this->importer
-                ->import(
-                    $path,
-                    $entryId,
-                    true
-                );
+                 ->import(
+                     $path,
+                     $entryId,
+                     true
+                 );
+
+
+
+        if ($result->isDuplicate()) {
+
+            $view = new View();
+
+            $view->render(
+                'import/duplicate',
+                $result->getDuplicateData()
+            );
+
+            return;
+        }
+
 
 
         $this->renderImportResult(
-            $releaseId
+            $result->getReleaseId()
         );
     }
 
@@ -382,4 +393,3 @@ final class ImportController extends Controller
         );
     }
 }
-

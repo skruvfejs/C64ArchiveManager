@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Entity\ImportResult;
 use App\Entity\Release;
 use App\Entity\ReleaseFile;
 use App\Repositories\ReleaseRepository;
@@ -29,7 +30,7 @@ final class D71ImporterService
         string $filename,
         int $entryId,
         bool $forceDuplicate = false
-    ): int {
+    ): ImportResult {
 
         if (!is_file($filename)) {
 
@@ -170,6 +171,7 @@ final class D71ImporterService
                      ->create($releaseFile);
         }
 
+
         /*
          * Importera katalogposter
          */
@@ -177,9 +179,6 @@ final class D71ImporterService
         $entries =
             $this->directoryParser
                  ->readDirectory($filename);
-
-
-
         foreach ($entries as $entry) {
 
 
@@ -221,7 +220,10 @@ final class D71ImporterService
 
 
 
-        return $releaseId;
+        return new ImportResult(
+            $releaseId,
+            count($entries)
+        );
     }
 
 
@@ -261,4 +263,3 @@ final class D71ImporterService
         return $duplicateName;
     }
 }
-
