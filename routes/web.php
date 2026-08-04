@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Core\Router;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\DiskController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\DirectoryController;
@@ -40,6 +41,15 @@ return function (Router $router): void {
         [
             LoginController::class,
             'login'
+        ]
+    );
+
+
+    $router->get(
+        '/logout',
+        [
+            LogoutController::class,
+            'index'
         ]
     );
 
