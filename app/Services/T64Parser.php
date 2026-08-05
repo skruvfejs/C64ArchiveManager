@@ -8,13 +8,14 @@ use RuntimeException;
 
 final class T64Parser
 {
-    private const HEADER_SIZE = 32;
+    private const HEADER_SIZE = 64;
 
 
     public function __construct(
         private PetsciiDecoder $decoder
     ) {
     }
+
 
 
     /**
@@ -26,17 +27,19 @@ final class T64Parser
     {
         $fp = $this->open($filename);
 
+
         try {
 
-            $header = fread(
-                $fp,
-                self::HEADER_SIZE
-            );
+            $header =
+                fread(
+                    $fp,
+                    self::HEADER_SIZE
+                );
 
 
             if (
                 $header === false ||
-                strlen($header) !== 32
+                strlen($header) !== self::HEADER_SIZE
             ) {
 
                 throw new RuntimeException(
@@ -58,6 +61,7 @@ final class T64Parser
             }
 
 
+
             $version =
                 unpack(
                     'v',
@@ -69,6 +73,7 @@ final class T64Parser
                 )[1];
 
 
+
             $entries =
                 unpack(
                     'v',
@@ -78,6 +83,7 @@ final class T64Parser
                         2
                     )
                 )[1];
+
 
 
             return [
@@ -99,6 +105,7 @@ final class T64Parser
             ];
 
 
+
         } finally {
 
             fclose($fp);
@@ -106,36 +113,48 @@ final class T64Parser
         }
     }
 
-
-
     /**
-     * Läser filposter.
+     * Läser T64 filposter.
      *
      * @return array<int,array<string,mixed>>
      */
     public function readEntries(string $filename): array
     {
-        $fp = $this->open($filename);
+        $fp =
+            $this->open($filename);
 
 
         try {
 
+            /*
+             * Första katalogpost börjar på $40.
+             */
+            fseek(
+                $fp,
+                64
+            );
+
+
             $header =
-                fread(
-                    $fp,
-                    64
+                file_get_contents(
+                    $filename,
+                    false,
+                    null,
+                    0,
+                    self::HEADER_SIZE
                 );
 
 
             if (
                 $header === false ||
-                strlen($header) !== 64
+                strlen($header) !== self::HEADER_SIZE
             ) {
 
                 throw new RuntimeException(
                     'Unable to read T64 header.'
                 );
             }
+
 
 
             $entries =
@@ -149,13 +168,9 @@ final class T64Parser
                 )[1];
 
 
-            fseek(
-                $fp,
-                64
-            );
-
 
             $result = [];
+
 
             for (
                 $i = 0;
@@ -182,9 +197,14 @@ final class T64Parser
 
 
                 $type =
-                    ord($entry[0]);
+                    ord(
+                        $entry[0]
+                    );
 
 
+                /*
+                 * Hoppa över tomma entries.
+                 */
                 if ($type === 0) {
 
                     continue;
@@ -254,7 +274,11 @@ final class T64Parser
                         $offset,
 
                     'size' =>
-                        $endAddress - $startAddress,
+                        max(
+                            0,
+                            $endAddress - $startAddress
+                        )
+
                 ];
             }
 

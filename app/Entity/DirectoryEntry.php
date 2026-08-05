@@ -22,6 +22,10 @@ final class DirectoryEntry
 
     private int $blocks = 0;
 
+    private ?int $fileOffset = null;
+
+    private ?int $fileSize = null;
+
     private bool $locked = false;
 
     private bool $closed = true;
@@ -29,6 +33,7 @@ final class DirectoryEntry
     private ?string $createdAt = null;
 
     private ?string $updatedAt = null;
+
 
 
     public function getId(): ?int
@@ -155,6 +160,38 @@ final class DirectoryEntry
 
         return $this;
     }
+
+    public function getFileOffset(): ?int
+    {
+        return $this->fileOffset;
+    }
+
+
+    public function setFileOffset(
+        ?int $fileOffset
+    ): self {
+
+        $this->fileOffset = $fileOffset;
+
+        return $this;
+    }
+
+
+    public function getFileSize(): ?int
+    {
+        return $this->fileSize;
+    }
+
+
+    public function setFileSize(
+        ?int $fileSize
+    ): self {
+
+        $this->fileSize = $fileSize;
+
+        return $this;
+    }
+
 
 
     public function isLocked(): bool

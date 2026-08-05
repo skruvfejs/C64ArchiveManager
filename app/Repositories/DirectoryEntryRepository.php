@@ -24,6 +24,8 @@ final class DirectoryEntryRepository extends Repository
                 start_track,
                 start_sector,
                 blocks,
+                file_offset,
+                file_size,
                 locked,
                 closed
             )
@@ -36,6 +38,8 @@ final class DirectoryEntryRepository extends Repository
                 :start_track,
                 :start_sector,
                 :blocks,
+                :file_offset,
+                :file_size,
                 :locked,
                 :closed
             )
@@ -65,6 +69,12 @@ final class DirectoryEntryRepository extends Repository
 
             'blocks' =>
                 $entry->getBlocks(),
+
+            'file_offset' =>
+                $entry->getFileOffset(),
+
+            'file_size' =>
+                $entry->getFileSize(),
 
             'locked' =>
                 $entry->isLocked()
@@ -153,7 +163,6 @@ final class DirectoryEntryRepository extends Repository
         );
     }
 
-
     public function findExisting(
         int $releaseFileId,
         string $filename,
@@ -200,6 +209,7 @@ final class DirectoryEntryRepository extends Repository
     }
 
 
+
     public function update(
         DirectoryEntry $entry
     ): bool {
@@ -213,6 +223,8 @@ final class DirectoryEntryRepository extends Repository
                 start_track = :start_track,
                 start_sector = :start_sector,
                 blocks = :blocks,
+                file_offset = :file_offset,
+                file_size = :file_size,
                 locked = :locked,
                 closed = :closed
             WHERE id = :id
@@ -240,6 +252,12 @@ final class DirectoryEntryRepository extends Repository
             'blocks' =>
                 $entry->getBlocks(),
 
+            'file_offset' =>
+                $entry->getFileOffset(),
+
+            'file_size' =>
+                $entry->getFileSize(),
+
             'locked' =>
                 $entry->isLocked()
                     ? 1
@@ -252,6 +270,7 @@ final class DirectoryEntryRepository extends Repository
 
         ]);
     }
+
 
 
     public function delete(
@@ -272,6 +291,7 @@ final class DirectoryEntryRepository extends Repository
 
         ]);
     }
+
 
 
     private function hydrate(
@@ -318,6 +338,18 @@ final class DirectoryEntryRepository extends Repository
                 (int) $row['blocks']
             )
 
+            ->setFileOffset(
+                $row['file_offset'] !== null
+                    ? (int) $row['file_offset']
+                    : null
+            )
+
+            ->setFileSize(
+                $row['file_size'] !== null
+                    ? (int) $row['file_size']
+                    : null
+            )
+
             ->setLocked(
                 (bool) $row['locked']
             )
@@ -327,4 +359,3 @@ final class DirectoryEntryRepository extends Repository
             );
     }
 }
-

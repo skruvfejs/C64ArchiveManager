@@ -143,14 +143,8 @@ final class T64ImporterService
             ->setSize(
                 filesize($filename)
             )
-            ->setCrc32(
-                $checksum['crc32']
-            )
             ->setMd5(
                 $checksum['md5']
-            )
-            ->setSha1(
-                $checksum['sha1']
             );
 
 
@@ -186,6 +180,12 @@ final class T64ImporterService
                 )
                 ->setBlocks(
                     0
+                )
+                ->setFileOffset(
+                    $t64Entry['offset'] ?? null
+                )
+                ->setFileSize(
+                    $t64Entry['size'] ?? null
                 );
 
 
