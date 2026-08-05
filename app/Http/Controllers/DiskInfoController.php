@@ -77,25 +77,65 @@ final class DiskInfoController extends Controller
             );
 
 
-        $blocksUsed =
-            array_sum(
-                array_map(
-                    fn($entry): int =>
-                        $entry->getBlocks(),
-                    $entries
-                )
-            );
-
-
         $format =
-            $file->getFormat();
-
-
-        $totalBlocks =
-            $this->geometry->totalBlocks(
-                $format
+            strtoupper(
+                $file->getFormat()
             );
 
+
+        $isT64 =
+            $format === 'T64';
+
+
+
+        if ($isT64) {
+
+
+            $used =
+                array_sum(
+                    array_map(
+                        fn($entry): int =>
+                            $entry->getFileSize() ?? 0,
+                        $entries
+                    )
+                );
+
+
+            $totalBlocks = 0;
+
+            $blocksFree = 0;
+
+
+            $fileSize =
+                $used;
+
+
+        } else {
+
+
+            $used =
+                array_sum(
+                    array_map(
+                        fn($entry): int =>
+                            $entry->getBlocks(),
+                        $entries
+                    )
+                );
+
+
+            $totalBlocks =
+                $this->geometry->totalBlocks(
+                    $format
+                );
+
+
+            $blocksFree =
+                $totalBlocks - $used;
+
+
+            $fileSize = null;
+
+        }
 
         $view = new View();
 
@@ -103,41 +143,59 @@ final class DiskInfoController extends Controller
         $view->render(
             'disk/info',
             [
+
                 'title' =>
                     'Disk Information',
+
 
                 'release' =>
                     $release,
 
+
                 'file' =>
                     $file,
 
+
                 'format' =>
                     $format,
+
 
                 'diskType' =>
                     $this->geometry->diskType(
                         $format
                     ),
 
+
                 'tracks' =>
                     $this->geometry->tracks(
                         $format
                     ),
 
+
                 'totalBlocks' =>
                     $totalBlocks,
 
+
                 'blocksUsed' =>
-                    $blocksUsed,
+                    $used,
+
 
                 'blocksFree' =>
-                    $totalBlocks - $blocksUsed,
+                    $blocksFree,
+
 
                 'fileCount' =>
-                    count($entries)
+                    count($entries),
+
+
+                'isT64' =>
+                    $isT64,
+
+
+                'fileSize' =>
+                    $fileSize
+
             ]
         );
     }
 }
-

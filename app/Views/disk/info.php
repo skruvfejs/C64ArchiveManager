@@ -1,3 +1,4 @@
+
 <h1><?= $title ?></h1>
 
 
@@ -27,12 +28,23 @@ TYPE:
 
 
 TRACKS:
+<?php if ($isT64): ?>
+N/A
+<?php else: ?>
 <?= $tracks ?>
-
+<?php endif; ?>
 
 FILES:
 <?= $fileCount ?>
 
+
+<?php if ($isT64): ?>
+
+SIZE:
+<?= $fileSize ?> bytes
+
+
+<?php else: ?>
 
 BLOCKS:
 <?= $blocksUsed ?> / <?= $totalBlocks ?>
@@ -40,6 +52,8 @@ BLOCKS:
 
 FREE:
 <?= $blocksFree ?>
+
+<?php endif; ?>
 
 
 </pre>

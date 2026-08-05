@@ -26,6 +26,7 @@ final class DiskGeometry
     }
 
 
+
     public function tracks(
         string $format
     ): int {
@@ -45,6 +46,7 @@ final class DiskGeometry
     }
 
 
+
     public function diskType(
         string $format
     ): string {
@@ -58,6 +60,8 @@ final class DiskGeometry
             'D71' => '1571',
 
             'D81' => '1581',
+
+            'T64' => 'Tape Image',
 
             default => 'Unknown'
         };
