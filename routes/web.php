@@ -92,6 +92,13 @@ return function (Router $router): void {
 
 
     $router->get(
+        '/file/download',
+        [
+            FileController::class,
+            'download'
+        ]
+    );
+    $router->get(
         '/import',
         [
             ImportController::class,
@@ -127,21 +134,21 @@ return function (Router $router): void {
     );
 
 
-$router->get(
-    '/entry',
-    [
-        EntryController::class,
-        'index'
-    ]
-);
+    $router->get(
+        '/entry',
+        [
+            EntryController::class,
+            'index'
+        ]
+    );
 
-$router->get(
-    '/release',
-    [
-        ReleaseController::class,
-        'index'
-    ]
-);
+
+    $router->get(
+        '/release',
+        [
+            ReleaseController::class,
+            'index'
+        ]
+    );
 
 };
-

@@ -9,7 +9,7 @@
 <?php endif; ?>
 
 
-<h1><?= $title ?></h1>
+<h1><?= htmlspecialchars($title) ?></h1>
 
 
 <h2>
@@ -81,8 +81,6 @@
 </tr>
 
 <?php endif; ?>
-
-
 <tr>
     <th>Directory position</th>
     <td>
@@ -125,3 +123,10 @@
 
 </table>
 
+
+<br>
+
+
+<a href="/file/download?id=<?= $entry->getId() ?>">
+    Download file
+</a>
