@@ -13,7 +13,9 @@ final class C64FileExtractorService
     public function __construct(
         private D64FileReader $d64Reader,
         private D71FileReader $d71Reader,
-        private D81FileReader $d81Reader
+        private D81FileReader $d81Reader,
+        private T64FileReader $t64Reader,
+        private T64Parser $t64Parser
     ) {
     }
 
@@ -31,6 +33,7 @@ final class C64FileExtractorService
 
 
         return match ($format) {
+
 
             'D64' =>
                 $this->d64Reader->read(
@@ -56,12 +59,57 @@ final class C64FileExtractorService
                 ),
 
 
+            'T64' =>
+                $this->extractT64(
+                    $releaseFile,
+                    $entry
+                ),
+
+
             default =>
                 throw new RuntimeException(
                     'Unsupported disk format: '
                     . $format
                 )
         };
+    }
+
+
+    private function extractT64(
+        ReleaseFile $releaseFile,
+        DirectoryEntry $entry
+    ): string {
+
+
+        $entries =
+            $this->t64Parser
+                 ->readEntries(
+                     $releaseFile->getPath()
+                 );
+
+
+        foreach ($entries as $t64Entry) {
+
+
+            if (
+                strcasecmp(
+                    $t64Entry['name'],
+                    $entry->getFilename()
+                ) === 0
+            ) {
+
+                return $this->t64Reader->read(
+                    $releaseFile->getPath(),
+                    $t64Entry['offset'],
+                    $t64Entry['size']
+                );
+            }
+        }
+
+
+        throw new RuntimeException(
+            'T64 file entry not found.'
+        );
     }
 }
 

@@ -7,8 +7,10 @@ namespace App\Services;
 use App\Entity\ImportResult;
 use App\Entity\Release;
 use App\Entity\ReleaseFile;
+use App\Entity\DirectoryEntry;
 use App\Repositories\ReleaseRepository;
 use App\Repositories\ReleaseFileRepository;
+use App\Repositories\DirectoryEntryRepository;
 use RuntimeException;
 
 final class T64ImporterService
@@ -17,10 +19,10 @@ final class T64ImporterService
         private T64Parser $parser,
         private ChecksumService $checksumService,
         private ReleaseRepository $releaseRepository,
-        private ReleaseFileRepository $releaseFileRepository
+        private ReleaseFileRepository $releaseFileRepository,
+        private DirectoryEntryRepository $directoryEntryRepository
     ) {
     }
-
 
 
     public function import(
@@ -38,11 +40,9 @@ final class T64ImporterService
         }
 
 
-
         $header =
             $this->parser
                  ->parse($filename);
-
 
 
         $checksum =
@@ -54,7 +54,6 @@ final class T64ImporterService
         $existingReleaseFile = null;
 
 
-
         if (!$forceDuplicate) {
 
             $existingReleaseFile =
@@ -64,7 +63,6 @@ final class T64ImporterService
                          $entryId
                      );
         }
-
 
 
         if ($existingReleaseFile !== null) {
@@ -98,16 +96,13 @@ final class T64ImporterService
             new Release();
 
 
-
         $name =
             $header['description'] !== ''
                 ? $header['description']
                 : basename($filename);
 
 
-
         $version = 'T64';
-
 
 
         if ($forceDuplicate) {
@@ -121,7 +116,6 @@ final class T64ImporterService
         }
 
 
-
         $release
             ->setEntryId($entryId)
             ->setName($name)
@@ -132,7 +126,11 @@ final class T64ImporterService
         $releaseId =
             $this->releaseRepository
                  ->create($release);
-        $releaseFile = new ReleaseFile();
+
+
+
+        $releaseFile =
+            new ReleaseFile();
 
 
         $releaseFile
@@ -156,15 +154,50 @@ final class T64ImporterService
             );
 
 
+        $releaseFileId =
+            $this->releaseFileRepository
+                 ->create($releaseFile);
 
-        $this->releaseFileRepository
-             ->create($releaseFile);
+        $entries =
+            $this->parser
+                 ->readEntries($filename);
+
+
+
+        foreach ($entries as $position => $t64Entry) {
+
+
+            $entry =
+                new DirectoryEntry();
+
+
+            $entry
+                ->setReleaseFileId(
+                    $releaseFileId
+                )
+                ->setFilename(
+                    $t64Entry['name']
+                )
+                ->setDirectoryPosition(
+                    $position
+                )
+                ->setFiletype(
+                    'PRG'
+                )
+                ->setBlocks(
+                    0
+                );
+
+
+            $this->directoryEntryRepository
+                 ->create($entry);
+        }
 
 
 
         return new ImportResult(
             $releaseId,
-            1
+            count($entries)
         );
     }
 

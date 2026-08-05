@@ -10,6 +10,13 @@ final class T64Parser
 {
     private const HEADER_SIZE = 32;
 
+
+    public function __construct(
+        private PetsciiDecoder $decoder
+    ) {
+    }
+
+
     /**
      * Läser T64 metadata.
      *
@@ -21,9 +28,17 @@ final class T64Parser
 
         try {
 
-            $header = fread($fp, self::HEADER_SIZE);
+            $header = fread(
+                $fp,
+                self::HEADER_SIZE
+            );
 
-            if ($header === false || strlen($header) !== 32) {
+
+            if (
+                $header === false ||
+                strlen($header) !== 32
+            ) {
+
                 throw new RuntimeException(
                     'Unable to read T64 header.'
                 );
@@ -36,6 +51,7 @@ final class T64Parser
                     'C64'
                 )
             ) {
+
                 throw new RuntimeException(
                     'Invalid T64 file.'
                 );
@@ -45,30 +61,39 @@ final class T64Parser
             $version =
                 unpack(
                     'v',
-                    substr($header, 24, 2)
+                    substr(
+                        $header,
+                        32,
+                        2
+                    )
                 )[1];
 
 
             $entries =
                 unpack(
                     'v',
-                    substr($header, 26, 2)
+                    substr(
+                        $header,
+                        34,
+                        2
+                    )
                 )[1];
 
 
             return [
-                'version' => $version,
-                'entries' => $entries,
+
+                'version' =>
+                    $version,
+
+                'entries' =>
+                    $entries,
+
                 'description' =>
-                    rtrim(
-                        str_replace(
-                            "\x20",
-                            ' ',
-                            substr(
-                                $header,
-                                8,
-                                24
-                            )
+                    $this->decoder->decode(
+                        substr(
+                            $header,
+                            8,
+                            24
                         )
                     )
             ];
@@ -82,6 +107,7 @@ final class T64Parser
     }
 
 
+
     /**
      * Läser filposter.
      *
@@ -91,18 +117,25 @@ final class T64Parser
     {
         $fp = $this->open($filename);
 
+
         try {
 
-            fseek(
-                $fp,
-                32
-            );
+            $header =
+                fread(
+                    $fp,
+                    64
+                );
 
 
-            $header = fread(
-                $fp,
-                32
-            );
+            if (
+                $header === false ||
+                strlen($header) !== 64
+            ) {
+
+                throw new RuntimeException(
+                    'Unable to read T64 header.'
+                );
+            }
 
 
             $entries =
@@ -110,29 +143,42 @@ final class T64Parser
                     'v',
                     substr(
                         $header,
-                        26,
+                        34,
                         2
                     )
                 )[1];
 
 
+            fseek(
+                $fp,
+                64
+            );
+
+
             $result = [];
 
+            for (
+                $i = 0;
+                $i < $entries;
+                $i++
+            ) {
 
-            for ($i = 0; $i < $entries; $i++) {
 
-                $entry = fread(
-                    $fp,
-                    32
-                );
+                $entry =
+                    fread(
+                        $fp,
+                        32
+                    );
 
 
                 if (
                     $entry === false ||
                     strlen($entry) !== 32
                 ) {
+
                     break;
                 }
+
 
 
                 $type =
@@ -140,8 +186,10 @@ final class T64Parser
 
 
                 if ($type === 0) {
+
                     continue;
                 }
+
 
 
                 $startAddress =
@@ -155,6 +203,7 @@ final class T64Parser
                     )[1];
 
 
+
                 $endAddress =
                     unpack(
                         'v',
@@ -164,6 +213,7 @@ final class T64Parser
                             2
                         )
                     )[1];
+
 
 
                 $offset =
@@ -177,35 +227,41 @@ final class T64Parser
                     )[1];
 
 
+
                 $name =
-                    rtrim(
-                        str_replace(
-                            "\x20",
-                            ' ',
-                            substr(
-                                $entry,
-                                16,
-                                16
-                            )
+                    $this->decoder->decode(
+                        substr(
+                            $entry,
+                            16,
+                            16
                         )
                     );
 
 
+
                 $result[] = [
-                    'name' => $name,
+
+                    'name' =>
+                        $name,
+
                     'start_address' =>
                         $startAddress,
+
                     'end_address' =>
                         $endAddress,
+
                     'offset' =>
                         $offset,
+
                     'size' =>
                         $endAddress - $startAddress,
                 ];
             }
 
 
+
             return $result;
+
 
 
         } finally {
@@ -214,6 +270,8 @@ final class T64Parser
 
         }
     }
+
+
 
 
     private function open(string $filename)
@@ -226,10 +284,11 @@ final class T64Parser
         }
 
 
-        $fp = fopen(
-            $filename,
-            'rb'
-        );
+        $fp =
+            fopen(
+                $filename,
+                'rb'
+            );
 
 
         if ($fp === false) {
@@ -243,4 +302,3 @@ final class T64Parser
         return $fp;
     }
 }
-
