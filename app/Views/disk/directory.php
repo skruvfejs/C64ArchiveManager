@@ -44,19 +44,43 @@ TOTAL BLOCKS:
     <thead>
         <tr>
             <th>BLOCKS</th>
+            <th>SIZE</th>
             <th>FILE</th>
             <th>TYPE</th>
         </tr>
     </thead>
 
+
     <tbody>
+
 
 <?php foreach ($directories[$file->getId()] ?? [] as $entry): ?>
 
         <tr>
+
             <td>
                 <?= $entry->getBlocks() ?>
             </td>
+
+
+            <td>
+                <?php
+
+                if ($entry->getFileSize() !== null) {
+
+                    echo $entry->getFileSize() . ' bytes';
+
+                } else {
+
+                    echo (
+                        $entry->getBlocks() * 254
+                    ) . ' bytes';
+
+                }
+
+                ?>
+            </td>
+
 
             <td>
                 <a href="/file?id=<?= $entry->getId() ?>">
@@ -66,39 +90,46 @@ TOTAL BLOCKS:
                 </a>
             </td>
 
+
             <td>
                 <?= htmlspecialchars(
                     $entry->getFiletype()
                 ) ?>
             </td>
+
         </tr>
 
+
 <?php endforeach; ?>
+
 
     </tbody>
 </table>
 
-
 <p>
-<?= count(
-    $directories[$file->getId()] ?? []
-) ?> FILES
+    <?= count(
+        $directories[$file->getId()] ?? []
+    ) ?> FILES
 </p>
 
 
+
 <p>
-BLOCKS USED:
-<?= $blocksUsed[$file->getId()] ?? 0 ?>
+    BLOCKS USED:
+    <?= $blocksUsed[$file->getId()] ?? 0 ?>
 </p>
 
 
+
 <p>
-BLOCKS FREE:
-<?= $blocksFree[$file->getId()] ?? 0 ?>
+    BLOCKS FREE:
+    <?= $blocksFree[$file->getId()] ?? 0 ?>
 </p>
+
 
 
 <?php endforeach; ?>
+
 
 
 <p>
@@ -106,6 +137,7 @@ BLOCKS FREE:
         → Disk Information
     </a>
 </p>
+
 
 
 <p>

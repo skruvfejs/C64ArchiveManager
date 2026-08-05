@@ -82,22 +82,54 @@ final class DirectoryController extends Controller
                 $entries;
 
 
-            $used =
-                array_sum(
-                    array_map(
-                        fn($entry): int =>
-                            $entry->getBlocks(),
-                        $entries
-                    )
-                );
+
+            /*
+             * T64 har ingen BAM/blockräkning.
+             * Därför används file_size.
+             *
+             * D64/D71/D81 använder blocks.
+             */
+            if (
+                strtoupper(
+                    $file->getFormat()
+                ) === 'T64'
+            ) {
+
+
+                $used =
+                    array_sum(
+                        array_map(
+                            fn($entry): int =>
+                                $entry->getFileSize() ?? 0,
+                            $entries
+                        )
+                    );
+
+
+            } else {
+
+
+                $used =
+                    array_sum(
+                        array_map(
+                            fn($entry): int =>
+                                $entry->getBlocks(),
+                            $entries
+                        )
+                    );
+
+            }
+
 
 
             $blocksUsed[$file->getId()] =
                 $used;
 
 
+
             $format =
                 $file->getFormat();
+
 
 
             $total =
@@ -106,8 +138,10 @@ final class DirectoryController extends Controller
                 );
 
 
+
             $totalBlocks[$file->getId()] =
                 $total;
+
 
 
             $diskTypes[$file->getId()] =
@@ -116,16 +150,35 @@ final class DirectoryController extends Controller
                 );
 
 
+
             $tracks[$file->getId()] =
                 $this->geometry->tracks(
                     $format
                 );
 
 
-            $blocksFree[$file->getId()] =
-                $total > 0
-                    ? $total - $used
-                    : 0;
+            /*
+             * T64 har ingen total blockkapacitet.
+             * Behåll 0 från DiskGeometry.
+             */
+            if (
+                strtoupper(
+                    $format
+                ) === 'T64'
+            ) {
+
+                $blocksFree[$file->getId()] = 0;
+
+
+            } else {
+
+
+                $blocksFree[$file->getId()] =
+                    $total > 0
+                        ? $total - $used
+                        : 0;
+
+            }
         }
 
 
@@ -135,34 +188,43 @@ final class DirectoryController extends Controller
         $view->render(
             'disk/directory',
             [
+
                 'title' =>
                     'C64 Directory',
+
 
                 'release' =>
                     $release,
 
+
                 'files' =>
                     $files,
+
 
                 'directories' =>
                     $directories,
 
+
                 'blocksUsed' =>
                     $blocksUsed,
+
 
                 'blocksFree' =>
                     $blocksFree,
 
+
                 'totalBlocks' =>
                     $totalBlocks,
+
 
                 'diskTypes' =>
                     $diskTypes,
 
+
                 'tracks' =>
                     $tracks
+
             ]
         );
     }
 }
-
