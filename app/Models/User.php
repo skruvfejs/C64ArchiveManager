@@ -40,7 +40,7 @@ final class User
             'SELECT *
              FROM users
              WHERE username = :username
-               AND active = 1
+               AND deleted_at IS NULL
              LIMIT 1'
         );
 
@@ -74,8 +74,7 @@ final class User
                 email,
                 password,
                 first_name,
-                last_name,
-                active
+                last_name
             )
             VALUES
             (
@@ -84,8 +83,7 @@ final class User
                 :email,
                 :password,
                 :first_name,
-                :last_name,
-                :active
+                :last_name
             )'
         );
 
@@ -96,10 +94,9 @@ final class User
             'password'   => $data['password'],
             'first_name' => $data['first_name'],
             'last_name'  => $data['last_name'],
-            'active'     => $data['active'] ?? 1,
         ]);
 
-        return (int)$this->pdo->lastInsertId();
+        return (int) $this->pdo->lastInsertId();
     }
 
     public function update(int $id, array $data): bool
@@ -107,13 +104,12 @@ final class User
         $stmt = $this->pdo->prepare(
             'UPDATE users
              SET
-                role_id = :role_id,
-                username = :username,
-                email = :email,
-                first_name = :first_name,
-                last_name = :last_name,
-                active = :active,
-                updated_at = NOW()
+                 role_id = :role_id,
+                 username = :username,
+                 email = :email,
+                 first_name = :first_name,
+                 last_name = :last_name,
+                 updated_at = NOW()
              WHERE id = :id'
         );
 
@@ -124,7 +120,6 @@ final class User
             'email'      => $data['email'],
             'first_name' => $data['first_name'],
             'last_name'  => $data['last_name'],
-            'active'     => $data['active'],
         ]);
     }
 
@@ -133,13 +128,13 @@ final class User
         $stmt = $this->pdo->prepare(
             'UPDATE users
              SET
-                password = :password,
-                updated_at = NOW()
+                 password = :password,
+                 updated_at = NOW()
              WHERE id = :id'
         );
 
         return $stmt->execute([
-            'id' => $id,
+            'id'       => $id,
             'password' => $passwordHash,
         ]);
     }
@@ -156,4 +151,3 @@ final class User
         ]);
     }
 }
-

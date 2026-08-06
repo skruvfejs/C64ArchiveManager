@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Core;
 
 use App\Http\Request;
+use App\Repositories\UserRepository;
+use App\Services\UserService;
 
 final class Application
 {
@@ -74,13 +76,20 @@ final class Application
             )
         );
 
+$this->container->singleton(
+    UserRepository::class,
+    fn (Container $c) => new UserRepository(
+        $c->get(Database::class)
+    )
+);
 
-        $this->container->singleton(
-            \App\Models\User::class,
-            fn (Container $c) => new \App\Models\User(
-                $c->get(Database::class)
-            )
-        );
+$this->container->singleton(
+    UserService::class,
+    fn (Container $c) => new UserService(
+        $c->get(UserRepository::class)
+    )
+);
+
 
 
         $this->container->singleton(
