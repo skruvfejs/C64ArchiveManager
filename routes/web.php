@@ -15,9 +15,10 @@ use App\Http\Controllers\ImportLogController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ReleaseController;
 
+use App\Http\Middleware\AuthMiddleware;
+use App\Http\Middleware\ImportMiddleware;
 
 return function (Router $router): void {
-
 
     $router->get(
         '/',
@@ -27,7 +28,6 @@ return function (Router $router): void {
         ]
     );
 
-
     $router->get(
         '/login',
         [
@@ -35,7 +35,6 @@ return function (Router $router): void {
             'index'
         ]
     );
-
 
     $router->post(
         '/login',
@@ -45,15 +44,16 @@ return function (Router $router): void {
         ]
     );
 
-
     $router->get(
         '/logout',
         [
             LogoutController::class,
             'index'
+        ],
+        [
+            AuthMiddleware::class,
         ]
     );
-
 
     $router->get(
         '/disk',
@@ -63,7 +63,6 @@ return function (Router $router): void {
         ]
     );
 
-
     $router->get(
         '/disk/directory',
         [
@@ -71,7 +70,6 @@ return function (Router $router): void {
             'index'
         ]
     );
-
 
     $router->get(
         '/disk/info',
@@ -81,7 +79,6 @@ return function (Router $router): void {
         ]
     );
 
-
     $router->get(
         '/file',
         [
@@ -90,7 +87,6 @@ return function (Router $router): void {
         ]
     );
 
-
     $router->get(
         '/file/download',
         [
@@ -98,41 +94,52 @@ return function (Router $router): void {
             'download'
         ]
     );
+
     $router->get(
         '/import',
         [
             ImportController::class,
             'index'
+        ],
+        [
+            AuthMiddleware::class,
         ]
     );
-
 
     $router->post(
         '/import',
         [
             ImportController::class,
             'upload'
+        ],
+        [
+            AuthMiddleware::class,
+            ImportMiddleware::class,
         ]
     );
-
 
     $router->post(
         '/import/force',
         [
             ImportController::class,
             'force'
+        ],
+        [
+            AuthMiddleware::class,
+            ImportMiddleware::class,
         ]
     );
-
 
     $router->get(
         '/import/logs',
         [
             ImportLogController::class,
             'index'
+        ],
+        [
+            AuthMiddleware::class,
         ]
     );
-
 
     $router->get(
         '/entry',
@@ -142,7 +149,6 @@ return function (Router $router): void {
         ]
     );
 
-
     $router->get(
         '/release',
         [
@@ -150,5 +156,5 @@ return function (Router $router): void {
             'index'
         ]
     );
-
 };
+

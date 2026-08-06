@@ -13,9 +13,18 @@ return [
                 release_file_id INT UNSIGNED NOT NULL,
 
                 filename VARCHAR(255) NOT NULL,
+
+                directory_position SMALLINT UNSIGNED DEFAULT NULL,
+
                 filetype CHAR(3) NOT NULL,
 
+                start_track TINYINT UNSIGNED DEFAULT NULL,
+                start_sector TINYINT UNSIGNED DEFAULT NULL,
+
                 blocks SMALLINT UNSIGNED NOT NULL,
+
+                file_offset INT UNSIGNED DEFAULT NULL,
+                file_size INT UNSIGNED DEFAULT NULL,
 
                 locked BOOLEAN NOT NULL DEFAULT FALSE,
                 closed BOOLEAN NOT NULL DEFAULT TRUE,
@@ -32,7 +41,10 @@ return [
 
                 INDEX idx_directory_entries_release_file (release_file_id),
                 INDEX idx_directory_entries_filename (filename),
+                INDEX idx_directory_entries_directory_position (directory_position),
                 INDEX idx_directory_entries_filetype (filetype),
+                INDEX idx_directory_entries_start_track (start_track),
+                INDEX idx_directory_entries_start_sector (start_sector),
                 INDEX idx_directory_entries_blocks (blocks),
                 INDEX idx_directory_entries_locked (locked),
                 INDEX idx_directory_entries_closed (closed)
@@ -53,4 +65,3 @@ return [
     }
 
 ];
-

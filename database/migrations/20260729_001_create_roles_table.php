@@ -30,9 +30,11 @@ return [
             INSERT IGNORE INTO roles
                 (id, name, description)
             VALUES
-                (1, 'Admin', 'Full access'),
-                (2, 'User', 'Standard user'),
-                (3, 'ReadOnly', 'Read only access')
+                (1, 'Super Admin', 'Full system owner'),
+                (2, 'Admin', 'System administrator'),
+                (3, 'Power User', 'Advanced contributor'),
+                (4, 'User', 'Standard contributor'),
+                (5, 'ReadOnly', 'Read only access')
         ");
 
         $stmt->execute();

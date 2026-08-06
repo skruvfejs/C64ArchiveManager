@@ -6,28 +6,18 @@ return [
 
     'up' => function (PDO $pdo): void {
 
-        $pdo->exec("
-            ALTER TABLE directory_entries
-
-            ADD COLUMN file_offset BIGINT UNSIGNED NULL
-                AFTER blocks,
-
-            ADD COLUMN file_size INT UNSIGNED NULL
-                AFTER file_offset
-        ");
+        // Intentionally left empty.
+        //
+        // file_offset and file_size were moved into
+        // 20260729_009_create_directory_entries_table.php
+        // so that a fresh installation creates the complete
+        // schema directly.
 
     },
 
-
     'down' => function (PDO $pdo): void {
 
-        $pdo->exec("
-            ALTER TABLE directory_entries
-
-            DROP COLUMN file_size,
-
-            DROP COLUMN file_offset
-        ");
+        // Nothing to rollback.
 
     }
 

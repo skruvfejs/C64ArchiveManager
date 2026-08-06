@@ -14,6 +14,10 @@ return [
 
                 filename VARCHAR(255) NOT NULL,
                 format VARCHAR(20) NOT NULL,
+
+                disk_name VARCHAR(32) DEFAULT NULL,
+                disk_id VARCHAR(8) DEFAULT NULL,
+
                 path VARCHAR(1024) NOT NULL,
 
                 size BIGINT UNSIGNED NOT NULL,
@@ -36,6 +40,8 @@ return [
 
                 INDEX idx_release_files_release (release_id),
                 INDEX idx_release_files_format (format),
+                INDEX idx_release_files_disk_name (disk_name),
+                INDEX idx_release_files_disk_id (disk_id),
                 INDEX idx_release_files_crc32 (crc32),
                 INDEX idx_release_files_md5 (md5),
                 INDEX idx_release_files_sha1 (sha1)
@@ -56,3 +62,4 @@ return [
     }
 
 ];
+

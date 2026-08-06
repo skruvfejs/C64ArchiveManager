@@ -14,7 +14,7 @@ return [
         );
 
         $stmt->execute([
-            'username' => 'admin'
+            'username' => 'screwface'
         ]);
 
         if ($stmt->fetch()) {
@@ -46,11 +46,11 @@ return [
 
         $stmt->execute([
             'role_id'    => 1,
-            'username'   => 'admin',
+            'username'   => 'screwface',
             'email'      => 'admin@localhost',
             'password'   => password_hash('admin', PASSWORD_DEFAULT),
-            'first_name' => 'System',
-            'last_name'  => 'Administrator',
+            'first_name' => '',
+            'last_name'  => '',
             'active'     => 1,
         ]);
     },
@@ -63,9 +63,8 @@ return [
         );
 
         $stmt->execute([
-            'username' => 'admin'
+            'username' => 'screwface'
         ]);
     }
 
 ];
-
