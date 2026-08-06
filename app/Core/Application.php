@@ -6,6 +6,7 @@ namespace App\Core;
 
 use App\Http\Request;
 use App\Repositories\UserRepository;
+use App\Services\RegistrationService;
 use App\Services\UserService;
 
 final class Application
@@ -76,22 +77,29 @@ final class Application
             )
         );
 
-$this->container->singleton(
-    UserRepository::class,
-    fn (Container $c) => new UserRepository(
-        $c->get(Database::class)
-    )
-);
 
-$this->container->singleton(
-    UserService::class,
-    fn (Container $c) => new UserService(
-        $c->get(UserRepository::class)
-    )
-);
+        $this->container->singleton(
+            UserRepository::class,
+            fn (Container $c) => new UserRepository(
+                $c->get(Database::class)
+            )
+        );
 
 
+        $this->container->singleton(
+            UserService::class,
+            fn (Container $c) => new UserService(
+                $c->get(UserRepository::class)
+            )
+        );
 
+
+        $this->container->singleton(
+            RegistrationService::class,
+            fn (Container $c) => new RegistrationService(
+                $c->get(UserService::class)
+            )
+        );
         $this->container->singleton(
             View::class,
             fn () => new View()
@@ -116,11 +124,15 @@ $this->container->singleton(
             require dirname(__DIR__, 2) . '/routes/web.php';
 
 
-        $routes($this->router);
+        $routes(
+            $this->router
+        );
 
 
         $this->router->dispatch(
-            $this->container->get(Request::class)
+            $this->container->get(
+                Request::class
+            )
         );
     }
 
@@ -130,3 +142,4 @@ $this->container->singleton(
         return $this->container;
     }
 }
+

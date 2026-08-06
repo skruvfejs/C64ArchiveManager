@@ -6,6 +6,7 @@ use App\Core\Router;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\DiskController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\DirectoryController;
@@ -41,6 +42,22 @@ return function (Router $router): void {
         [
             LoginController::class,
             'login'
+        ]
+    );
+
+    $router->get(
+        '/register',
+        [
+            RegisterController::class,
+            'index'
+        ]
+    );
+
+    $router->post(
+        '/register',
+        [
+            RegisterController::class,
+            'register'
         ]
     );
 
@@ -157,4 +174,3 @@ return function (Router $router): void {
         ]
     );
 };
-
