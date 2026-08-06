@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Core\Auth;
+use App\Core\Flash;
 use App\Core\Role;
 use App\Services\UserService;
 
@@ -12,7 +13,8 @@ final class UserDeleteController extends Controller
 {
     public function __construct(
         private readonly UserService $users,
-        private readonly Auth $auth
+        private readonly Auth $auth,
+        private readonly Flash $flash
     ) {
     }
 
@@ -42,11 +44,15 @@ final class UserDeleteController extends Controller
 
         if ($user === null) {
 
-            http_response_code(404);
+            $this->flash->error(
+                'Användaren hittades inte.'
+            );
 
-            echo 'Användaren hittades inte.';
+            header(
+                'Location: /users'
+            );
 
-            return;
+            exit;
         }
 
 
@@ -59,11 +65,15 @@ final class UserDeleteController extends Controller
             === $user->getId()
         ) {
 
-            http_response_code(403);
+            $this->flash->error(
+                'Du kan inte ta bort ditt eget konto.'
+            );
 
-            echo 'Du kan inte ta bort ditt eget konto.';
+            header(
+                'Location: /users'
+            );
 
-            return;
+            exit;
         }
 
 
@@ -76,11 +86,15 @@ final class UserDeleteController extends Controller
             === Role::SUPER_ADMIN
         ) {
 
-            http_response_code(403);
+            $this->flash->error(
+                'Super Admin-konton kan inte tas bort.'
+            );
 
-            echo 'Super Admin-konton kan inte tas bort.';
+            header(
+                'Location: /users'
+            );
 
-            return;
+            exit;
         }
 
 
@@ -95,12 +109,22 @@ final class UserDeleteController extends Controller
 
         if (!$result) {
 
-            http_response_code(500);
+            $this->flash->error(
+                'Kunde inte ta bort användaren.'
+            );
 
-            echo 'Kunde inte ta bort användaren.';
+            header(
+                'Location: /users'
+            );
 
-            return;
+            exit;
         }
+
+
+
+        $this->flash->success(
+            'Användaren har tagits bort.'
+        );
 
 
 

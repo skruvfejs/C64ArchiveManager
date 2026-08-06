@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Core\Authorization;
 use App\Core\Auth;
+use App\Core\Flash;
 use App\Core\Role;
 use App\Core\View;
 use App\Services\RoleService;
@@ -18,7 +19,8 @@ final class UserCreateController extends Controller
         private readonly RoleService $roles,
         private readonly Authorization $authorization,
         private readonly Auth $auth,
-        private readonly View $view
+        private readonly View $view,
+        private readonly Flash $flash
     ) {
     }
 
@@ -43,9 +45,6 @@ final class UserCreateController extends Controller
         /*
          * Pending används endast vid
          * självregistrering.
-         *
-         * Nya användare skapade av admin
-         * ska alltid få en aktiv roll.
          */
         $roles = array_filter(
             $roles,
@@ -110,38 +109,38 @@ final class UserCreateController extends Controller
 
 
 
-        /*
-         * Pending får aldrig skapas
-         * via adminpanelen.
-         */
         if (
             $roleId === Role::PENDING
         ) {
 
-            http_response_code(403);
+            $this->flash->error(
+                'Pending-konton kan endast skapas via registrering.'
+            );
 
-            echo 'Pending-konton kan endast skapas via registrering.';
+            header(
+                'Location: /users/create'
+            );
 
-            return;
+            exit;
         }
 
 
 
-        /*
-         * Endast Super Admin får skapa
-         * nya Super Admin-konton.
-         */
         if (
             $roleId === Role::SUPER_ADMIN
             &&
             !$this->authorization->isSuperAdmin()
         ) {
 
-            http_response_code(403);
+            $this->flash->error(
+                'Endast Super Admin får skapa Super Admin-konton.'
+            );
 
-            echo 'Endast Super Admin får skapa Super Admin-konton.';
+            header(
+                'Location: /users/create'
+            );
 
-            return;
+            exit;
         }
 
 
@@ -171,11 +170,15 @@ final class UserCreateController extends Controller
             $password === ''
         ) {
 
-            http_response_code(400);
+            $this->flash->error(
+                'Alla obligatoriska fält måste fyllas i.'
+            );
 
-            echo 'Alla obligatoriska fält måste fyllas i.';
+            header(
+                'Location: /users/create'
+            );
 
-            return;
+            exit;
         }
 
 
@@ -186,11 +189,15 @@ final class UserCreateController extends Controller
             )
         ) {
 
-            http_response_code(400);
+            $this->flash->error(
+                'Användarnamnet finns redan.'
+            );
 
-            echo 'Användarnamnet finns redan.';
+            header(
+                'Location: /users/create'
+            );
 
-            return;
+            exit;
         }
 
 
@@ -201,11 +208,15 @@ final class UserCreateController extends Controller
             )
         ) {
 
-            http_response_code(400);
+            $this->flash->error(
+                'E-postadressen finns redan.'
+            );
 
-            echo 'E-postadressen finns redan.';
+            header(
+                'Location: /users/create'
+            );
 
-            return;
+            exit;
         }
 
 
@@ -224,6 +235,12 @@ final class UserCreateController extends Controller
 
 
 
+        $this->flash->success(
+            'Användaren har skapats.'
+        );
+
+
+
         header(
             'Location: /users'
         );
@@ -231,4 +248,3 @@ final class UserCreateController extends Controller
         exit;
     }
 }
-

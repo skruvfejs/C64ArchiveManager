@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Core\Auth;
+use App\Core\Flash;
 use App\Core\Role;
 use App\Core\View;
 use App\Services\UserService;
@@ -14,7 +15,8 @@ final class DeletedUsersController extends Controller
     public function __construct(
         private readonly UserService $users,
         private readonly Auth $auth,
-        private readonly View $view
+        private readonly View $view,
+        private readonly Flash $flash
     ) {
     }
 
@@ -28,6 +30,7 @@ final class DeletedUsersController extends Controller
 
             exit;
         }
+
 
 
         $this->view->render(
@@ -54,9 +57,11 @@ final class DeletedUsersController extends Controller
         }
 
 
+
         $id = (int) (
             $_POST['id'] ?? 0
         );
+
 
 
         $user =
@@ -66,11 +71,15 @@ final class DeletedUsersController extends Controller
 
         if ($user === null) {
 
-            http_response_code(404);
+            $this->flash->error(
+                'Användaren hittades inte.'
+            );
 
-            echo 'Användaren hittades inte.';
+            header(
+                'Location: /users/deleted'
+            );
 
-            return;
+            exit;
         }
 
 
@@ -84,11 +93,15 @@ final class DeletedUsersController extends Controller
             === Role::SUPER_ADMIN
         ) {
 
-            http_response_code(403);
+            $this->flash->error(
+                'Super Admin-konton kan inte återställas här.'
+            );
 
-            echo 'Super Admin-konton kan inte återställas här.';
+            header(
+                'Location: /users/deleted'
+            );
 
-            return;
+            exit;
         }
 
 
@@ -97,11 +110,15 @@ final class DeletedUsersController extends Controller
             !$user->isDeleted()
         ) {
 
-            http_response_code(400);
+            $this->flash->error(
+                'Användaren är inte borttagen.'
+            );
 
-            echo 'Användaren är inte borttagen.';
+            header(
+                'Location: /users/deleted'
+            );
 
-            return;
+            exit;
         }
 
 
@@ -109,6 +126,13 @@ final class DeletedUsersController extends Controller
         $this->users->restore(
             $id
         );
+
+
+
+        $this->flash->success(
+            'Användaren har återställts.'
+        );
+
 
 
         header(

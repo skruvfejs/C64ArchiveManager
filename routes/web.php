@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\PasswordController;
 
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserEditController;
@@ -87,6 +88,36 @@ return function (Router $router): void {
         [
             LogoutController::class,
             'index'
+        ],
+        [
+            AuthMiddleware::class,
+        ]
+    );
+
+
+
+    /*
+     * Account
+     */
+
+
+    $router->get(
+        '/account/password',
+        [
+            PasswordController::class,
+            'index'
+        ],
+        [
+            AuthMiddleware::class,
+        ]
+    );
+
+
+    $router->post(
+        '/account/password',
+        [
+            PasswordController::class,
+            'update'
         ],
         [
             AuthMiddleware::class,

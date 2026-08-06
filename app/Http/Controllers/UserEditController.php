@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Core\Auth;
 use App\Core\Authorization;
+use App\Core\Flash;
 use App\Core\Role;
 use App\Core\View;
 use App\Services\RoleService;
@@ -18,7 +19,8 @@ final class UserEditController extends Controller
         private readonly RoleService $roles,
         private readonly Auth $auth,
         private readonly Authorization $authorization,
-        private readonly View $view
+        private readonly View $view,
+        private readonly Flash $flash
     ) {
     }
 
@@ -34,27 +36,54 @@ final class UserEditController extends Controller
         }
 
 
+
         $id = (int) (
             $_GET['id'] ?? 0
         );
+
 
 
         $user =
             $this->users->findById($id);
 
 
+
         if ($user === null) {
 
-            http_response_code(404);
+            $this->flash->error(
+                'Användaren hittades inte.'
+            );
 
-            echo 'Användaren hittades inte.';
+            header(
+                'Location: /users'
+            );
 
-            return;
+            exit;
         }
+
 
 
         $roles =
             $this->roles->findAll();
+
+
+
+        /*
+         * Pending används endast vid
+         * självregistrering.
+         *
+         * Ska inte kunna väljas
+         * från adminpanelen.
+         */
+        $roles = array_filter(
+            $roles,
+            function ($role) {
+
+                return $role->getId()
+                    !== Role::PENDING;
+            }
+        );
+
 
 
         if (
@@ -70,6 +99,7 @@ final class UserEditController extends Controller
                 }
             );
         }
+
 
 
         $this->view->render(
@@ -94,33 +124,45 @@ final class UserEditController extends Controller
         }
 
 
+
         $id = (int) (
             $_POST['id'] ?? 0
         );
+
 
 
         $user =
             $this->users->findById($id);
 
 
+
         if ($user === null) {
 
-            http_response_code(404);
+            $this->flash->error(
+                'Användaren hittades inte.'
+            );
 
-            echo 'Användaren hittades inte.';
+            header(
+                'Location: /users'
+            );
 
-            return;
+            exit;
         }
+
 
 
         $currentUserId =
             $this->auth->id();
 
 
+
         $roleId = (int) (
             $_POST['role_id']
             ?? $user->getRoleId()
         );
+
+
+
         /*
          * Skydda Super Admin-konton.
          *
@@ -135,20 +177,21 @@ final class UserEditController extends Controller
             !== $user->getId()
         ) {
 
-            http_response_code(403);
+            $this->flash->error(
+                'Du får inte ändra andra Super Admin-konton.'
+            );
 
-            echo 'Du får inte ändra andra Super Admin-konton.';
+            header(
+                'Location: /users'
+            );
 
-            return;
+            exit;
         }
 
 
 
         /*
          * Skydda sista Super Admin.
-         *
-         * Om detta är sista aktiva Super Admin
-         * får rollen inte ändras till något annat.
          */
         if (
             $user->getRoleId()
@@ -161,18 +204,22 @@ final class UserEditController extends Controller
             ) <= 1
         ) {
 
-            http_response_code(403);
+            $this->flash->error(
+                'Det måste finnas minst en Super Admin kvar.'
+            );
 
-            echo 'Det måste finnas minst en Super Admin kvar.';
+            header(
+                'Location: /users'
+            );
 
-            return;
+            exit;
         }
 
 
 
         /*
-         * Endast Super Admin får skapa
-         * nya Super Admin-konton.
+         * Endast Super Admin får tilldela
+         * Super Admin-rollen.
          */
         if (
             $roleId === Role::SUPER_ADMIN
@@ -180,11 +227,15 @@ final class UserEditController extends Controller
             !$this->authorization->isSuperAdmin()
         ) {
 
-            http_response_code(403);
+            $this->flash->error(
+                'Endast Super Admin får tilldela Super Admin-rollen.'
+            );
 
-            echo 'Endast Super Admin får tilldela Super Admin-rollen.';
+            header(
+                'Location: /users'
+            );
 
-            return;
+            exit;
         }
 
 
@@ -194,9 +245,17 @@ final class UserEditController extends Controller
         );
 
 
+
         $this->users->update(
             $user
         );
+
+
+
+        $this->flash->success(
+            'Användaren har uppdaterats.'
+        );
+
 
 
         header(
