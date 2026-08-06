@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Core;
 
 use App\Http\Request;
+use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
 use App\Services\RegistrationService;
+use App\Services\RoleService;
 use App\Services\UserService;
 
 final class Application
@@ -15,11 +17,9 @@ final class Application
 
     private Router $router;
 
-
     public function __construct()
     {
         $this->container = new Container();
-
 
         /*
          * Config
@@ -31,7 +31,6 @@ final class Application
             )
         );
 
-
         /*
          * Timezone
          */
@@ -40,7 +39,6 @@ final class Application
                 ->get(Config::class)
                 ->get('app.timezone', 'UTC')
         );
-
 
         /*
          * Core services
@@ -52,7 +50,6 @@ final class Application
             )
         );
 
-
         /*
          * Database transaction
          */
@@ -63,12 +60,10 @@ final class Application
             )
         );
 
-
         $this->container->singleton(
             Session::class,
             fn () => new Session()
         );
-
 
         $this->container->singleton(
             Auth::class,
@@ -77,6 +72,19 @@ final class Application
             )
         );
 
+        $this->container->singleton(
+            RoleRepository::class,
+            fn (Container $c) => new RoleRepository(
+                $c->get(Database::class)
+            )
+        );
+
+        $this->container->singleton(
+            RoleService::class,
+            fn (Container $c) => new RoleService(
+                $c->get(RoleRepository::class)
+            )
+        );
 
         $this->container->singleton(
             UserRepository::class,
@@ -85,7 +93,6 @@ final class Application
             )
         );
 
-
         $this->container->singleton(
             UserService::class,
             fn (Container $c) => new UserService(
@@ -93,11 +100,11 @@ final class Application
             )
         );
 
-
         $this->container->singleton(
             RegistrationService::class,
             fn (Container $c) => new RegistrationService(
-                $c->get(UserService::class)
+                $c->get(UserService::class),
+                $c->get(RoleService::class)
             )
         );
         $this->container->singleton(
@@ -105,29 +112,25 @@ final class Application
             fn () => new View()
         );
 
-
         $this->container->singleton(
             Request::class,
             fn () => new Request()
         );
-
 
         $this->router = new Router(
             $this->container
         );
     }
 
-
     public function run(): void
     {
         $routes =
-            require dirname(__DIR__, 2) . '/routes/web.php';
-
+            require dirname(__DIR__, 2)
+            . '/routes/web.php';
 
         $routes(
             $this->router
         );
-
 
         $this->router->dispatch(
             $this->container->get(
@@ -135,7 +138,6 @@ final class Application
             )
         );
     }
-
 
     public function container(): Container
     {

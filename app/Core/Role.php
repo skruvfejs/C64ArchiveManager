@@ -10,11 +10,13 @@ final class Role
     {
     }
 
+
     /**
      * System owner.
      * Has unrestricted access to the entire application.
      */
     public const SUPER_ADMIN = 1;
+
 
     /**
      * System administrator.
@@ -22,11 +24,13 @@ final class Role
      */
     public const ADMIN = 2;
 
+
     /**
      * Advanced contributor.
      * Can import, edit and delete archive data.
      */
     public const POWER_USER = 3;
+
 
     /**
      * Standard contributor.
@@ -34,8 +38,17 @@ final class Role
      */
     public const USER = 4;
 
+
     /**
      * Read-only access.
      */
     public const READONLY = 5;
+
+
+    /**
+     * Registered user awaiting approval.
+     * Has no permissions until assigned another role.
+     */
+    public const PENDING = 6;
 }
+

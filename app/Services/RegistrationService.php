@@ -8,17 +8,9 @@ use RuntimeException;
 
 final class RegistrationService
 {
-    /**
-     * Pending
-     *
-     * TODO:
-     * Ersätt med RoleRepository senare så vi slipper
-     * hårdkoda roll-ID.
-     */
-    private const DEFAULT_ROLE_ID = 6;
-
     public function __construct(
-        private readonly UserService $users
+        private readonly UserService $users,
+        private readonly RoleService $roles
     ) {
     }
 
@@ -72,8 +64,11 @@ final class RegistrationService
             PASSWORD_DEFAULT
         );
 
+        $pendingRole =
+            $this->roles->getPendingRole();
+
         return $this->users->createUser(
-            self::DEFAULT_ROLE_ID,
+            $pendingRole->getId(),
             $username,
             $email,
             $passwordHash,

@@ -152,6 +152,7 @@ final class UserRepository extends Repository
     }
 
 
+
     /**
      * @return User[]
      */
@@ -176,9 +177,6 @@ final class UserRepository extends Repository
 
         );
     }
-
-
-
     /**
      * @return User[]
      */
@@ -202,6 +200,45 @@ final class UserRepository extends Repository
 
             $this->fetchAll($stmt)
 
+        );
+    }
+
+
+
+    /**
+     * Count active users with a specific role.
+     *
+     * Used for security checks such as
+     * preventing the last Super Admin
+     * from being removed.
+     */
+    public function countByRoleId(
+        int $roleId
+    ): int {
+
+        $stmt = $this->prepare(
+            '
+            SELECT COUNT(*) AS total
+            FROM users
+            WHERE role_id = :role_id
+            AND deleted_at IS NULL
+            '
+        );
+
+
+        $stmt->execute([
+
+            'role_id' => $roleId
+
+        ]);
+
+
+        $row =
+            $this->fetchOne($stmt);
+
+
+        return (int) (
+            $row['total'] ?? 0
         );
     }
 
@@ -266,6 +303,7 @@ final class UserRepository extends Repository
             '
         );
 
+
         $stmt->execute([
 
             'role_id' =>
@@ -294,10 +332,9 @@ final class UserRepository extends Repository
 
         ]);
 
+
         return $this->lastInsertId();
     }
-
-
     public function update(
         User $user
     ): bool {
@@ -317,6 +354,7 @@ final class UserRepository extends Repository
             WHERE id = :id
             '
         );
+
 
         return $stmt->execute([
 
@@ -364,6 +402,7 @@ final class UserRepository extends Repository
             '
         );
 
+
         return $stmt->execute([
 
             'id' =>
@@ -393,6 +432,7 @@ final class UserRepository extends Repository
             '
         );
 
+
         return $stmt->execute([
 
             'id' =>
@@ -420,6 +460,7 @@ final class UserRepository extends Repository
             WHERE id = :id
             '
         );
+
 
         return $stmt->execute([
 

@@ -11,6 +11,14 @@ use App\Services\UserService;
 
 final class LoginController extends Controller
 {
+    /**
+     * Pending-rollen.
+     *
+     * TODO:
+     * Ersätt med RoleRepository/RoleService senare.
+     */
+    private const PENDING_ROLE_ID = 6;
+
     public function __construct(
         private readonly UserService $users,
         private readonly Auth $auth,
@@ -76,6 +84,20 @@ final class LoginController extends Controller
             return;
         }
 
+        /*
+         * Pending-användare får inte logga in.
+         */
+        if (
+            $user->getRoleId() === self::PENDING_ROLE_ID
+        ) {
+
+            $this->showError(
+                'Ditt konto väntar på att en administratör ska godkänna det.'
+            );
+
+            return;
+        }
+
         $this->auth->login([
             'id'         => $user->getId(),
             'role_id'    => $user->getRoleId(),
@@ -92,6 +114,7 @@ final class LoginController extends Controller
         header('Location: /');
         exit;
     }
+
     private function verifyPassword(
         User $user,
         string $password
@@ -102,8 +125,6 @@ final class LoginController extends Controller
             $user->getPassword()
         );
     }
-
-
 
     private function showError(
         string $message
@@ -118,3 +139,4 @@ final class LoginController extends Controller
         );
     }
 }
+

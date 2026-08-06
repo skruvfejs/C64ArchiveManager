@@ -79,6 +79,19 @@ final class UserService
 
 
 
+    /**
+     * Count active users with a role.
+     */
+    public function countByRoleId(
+        int $roleId
+    ): int {
+
+        return $this->repository
+                    ->countByRoleId($roleId);
+    }
+
+
+
     public function existsByUsername(
         string $username
     ): bool {
@@ -116,9 +129,6 @@ final class UserService
         return $this->repository
                     ->update($user);
     }
-
-
-
     public function changePassword(
         int $id,
         string $passwordHash
@@ -141,15 +151,18 @@ final class UserService
         $user =
             $this->findById($id);
 
+
         if ($user === null) {
 
             return false;
         }
 
+
         if ($user->isDeleted()) {
 
             return false;
         }
+
 
         return $this->repository
                     ->markDeleted(
@@ -167,15 +180,18 @@ final class UserService
         $user =
             $this->findById($id);
 
+
         if ($user === null) {
 
             return false;
         }
 
+
         if (!$user->isDeleted()) {
 
             return false;
         }
+
 
         return $this->repository
                     ->restore($id);
@@ -218,6 +234,7 @@ final class UserService
                 $lastName
             );
 
+
         return $this->repository
                     ->create($user);
     }
@@ -231,14 +248,17 @@ final class UserService
         $user =
             $this->findById($id);
 
+
         if ($user === null) {
 
             return false;
         }
 
+
         $user->setLastLoginAt(
             date('Y-m-d H:i:s')
         );
+
 
         return $this->repository
                     ->update($user);
