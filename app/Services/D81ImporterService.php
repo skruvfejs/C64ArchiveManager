@@ -126,6 +126,26 @@ final class D81ImporterService
                     $version
                 );
         }
+        /*
+         * Om samma release redan finns,
+         * skapa ett nytt release-namn.
+         */
+        if (
+            $this->releaseRepository
+                 ->existsByEntryNameVersion(
+                     $entryId,
+                     $diskName,
+                     $version
+                 )
+        ) {
+
+            $diskName =
+                $this->createDuplicateName(
+                    $entryId,
+                    $diskName,
+                    $version
+                );
+        }
 
 
 
@@ -144,6 +164,7 @@ final class D81ImporterService
 
 
         $releaseFile = new ReleaseFile();
+
 
 
         $releaseFile
@@ -171,6 +192,8 @@ final class D81ImporterService
             ->setSha1(
                 $checksum['sha1']
             );
+
+
 
         $releaseFileId =
             $this->releaseFileRepository
