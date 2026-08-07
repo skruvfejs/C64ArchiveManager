@@ -84,6 +84,11 @@ declare(strict_types=1);
 
 
             <th>
+                Kommentar
+            </th>
+
+
+            <th>
                 Åtgärd
             </th>
 
@@ -139,9 +144,6 @@ declare(strict_types=1);
                     $disk->getFilename()
                 ) ?>
             </td>
-
-
-
             <td>
                 <?= htmlspecialchars(
                     $disk->getFormat()
@@ -162,6 +164,14 @@ declare(strict_types=1);
             <td>
                 <?= htmlspecialchars(
                     $disk->getMd5()
+                ) ?>
+            </td>
+
+
+
+            <td>
+                <?= htmlspecialchars(
+                    $disk->getReleaseNotes() ?? ''
                 ) ?>
             </td>
 
@@ -189,3 +199,4 @@ declare(strict_types=1);
 
 
 <?php endif; ?>
+

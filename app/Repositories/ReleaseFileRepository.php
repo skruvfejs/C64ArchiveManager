@@ -167,7 +167,8 @@ final class ReleaseFileRepository extends Repository
             '
             SELECT
                 rf.*,
-                e.title AS entry_title
+                e.title AS entry_title,
+                r.notes AS release_notes
 
             FROM release_files rf
 
@@ -194,9 +195,6 @@ final class ReleaseFileRepository extends Repository
 
         );
     }
-
-
-
     public function findByMd5(
         string $md5
     ): ?ReleaseFile {
@@ -318,9 +316,6 @@ final class ReleaseFileRepository extends Repository
 
         );
     }
-
-
-
     public function delete(
         int $id
     ): bool {
@@ -375,6 +370,10 @@ final class ReleaseFileRepository extends Repository
 
             ->setEntryTitle(
                 $row['entry_title'] ?? null
+            )
+
+            ->setReleaseNotes(
+                $row['release_notes'] ?? null
             )
 
             ->setPath(

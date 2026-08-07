@@ -20,6 +20,8 @@ final class ReleaseFile
 
     private ?string $entryTitle = null;
 
+    private ?string $releaseNotes = null;
+
     private string $path = '';
 
     private int $size = 0;
@@ -135,6 +137,18 @@ final class ReleaseFile
     public function setEntryTitle(?string $entryTitle): self
     {
         $this->entryTitle = $entryTitle;
+
+        return $this;
+    }
+    public function getReleaseNotes(): ?string
+    {
+        return $this->releaseNotes;
+    }
+
+
+    public function setReleaseNotes(?string $releaseNotes): self
+    {
+        $this->releaseNotes = $releaseNotes;
 
         return $this;
     }
