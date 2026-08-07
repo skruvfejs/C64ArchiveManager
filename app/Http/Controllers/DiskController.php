@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Core\Auth;
 use App\Core\View;
 use App\Repositories\ReleaseRepository;
 use App\Repositories\ReleaseFileRepository;
@@ -21,14 +22,25 @@ final class DiskController extends Controller
         private ReleaseRepository $releases,
         private ReleaseFileRepository $files,
         private DirectoryEntryRepository $entries,
-        private Request $request
+        private Request $request,
+        private Auth $auth
     ) {
     }
 
+
     public function index(): void
     {
+        if (!$this->auth->check()) {
+
+            header('Location: /login');
+
+            exit;
+        }
+
+
         $id =
             (int) $this->request->query('id');
+
 
         if ($id <= 0) {
 
@@ -39,8 +51,10 @@ final class DiskController extends Controller
             return;
         }
 
+
         $release =
             $this->releases->findById($id);
+
 
         if ($release === null) {
 
@@ -51,29 +65,33 @@ final class DiskController extends Controller
             return;
         }
 
+
         $search =
             trim(
                 (string) $this->request->query('search', '')
             );
 
+
         $sort =
             (string) $this->request->query('sort', '');
 
+
         $files =
             $this->files->findByRelease($id);
+
 
         $directories = [];
 
         $integrity = null;
 
         $comparison = null;
-
         foreach ($files as $file) {
 
             $entries =
                 $this->entries->findByReleaseFile(
                     $file->getId()
                 );
+
 
             if ($search !== '') {
 
@@ -89,9 +107,12 @@ final class DiskController extends Controller
                         }
                     );
 
+
                 $entries =
                     array_values($entries);
             }
+
+
 
             switch ($sort) {
 
@@ -110,6 +131,8 @@ final class DiskController extends Controller
 
                     break;
 
+
+
                 case 'blocks':
 
                     usort(
@@ -123,6 +146,8 @@ final class DiskController extends Controller
                     );
 
                     break;
+
+
 
                 case 'track':
 
@@ -145,12 +170,18 @@ final class DiskController extends Controller
                     break;
             }
 
+
+
             $directories[$file->getId()] =
                 $entries;
+
+
+
             /*
              * Run C64 integrity check
              * on first disk image.
              */
+
             if (
                 $integrity === null
             ) {
@@ -160,6 +191,7 @@ final class DiskController extends Controller
                         $file->getPath()
                     );
 
+
                 $builder =
                     new C64BamBuilder(
                         strtoupper(
@@ -167,12 +199,16 @@ final class DiskController extends Controller
                         )
                     );
 
+
                 /*
                  * Reserve:
                  * Track 18 sector 0 BAM
                  * Track 18 directory sectors
                  */
+
                 $builder->reserveD64SystemTracks();
+
+
 
                 foreach ($entries as $entry) {
 
@@ -183,30 +219,39 @@ final class DiskController extends Controller
                         continue;
                     }
 
+
                     $chain =
                         $reader->readFileChain(
                             $entry->getStartTrack(),
                             $entry->getStartSector()
                         );
 
+
                     $builder->addSectors(
                         $chain
                     );
                 }
 
+
                 $calculated =
                     $builder->getLayout();
+
 
                 $bamReader =
                     new C64BamReader(
                         $file->getPath()
                     );
 
+
                 $realBam =
                     $bamReader->read();
 
+
+
                 $comparator =
                     new C64BamComparator();
+
+
 
                 $comparison =
                     $comparator->compare(
@@ -214,8 +259,12 @@ final class DiskController extends Controller
                         $calculated
                     );
 
+
+
                 $checker =
                     new C64DiskIntegrityChecker();
+
+
 
                 $integrity =
                     $checker->check(
@@ -224,8 +273,11 @@ final class DiskController extends Controller
             }
         }
 
+
+
         $view =
             new View();
+
 
         $view->render(
             'disk/index',
@@ -233,22 +285,30 @@ final class DiskController extends Controller
                 'title' =>
                     'C64 Disk Explorer',
 
+
                 'release' =>
                     $release,
+
 
                 'files' =>
                     $files,
 
+
                 'directories' =>
                     $directories,
+
 
                 'search' =>
                     $search,
 
+
                 'sort' =>
                     $sort,
+
+
                 'integrity' =>
                     $integrity,
+
 
                 'comparison' =>
                     $comparison

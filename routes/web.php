@@ -168,8 +168,6 @@ return function (Router $router): void {
         ]
     );
 
-
-
     $router->get(
         '/users/edit',
         [
@@ -266,6 +264,9 @@ return function (Router $router): void {
         [
             DisksController::class,
             'index'
+        ],
+        [
+            AuthMiddleware::class,
         ]
     );
 
@@ -275,6 +276,9 @@ return function (Router $router): void {
         [
             DirectoryController::class,
             'index'
+        ],
+        [
+            AuthMiddleware::class,
         ]
     );
 
@@ -284,6 +288,9 @@ return function (Router $router): void {
         [
             DiskInfoController::class,
             'index'
+        ],
+        [
+            AuthMiddleware::class,
         ]
     );
 
@@ -293,6 +300,9 @@ return function (Router $router): void {
         [
             FileController::class,
             'index'
+        ],
+        [
+            AuthMiddleware::class,
         ]
     );
 
@@ -302,10 +312,11 @@ return function (Router $router): void {
         [
             FileController::class,
             'download'
+        ],
+        [
+            AuthMiddleware::class,
         ]
     );
-
-
 
     /*
      * Import
@@ -368,6 +379,9 @@ return function (Router $router): void {
         [
             EntryController::class,
             'index'
+        ],
+        [
+            AuthMiddleware::class,
         ]
     );
 
@@ -377,6 +391,9 @@ return function (Router $router): void {
         [
             ReleaseController::class,
             'index'
+        ],
+        [
+            AuthMiddleware::class,
         ]
     );
 };
