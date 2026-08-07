@@ -26,8 +26,10 @@ final class PrgImporterService
     public function import(
         string $filename,
         int $entryId,
-        bool $forceDuplicate = false
+        bool $forceDuplicate = false,
+        ?string $notes = null
     ): ImportResult {
+
 
         if (!is_file($filename)) {
 
@@ -43,7 +45,8 @@ final class PrgImporterService
             basename($filename),
             $filename,
             $entryId,
-            $forceDuplicate
+            $forceDuplicate,
+            $notes
         );
     }
 
@@ -54,7 +57,9 @@ final class PrgImporterService
         string $filename,
         string $sourcePath,
         int $entryId,
-        bool $forceDuplicate = false
+        bool $forceDuplicate = false,
+        ?string $notes = null,
+        string $format = 'PRG'
     ): ImportResult {
 
 
@@ -74,10 +79,12 @@ final class PrgImporterService
             );
 
 
+
         file_put_contents(
             $tmp,
             $data
         );
+
 
 
         $checksum =
@@ -85,11 +92,13 @@ final class PrgImporterService
                  ->all($tmp);
 
 
+
         unlink($tmp);
 
 
 
         $existingReleaseFile = null;
+
 
 
         if (!$forceDuplicate) {
@@ -124,13 +133,13 @@ final class PrgImporterService
                     $checksum['md5'],
 
                 'existing' =>
-                    $existingReleaseFile
+                    $existingReleaseFile,
+
+                'notes' =>
+                    $notes
 
             ]);
         }
-
-
-
         $name =
             pathinfo(
                 $filename,
@@ -146,7 +155,7 @@ final class PrgImporterService
                      ->findByEntryNameVersion(
                          $entryId,
                          $name,
-                         'PRG'
+                         $format
                      );
 
 
@@ -177,7 +186,10 @@ final class PrgImporterService
                         $checksum['md5'],
 
                     'existing' =>
-                        $existingFiles[0] ?? null
+                        $existingFiles[0] ?? null,
+
+                    'notes' =>
+                        $notes
 
                 ]);
             }
@@ -191,16 +203,21 @@ final class PrgImporterService
                 $this->createDuplicateName(
                     $entryId,
                     $name,
-                    'PRG'
+                    $format
                 );
         }
+
+
+
         $release = new Release();
+
 
 
         $release
             ->setEntryId($entryId)
             ->setName($name)
-            ->setVersion('PRG');
+            ->setVersion($format)
+            ->setNotes($notes);
 
 
 
@@ -213,10 +230,11 @@ final class PrgImporterService
         $releaseFile = new ReleaseFile();
 
 
+
         $releaseFile
             ->setReleaseId($releaseId)
             ->setFilename($filename)
-            ->setFormat('PRG')
+            ->setFormat($format)
             ->setPath($sourcePath)
             ->setSize(strlen($data))
             ->setCrc32($checksum['crc32'])
@@ -244,8 +262,10 @@ final class PrgImporterService
         string $version
     ): string {
 
+
         $duplicateName =
             $name . ' (duplicate)';
+
 
 
         $counter = 2;
@@ -261,11 +281,13 @@ final class PrgImporterService
                  )
         ) {
 
+
             $duplicateName =
                 $name
                 . ' (duplicate '
                 . $counter
                 . ')';
+
 
 
             $counter++;

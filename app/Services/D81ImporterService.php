@@ -30,7 +30,8 @@ final class D81ImporterService
     public function import(
         string $filename,
         int $entryId,
-        bool $forceDuplicate = false
+        bool $forceDuplicate = false,
+        ?string $notes = null
     ): ImportResult {
 
 
@@ -91,7 +92,10 @@ final class D81ImporterService
                     $checksum['md5'],
 
                 'existing' =>
-                    $existingReleaseFile
+                    $existingReleaseFile,
+
+                'notes' =>
+                    $notes
 
             ]);
         }
@@ -128,13 +132,17 @@ final class D81ImporterService
         $release
             ->setEntryId($entryId)
             ->setName($diskName)
-            ->setVersion($version);
+            ->setVersion($version)
+            ->setNotes($notes);
 
 
 
         $releaseId =
             $this->releaseRepository
                  ->create($release);
+
+
+
         $releaseFile = new ReleaseFile();
 
 
@@ -163,8 +171,6 @@ final class D81ImporterService
             ->setSha1(
                 $checksum['sha1']
             );
-
-
 
         $releaseFileId =
             $this->releaseFileRepository

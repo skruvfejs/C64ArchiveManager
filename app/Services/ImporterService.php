@@ -126,9 +126,6 @@ final class ImporterService
                         );
                     }
                 );
-
-
-
             if (!$result->isDuplicate()) {
 
                 $this->importLogService
@@ -274,7 +271,8 @@ final class ImporterService
                         $filename,
                         $entryId,
                         $forceDuplicate,
-                        $notes
+                        $notes,
+                        'P00'
                     );
     }
 }

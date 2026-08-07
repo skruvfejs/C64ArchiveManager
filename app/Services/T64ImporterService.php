@@ -25,10 +25,12 @@ final class T64ImporterService
     }
 
 
+
     public function import(
         string $filename,
         int $entryId,
-        bool $forceDuplicate = false
+        bool $forceDuplicate = false,
+        ?string $notes = null
     ): ImportResult {
 
 
@@ -65,6 +67,7 @@ final class T64ImporterService
         }
 
 
+
         if ($existingReleaseFile !== null) {
 
             return (new ImportResult(
@@ -85,7 +88,10 @@ final class T64ImporterService
                     $checksum['md5'],
 
                 'existing' =>
-                    $existingReleaseFile
+                    $existingReleaseFile,
+
+                'notes' =>
+                    $notes
 
             ]);
         }
@@ -105,6 +111,7 @@ final class T64ImporterService
         $version = 'T64';
 
 
+
         if ($forceDuplicate) {
 
             $name =
@@ -116,10 +123,12 @@ final class T64ImporterService
         }
 
 
+
         $release
             ->setEntryId($entryId)
             ->setName($name)
-            ->setVersion($version);
+            ->setVersion($version)
+            ->setNotes($notes);
 
 
 
@@ -146,11 +155,11 @@ final class T64ImporterService
             ->setMd5(
                 $checksum['md5']
             );
-
-
         $releaseFileId =
             $this->releaseFileRepository
                  ->create($releaseFile);
+
+
 
         $entries =
             $this->parser
@@ -163,6 +172,7 @@ final class T64ImporterService
 
             $entry =
                 new DirectoryEntry();
+
 
 
             $entry
@@ -187,6 +197,7 @@ final class T64ImporterService
                 ->setFileSize(
                     $t64Entry['size'] ?? null
                 );
+
 
 
             $this->directoryEntryRepository
@@ -214,6 +225,7 @@ final class T64ImporterService
             $name . ' (duplicate)';
 
 
+
         $counter = 2;
 
 
@@ -235,6 +247,7 @@ final class T64ImporterService
                 . ')';
 
 
+
             $counter++;
         }
 
@@ -243,3 +256,4 @@ final class T64ImporterService
         return $duplicateName;
     }
 }
+
