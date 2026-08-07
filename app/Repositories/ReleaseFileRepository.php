@@ -153,6 +153,40 @@ final class ReleaseFileRepository extends Repository
 
         );
     }
+
+
+
+    /**
+     * Hämta alla diskfiler
+     *
+     * @return ReleaseFile[]
+     */
+    public function findAllDisks(): array
+    {
+        $stmt = $this->prepare(
+            '
+            SELECT *
+            FROM release_files
+            ORDER BY id DESC
+            '
+        );
+
+
+        $stmt->execute();
+
+
+        return array_map(
+
+            fn(array $row): ReleaseFile =>
+                $this->hydrate($row),
+
+            $this->fetchAll($stmt)
+
+        );
+    }
+
+
+
     public function findByMd5(
         string $md5
     ): ?ReleaseFile {
@@ -292,7 +326,8 @@ final class ReleaseFileRepository extends Repository
 
         return $stmt->execute([
 
-            'id' => $id
+            'id' =>
+                $id
 
         ]);
     }

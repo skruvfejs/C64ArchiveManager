@@ -2,6 +2,7 @@
 
 
 <p>
+
     <a href="/users/create">
         Ny användare
     </a>
@@ -11,6 +12,13 @@
     <a href="/users/deleted">
         Borttagna användare
     </a>
+
+    |
+
+    <a href="/users/logs">
+        Audit log
+    </a>
+
 </p>
 
 

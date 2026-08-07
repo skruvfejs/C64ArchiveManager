@@ -200,7 +200,7 @@ $title ??= 'C64 Archive Manager';
                 Dashboard
             </a>
 
-            <a href="/disks">
+            <a href="/disk">
                 Diskar
             </a>
 

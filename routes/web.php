@@ -18,6 +18,7 @@ use App\Http\Controllers\DeletedUsersController;
 use App\Http\Controllers\AuditLogController;
 
 use App\Http\Controllers\DiskController;
+use App\Http\Controllers\DisksController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\DirectoryController;
 use App\Http\Controllers\DiskInfoController;
@@ -263,7 +264,7 @@ return function (Router $router): void {
     $router->get(
         '/disk',
         [
-            DiskController::class,
+            DisksController::class,
             'index'
         ]
     );
