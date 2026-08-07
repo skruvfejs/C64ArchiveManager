@@ -1,3 +1,10 @@
+<?php
+
+declare(strict_types=1);
+
+?>
+
+
 <h1>
     C64 Import
 </h1>
@@ -12,9 +19,11 @@
 <?php endif; ?>
 
 
+
 <form method="post"
       action="/import"
       enctype="multipart/form-data">
+
 
 
     <p>
@@ -45,6 +54,21 @@
 
 
 
+
+    <p>
+        Kommentar (valfritt):
+    </p>
+
+
+    <textarea
+        name="notes"
+        rows="4"
+        cols="60"
+        placeholder="T.ex. Mitt original från barndomen 1987"></textarea>
+
+
+
+
     <p>
         Disk image:
     </p>
@@ -54,6 +78,7 @@
         type="file"
         name="disk"
     >
+
 
 
 
@@ -67,4 +92,3 @@
 
 
 </form>
-

@@ -58,6 +58,13 @@ final class ImportController extends Controller
 
 
 
+        $notes =
+            $this->request->post(
+                'notes'
+            );
+
+
+
         if (!isset($_FILES['disk'])) {
 
             $this->render(
@@ -135,7 +142,8 @@ final class ImportController extends Controller
                      $target,
                      $entryId,
                      false,
-                     $this->auth->id()
+                     $this->auth->id(),
+                     $notes
                  );
 
 
@@ -174,6 +182,13 @@ final class ImportController extends Controller
             $entryValue !== ''
                 ? (int) $entryValue
                 : null;
+
+
+
+        $notes =
+            $this->request->post(
+                'notes'
+            );
 
 
 
@@ -220,7 +235,8 @@ final class ImportController extends Controller
                      $path,
                      $entryId,
                      true,
-                     $this->auth->id()
+                     $this->auth->id(),
+                     $notes
                  );
 
 

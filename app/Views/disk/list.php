@@ -10,6 +10,7 @@ declare(strict_types=1);
 </h2>
 
 
+
 <p>
 
     <a href="/import">
@@ -25,11 +26,12 @@ declare(strict_types=1);
 </p>
 
 
+
 <?php if (empty($disks)): ?>
 
-    <p>
-        Inga diskar hittades.
-    </p>
+<p>
+    Inga diskar hittades.
+</p>
 
 
 <?php else: ?>
@@ -40,36 +42,55 @@ declare(strict_types=1);
     <thead>
 
         <tr>
+
             <th>
                 ID
             </th>
+
+
+            <th>
+                Titel
+            </th>
+
 
             <th>
                 Disknamn
             </th>
 
+
+            <th>
+                Disk-ID
+            </th>
+
+
             <th>
                 Filnamn
             </th>
+
 
             <th>
                 Format
             </th>
 
+
             <th>
                 Storlek
             </th>
+
 
             <th>
                 MD5
             </th>
 
+
             <th>
                 Åtgärd
             </th>
+
         </tr>
 
     </thead>
+
 
 
     <tbody>
@@ -80,11 +101,21 @@ declare(strict_types=1);
 
         <tr>
 
+
             <td>
                 <?= htmlspecialchars(
                     (string) $disk->getId()
                 ) ?>
             </td>
+
+
+
+            <td>
+                <?= htmlspecialchars(
+                    $disk->getEntryTitle() ?? ''
+                ) ?>
+            </td>
+
 
 
             <td>
@@ -94,6 +125,15 @@ declare(strict_types=1);
             </td>
 
 
+
+            <td>
+                <?= htmlspecialchars(
+                    $disk->getDiskId() ?? ''
+                ) ?>
+            </td>
+
+
+
             <td>
                 <?= htmlspecialchars(
                     $disk->getFilename()
@@ -101,11 +141,13 @@ declare(strict_types=1);
             </td>
 
 
+
             <td>
                 <?= htmlspecialchars(
                     $disk->getFormat()
                 ) ?>
             </td>
+
 
 
             <td>
@@ -116,11 +158,13 @@ declare(strict_types=1);
             </td>
 
 
+
             <td>
                 <?= htmlspecialchars(
                     $disk->getMd5()
                 ) ?>
             </td>
+
 
 
             <td>
@@ -139,6 +183,7 @@ declare(strict_types=1);
 
 
     </tbody>
+
 
 </table>
 

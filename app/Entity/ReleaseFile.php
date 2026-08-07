@@ -18,6 +18,8 @@ final class ReleaseFile
 
     private ?string $diskId = null;
 
+    private ?string $entryTitle = null;
+
     private string $path = '';
 
     private int $size = 0;
@@ -31,6 +33,7 @@ final class ReleaseFile
     private ?string $createdAt = null;
 
     private ?string $updatedAt = null;
+
 
 
     public function getId(): ?int
@@ -47,6 +50,7 @@ final class ReleaseFile
     }
 
 
+
     public function getReleaseId(): int
     {
         return $this->releaseId;
@@ -59,6 +63,7 @@ final class ReleaseFile
 
         return $this;
     }
+
 
 
     public function getFilename(): string
@@ -75,6 +80,7 @@ final class ReleaseFile
     }
 
 
+
     public function getFormat(): string
     {
         return $this->format;
@@ -87,6 +93,7 @@ final class ReleaseFile
 
         return $this;
     }
+
 
 
     public function getDiskName(): ?string
@@ -103,6 +110,7 @@ final class ReleaseFile
     }
 
 
+
     public function getDiskId(): ?string
     {
         return $this->diskId;
@@ -115,6 +123,22 @@ final class ReleaseFile
 
         return $this;
     }
+
+
+
+    public function getEntryTitle(): ?string
+    {
+        return $this->entryTitle;
+    }
+
+
+    public function setEntryTitle(?string $entryTitle): self
+    {
+        $this->entryTitle = $entryTitle;
+
+        return $this;
+    }
+
 
 
     public function getPath(): string
@@ -131,6 +155,7 @@ final class ReleaseFile
     }
 
 
+
     public function getSize(): int
     {
         return $this->size;
@@ -143,6 +168,7 @@ final class ReleaseFile
 
         return $this;
     }
+
 
 
     public function getCrc32(): ?string
@@ -159,6 +185,7 @@ final class ReleaseFile
     }
 
 
+
     public function getMd5(): ?string
     {
         return $this->md5;
@@ -171,6 +198,7 @@ final class ReleaseFile
 
         return $this;
     }
+
 
 
     public function getSha1(): ?string
@@ -187,10 +215,12 @@ final class ReleaseFile
     }
 
 
+
     public function getCreatedAt(): ?string
     {
         return $this->createdAt;
     }
+
 
 
     public function getUpdatedAt(): ?string
@@ -198,4 +228,3 @@ final class ReleaseFile
         return $this->updatedAt;
     }
 }
-

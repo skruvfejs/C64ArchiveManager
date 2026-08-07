@@ -165,9 +165,19 @@ final class ReleaseFileRepository extends Repository
     {
         $stmt = $this->prepare(
             '
-            SELECT *
-            FROM release_files
-            ORDER BY id DESC
+            SELECT
+                rf.*,
+                e.title AS entry_title
+
+            FROM release_files rf
+
+            LEFT JOIN releases r
+                ON r.id = rf.release_id
+
+            LEFT JOIN entries e
+                ON e.id = r.entry_id
+
+            ORDER BY rf.id DESC
             '
         );
 
@@ -226,8 +236,6 @@ final class ReleaseFileRepository extends Repository
 
     /**
      * Hitta fil med samma MD5 inom samma Entry.
-     *
-     * Används för duplicate-kontroll vid import.
      */
     public function findByMd5AndEntry(
         string $md5,
@@ -238,10 +246,13 @@ final class ReleaseFileRepository extends Repository
             '
             SELECT rf.*
             FROM release_files rf
+
             INNER JOIN releases r
                 ON r.id = rf.release_id
+
             WHERE rf.md5 = :md5
             AND r.entry_id = :entry_id
+
             LIMIT 1
             '
         );
@@ -274,8 +285,6 @@ final class ReleaseFileRepository extends Repository
 
 
     /**
-     * Find all files with same MD5 checksum.
-     *
      * @return ReleaseFile[]
      */
     public function findAllByMd5(
@@ -362,6 +371,10 @@ final class ReleaseFileRepository extends Repository
 
             ->setDiskId(
                 $row['disk_id'] ?? null
+            )
+
+            ->setEntryTitle(
+                $row['entry_title'] ?? null
             )
 
             ->setPath(

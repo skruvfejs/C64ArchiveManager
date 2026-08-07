@@ -34,7 +34,8 @@ final class ImporterService
         string $filename,
         ?int $entryId,
         bool $forceDuplicate = false,
-        ?int $userId = null
+        ?int $userId = null,
+        ?string $notes = null
     ): ImportResult {
 
 
@@ -112,14 +113,16 @@ final class ImporterService
                         $filename,
                         $entryId,
                         $format,
-                        $forceDuplicate
+                        $forceDuplicate,
+                        $notes
                     ): ImportResult {
 
                         return $this->doImport(
                             $filename,
                             $entryId,
                             $format,
-                            $forceDuplicate
+                            $forceDuplicate,
+                            $notes
                         );
                     }
                 );
@@ -161,7 +164,8 @@ final class ImporterService
         string $filename,
         int $entryId,
         string $format,
-        bool $forceDuplicate = false
+        bool $forceDuplicate = false,
+        ?string $notes = null
     ): ImportResult {
 
 
@@ -172,7 +176,8 @@ final class ImporterService
                      ->import(
                          $filename,
                          $entryId,
-                         $forceDuplicate
+                         $forceDuplicate,
+                         $notes
                      ),
 
 
@@ -182,7 +187,8 @@ final class ImporterService
                      ->import(
                          $filename,
                          $entryId,
-                         $forceDuplicate
+                         $forceDuplicate,
+                         $notes
                      ),
 
 
@@ -192,7 +198,8 @@ final class ImporterService
                      ->import(
                          $filename,
                          $entryId,
-                         $forceDuplicate
+                         $forceDuplicate,
+                         $notes
                      ),
 
 
@@ -202,7 +209,8 @@ final class ImporterService
                      ->import(
                          $filename,
                          $entryId,
-                         $forceDuplicate
+                         $forceDuplicate,
+                         $notes
                      ),
 
 
@@ -212,7 +220,8 @@ final class ImporterService
                      ->import(
                          $filename,
                          $entryId,
-                         $forceDuplicate
+                         $forceDuplicate,
+                         $notes
                      ),
 
 
@@ -221,7 +230,8 @@ final class ImporterService
                 $this->importP00(
                     $filename,
                     $entryId,
-                    $forceDuplicate
+                    $forceDuplicate,
+                    $notes
                 ),
 
 
@@ -240,7 +250,8 @@ final class ImporterService
     private function importP00(
         string $filename,
         int $entryId,
-        bool $forceDuplicate = false
+        bool $forceDuplicate = false,
+        ?string $notes = null
     ): ImportResult {
 
 
@@ -262,7 +273,8 @@ final class ImporterService
                         $info['name'] . '.prg',
                         $filename,
                         $entryId,
-                        $forceDuplicate
+                        $forceDuplicate,
+                        $notes
                     );
     }
 }

@@ -31,7 +31,8 @@ final class D64ImporterService
     public function import(
         string $filename,
         int $entryId,
-        bool $forceDuplicate = false
+        bool $forceDuplicate = false,
+        ?string $notes = null
     ): ImportResult {
 
 
@@ -92,7 +93,10 @@ final class D64ImporterService
                     $checksum['md5'],
 
                 'existing' =>
-                    $existingReleaseFile
+                    $existingReleaseFile,
+
+                'notes' =>
+                    $notes
 
             ]);
         }
@@ -130,9 +134,8 @@ final class D64ImporterService
         $release
             ->setEntryId($entryId)
             ->setName($diskName)
-            ->setVersion($version);
-
-
+            ->setVersion($version)
+            ->setNotes($notes);
 
         if (
             !$forceDuplicate &&
@@ -154,7 +157,11 @@ final class D64ImporterService
         $releaseId =
             $this->releaseRepository
                  ->create($release);
+
+
+
         $releaseFile = new ReleaseFile();
+
 
 
         $releaseFile

@@ -21,6 +21,7 @@
 </p>
 
 
+
 <form method="post"
       action="/import/force">
 
@@ -39,9 +40,17 @@
     >
 
 
+    <input
+        type="hidden"
+        name="notes"
+        value="<?= htmlspecialchars($notes ?? '') ?>"
+    >
+
+
+
     <button type="submit">
         Importera som ny release
     </button>
 
-</form>
 
+</form>
