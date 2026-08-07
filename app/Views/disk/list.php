@@ -11,6 +11,36 @@ declare(strict_types=1);
 
 
 
+<form method="get" action="/disk">
+
+    <label>
+        Sök:
+    </label>
+
+    <input
+        type="text"
+        name="search"
+        value="<?= htmlspecialchars($search ?? '') ?>"
+    >
+
+
+    <button type="submit">
+        Sök
+    </button>
+
+
+    <?php if (!empty($search)): ?>
+
+        <a href="/disk">
+            Rensa
+        </a>
+
+    <?php endif; ?>
+
+</form>
+
+
+
 <p>
 
     <a href="/import">
@@ -96,8 +126,6 @@ declare(strict_types=1);
 
     </thead>
 
-
-
     <tbody>
 
 
@@ -108,71 +136,93 @@ declare(strict_types=1);
 
 
             <td>
+
                 <?= htmlspecialchars(
                     (string) $disk->getId()
                 ) ?>
+
             </td>
 
 
 
             <td>
+
                 <?= htmlspecialchars(
                     $disk->getEntryTitle() ?? ''
                 ) ?>
+
             </td>
 
 
 
             <td>
+
                 <?= htmlspecialchars(
                     $disk->getDiskName() ?? ''
                 ) ?>
+
             </td>
 
 
 
             <td>
+
                 <?= htmlspecialchars(
                     $disk->getDiskId() ?? ''
                 ) ?>
+
             </td>
 
 
 
             <td>
+
                 <?= htmlspecialchars(
                     $disk->getFilename()
                 ) ?>
+
             </td>
+
+
+
             <td>
+
                 <?= htmlspecialchars(
                     $disk->getFormat()
                 ) ?>
+
             </td>
 
 
 
             <td>
+
                 <?= htmlspecialchars(
                     (string) $disk->getSize()
                 ) ?>
+
                 bytes
+
             </td>
 
 
 
             <td>
+
                 <?= htmlspecialchars(
                     $disk->getMd5()
                 ) ?>
+
             </td>
 
 
 
             <td>
+
                 <?= htmlspecialchars(
                     $disk->getReleaseNotes() ?? ''
                 ) ?>
+
             </td>
 
 
@@ -180,7 +230,9 @@ declare(strict_types=1);
             <td>
 
                 <a href="/disk?id=<?= $disk->getId() ?>">
+
                     Visa
+
                 </a>
 
             </td>
@@ -199,4 +251,3 @@ declare(strict_types=1);
 
 
 <?php endif; ?>
-

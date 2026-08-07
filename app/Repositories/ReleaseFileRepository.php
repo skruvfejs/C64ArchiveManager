@@ -195,6 +195,79 @@ final class ReleaseFileRepository extends Repository
 
         );
     }
+
+
+
+    /**
+     * Sök bland diskfiler
+     *
+     * @return ReleaseFile[]
+     */
+    public function searchDisks(
+        string $query
+    ): array {
+
+        $stmt = $this->prepare(
+            '
+            SELECT
+                rf.*,
+                e.title AS entry_title,
+                r.notes AS release_notes
+
+            FROM release_files rf
+
+            LEFT JOIN releases r
+                ON r.id = rf.release_id
+
+            LEFT JOIN entries e
+                ON e.id = r.entry_id
+
+            WHERE
+                rf.filename LIKE :query1
+                OR rf.disk_name LIKE :query2
+                OR rf.format LIKE :query3
+                OR rf.md5 LIKE :query4
+                OR r.notes LIKE :query5
+                OR e.title LIKE :query6
+
+            ORDER BY rf.id DESC
+            '
+        );
+        $stmt->execute([
+
+            'query1' =>
+                '%' . $query . '%',
+
+            'query2' =>
+                '%' . $query . '%',
+
+            'query3' =>
+                '%' . $query . '%',
+
+            'query4' =>
+                '%' . $query . '%',
+
+            'query5' =>
+                '%' . $query . '%',
+
+            'query6' =>
+                '%' . $query . '%'
+
+        ]);
+
+
+        return array_map(
+
+            fn(array $row): ReleaseFile =>
+                $this->hydrate($row),
+
+            $this->fetchAll($stmt)
+
+        );
+    }
+
+
+
     public function findByMd5(
         string $md5
     ): ?ReleaseFile {

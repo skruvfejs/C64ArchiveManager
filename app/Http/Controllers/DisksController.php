@@ -51,11 +51,27 @@ final class DisksController extends Controller
 
 
         /*
+         * Sökning i disklistan
+         */
+
+        $search =
+            trim(
+                (string) $this->request->query('search', '')
+            );
+
+
+
+        /*
          * Annars visa lista
          */
 
         $disks =
-            $this->files->findAllDisks();
+            $search === ''
+                ? $this->files->findAllDisks()
+                : $this->files->searchDisks($search);
+
+
+
         $this->view->render(
             'disk/list',
             [
@@ -64,7 +80,11 @@ final class DisksController extends Controller
 
                 'disks' =>
                     $disks,
+
+                'search' =>
+                    $search,
             ]
         );
     }
 }
+
