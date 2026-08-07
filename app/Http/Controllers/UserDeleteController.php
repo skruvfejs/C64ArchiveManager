@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Core\Auth;
 use App\Core\Flash;
 use App\Core\Role;
+use App\Services\AuditLogService;
 use App\Services\UserService;
 
 final class UserDeleteController extends Controller
@@ -14,7 +15,8 @@ final class UserDeleteController extends Controller
     public function __construct(
         private readonly UserService $users,
         private readonly Auth $auth,
-        private readonly Flash $flash
+        private readonly Flash $flash,
+        private readonly AuditLogService $auditLog
     ) {
     }
 
@@ -119,6 +121,16 @@ final class UserDeleteController extends Controller
 
             exit;
         }
+
+
+
+        $this->auditLog->log(
+            'DELETE',
+            'User',
+            $id,
+            'Tog bort användaren '
+            . $user->getUsername()
+        );
 
 
 

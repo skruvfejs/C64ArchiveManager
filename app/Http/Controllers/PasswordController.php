@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Core\Auth;
 use App\Core\Flash;
 use App\Core\View;
+use App\Services\AuditLogService;
 use App\Services\UserService;
 
 final class PasswordController extends Controller
@@ -15,7 +16,8 @@ final class PasswordController extends Controller
         private readonly Auth $auth,
         private readonly UserService $users,
         private readonly View $view,
-        private readonly Flash $flash
+        private readonly Flash $flash,
+        private readonly AuditLogService $auditLog
     ) {
     }
 
@@ -156,6 +158,15 @@ final class PasswordController extends Controller
                 $newPassword,
                 PASSWORD_DEFAULT
             )
+        );
+
+
+
+        $this->auditLog->log(
+            'CHANGE_PASSWORD',
+            'User',
+            $userId,
+            'Ändrade sitt lösenord'
         );
 
 

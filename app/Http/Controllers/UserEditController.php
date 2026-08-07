@@ -9,6 +9,7 @@ use App\Core\Authorization;
 use App\Core\Flash;
 use App\Core\Role;
 use App\Core\View;
+use App\Services\AuditLogService;
 use App\Services\RoleService;
 use App\Services\UserService;
 
@@ -20,7 +21,8 @@ final class UserEditController extends Controller
         private readonly Auth $auth,
         private readonly Authorization $authorization,
         private readonly View $view,
-        private readonly Flash $flash
+        private readonly Flash $flash,
+        private readonly AuditLogService $auditLog
     ) {
     }
 
@@ -68,13 +70,6 @@ final class UserEditController extends Controller
 
 
 
-        /*
-         * Pending används endast vid
-         * självregistrering.
-         *
-         * Ska inte kunna väljas
-         * från adminpanelen.
-         */
         $roles = array_filter(
             $roles,
             function ($role) {
@@ -163,12 +158,6 @@ final class UserEditController extends Controller
 
 
 
-        /*
-         * Skydda Super Admin-konton.
-         *
-         * Ett Super Admin-konto får endast
-         * ändras av samma konto.
-         */
         if (
             $user->getRoleId()
             === Role::SUPER_ADMIN
@@ -190,9 +179,6 @@ final class UserEditController extends Controller
 
 
 
-        /*
-         * Skydda sista Super Admin.
-         */
         if (
             $user->getRoleId()
             === Role::SUPER_ADMIN
@@ -217,10 +203,6 @@ final class UserEditController extends Controller
 
 
 
-        /*
-         * Endast Super Admin får tilldela
-         * Super Admin-rollen.
-         */
         if (
             $roleId === Role::SUPER_ADMIN
             &&
@@ -240,6 +222,11 @@ final class UserEditController extends Controller
 
 
 
+        $oldRoleId =
+            $user->getRoleId();
+
+
+
         $user->setRoleId(
             $roleId
         );
@@ -248,6 +235,18 @@ final class UserEditController extends Controller
 
         $this->users->update(
             $user
+        );
+
+
+
+        $this->auditLog->log(
+            'UPDATE',
+            'User',
+            $id,
+            'Ändrade användarens roll från '
+            . $oldRoleId
+            . ' till '
+            . $roleId
         );
 
 

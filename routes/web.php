@@ -15,6 +15,7 @@ use App\Http\Controllers\UserEditController;
 use App\Http\Controllers\UserDeleteController;
 use App\Http\Controllers\UserCreateController;
 use App\Http\Controllers\DeletedUsersController;
+use App\Http\Controllers\AuditLogController;
 
 use App\Http\Controllers\DiskController;
 use App\Http\Controllers\FileController;
@@ -228,6 +229,24 @@ return function (Router $router): void {
         [
             DeletedUsersController::class,
             'restore'
+        ],
+        [
+            ManageUsersMiddleware::class,
+        ]
+    );
+
+
+
+    /*
+     * Audit log
+     */
+
+
+    $router->get(
+        '/users/logs',
+        [
+            AuditLogController::class,
+            'index'
         ],
         [
             ManageUsersMiddleware::class,

@@ -9,6 +9,7 @@ use App\Core\Auth;
 use App\Core\Flash;
 use App\Core\Role;
 use App\Core\View;
+use App\Services\AuditLogService;
 use App\Services\RoleService;
 use App\Services\UserService;
 
@@ -20,7 +21,8 @@ final class UserCreateController extends Controller
         private readonly Authorization $authorization,
         private readonly Auth $auth,
         private readonly View $view,
-        private readonly Flash $flash
+        private readonly Flash $flash,
+        private readonly AuditLogService $auditLog
     ) {
     }
 
@@ -151,10 +153,12 @@ final class UserCreateController extends Controller
             );
 
 
+
         $email =
             trim(
                 $_POST['email'] ?? ''
             );
+
 
 
         $password =
@@ -221,16 +225,26 @@ final class UserCreateController extends Controller
 
 
 
-        $this->users->createUser(
-            $roleId,
-            $username,
-            $email,
-            password_hash(
-                $password,
-                PASSWORD_DEFAULT
-            ),
-            $_POST['first_name'] ?? null,
-            $_POST['last_name'] ?? null
+        $userId =
+            $this->users->createUser(
+                $roleId,
+                $username,
+                $email,
+                password_hash(
+                    $password,
+                    PASSWORD_DEFAULT
+                ),
+                $_POST['first_name'] ?? null,
+                $_POST['last_name'] ?? null
+            );
+
+
+
+        $this->auditLog->log(
+            'CREATE',
+            'User',
+            $userId,
+            'Skapade användaren ' . $username
         );
 
 

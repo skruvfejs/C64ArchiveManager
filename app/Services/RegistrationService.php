@@ -10,9 +10,12 @@ final class RegistrationService
 {
     public function __construct(
         private readonly UserService $users,
-        private readonly RoleService $roles
+        private readonly RoleService $roles,
+        private readonly AuditLogService $auditLog
     ) {
     }
+
+
 
     public function register(
         string $username,
@@ -25,17 +28,25 @@ final class RegistrationService
         $username = trim($username);
         $email = trim($email);
 
+
+
         $this->validateUsername(
             $username
         );
+
+
 
         $this->validateEmail(
             $email
         );
 
+
+
         $this->validatePassword(
             $password
         );
+
+
 
         if (
             $this->users->existsByUsername(
@@ -48,6 +59,8 @@ final class RegistrationService
             );
         }
 
+
+
         if (
             $this->users->existsByEmail(
                 $email
@@ -59,41 +72,69 @@ final class RegistrationService
             );
         }
 
+
+
         $passwordHash = password_hash(
             $password,
             PASSWORD_DEFAULT
         );
 
+
+
         $pendingRole =
             $this->roles->getPendingRole();
 
-        return $this->users->createUser(
-            $pendingRole->getId(),
-            $username,
-            $email,
-            $passwordHash,
-            $firstName,
-            $lastName
+
+
+        $userId =
+            $this->users->createUser(
+                $pendingRole->getId(),
+                $username,
+                $email,
+                $passwordHash,
+                $firstName,
+                $lastName
+            );
+
+
+
+        $this->auditLog->log(
+            'REGISTER',
+            'User',
+            $userId,
+            'Registrerade användaren ' . $username,
+            null
         );
+
+
+
+        return $userId;
     }
+
+
 
     public function usernameAvailable(
         string $username
-    ): bool
-    {
+    ): bool {
+
         return !$this->users->existsByUsername(
             trim($username)
         );
     }
 
+
+
     public function emailAvailable(
         string $email
-    ): bool
-    {
+    ): bool {
+
         return !$this->users->existsByEmail(
             trim($email)
         );
     }
+
+
+
     private function validateUsername(
         string $username
     ): void {
@@ -105,6 +146,8 @@ final class RegistrationService
             );
         }
 
+
+
         if (mb_strlen($username) < 3) {
 
             throw new RuntimeException(
@@ -112,12 +155,16 @@ final class RegistrationService
             );
         }
 
+
+
         if (mb_strlen($username) > 50) {
 
             throw new RuntimeException(
                 'Användarnamnet får vara högst 50 tecken.'
             );
         }
+
+
 
         if (
             !preg_match(
@@ -132,6 +179,8 @@ final class RegistrationService
         }
     }
 
+
+
     private function validateEmail(
         string $email
     ): void {
@@ -142,6 +191,8 @@ final class RegistrationService
                 'E-post måste anges.'
             );
         }
+
+
 
         if (
             !filter_var(
@@ -156,6 +207,8 @@ final class RegistrationService
         }
     }
 
+
+
     private function validatePassword(
         string $password
     ): void {
@@ -167,6 +220,8 @@ final class RegistrationService
             );
         }
 
+
+
         if (strlen($password) < 8) {
 
             throw new RuntimeException(
@@ -175,3 +230,4 @@ final class RegistrationService
         }
     }
 }
+

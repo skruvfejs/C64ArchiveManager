@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Core;
 
 use App\Http\Request;
+use App\Repositories\AuditLogRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
+use App\Services\AuditLogService;
 use App\Services\RegistrationService;
 use App\Services\RoleService;
 use App\Services\UserService;
@@ -17,9 +19,11 @@ final class Application
 
     private Router $router;
 
+
     public function __construct()
     {
         $this->container = new Container();
+
 
         /*
          * Config
@@ -31,6 +35,7 @@ final class Application
             )
         );
 
+
         /*
          * Timezone
          */
@@ -39,6 +44,7 @@ final class Application
                 ->get(Config::class)
                 ->get('app.timezone', 'UTC')
         );
+
 
         /*
          * Core services
@@ -50,6 +56,7 @@ final class Application
             )
         );
 
+
         /*
          * Database transaction
          */
@@ -60,10 +67,12 @@ final class Application
             )
         );
 
+
         $this->container->singleton(
             Session::class,
             fn () => new Session()
         );
+
 
         $this->container->singleton(
             Auth::class,
@@ -72,6 +81,10 @@ final class Application
             )
         );
 
+
+        /*
+         * Repositories
+         */
         $this->container->singleton(
             RoleRepository::class,
             fn (Container $c) => new RoleRepository(
@@ -79,12 +92,6 @@ final class Application
             )
         );
 
-        $this->container->singleton(
-            RoleService::class,
-            fn (Container $c) => new RoleService(
-                $c->get(RoleRepository::class)
-            )
-        );
 
         $this->container->singleton(
             UserRepository::class,
@@ -93,6 +100,26 @@ final class Application
             )
         );
 
+
+        $this->container->singleton(
+            AuditLogRepository::class,
+            fn (Container $c) => new AuditLogRepository(
+                $c->get(Database::class)
+            )
+        );
+
+
+        /*
+         * Services
+         */
+        $this->container->singleton(
+            RoleService::class,
+            fn (Container $c) => new RoleService(
+                $c->get(RoleRepository::class)
+            )
+        );
+
+
         $this->container->singleton(
             UserService::class,
             fn (Container $c) => new UserService(
@@ -100,27 +127,44 @@ final class Application
             )
         );
 
+
+        $this->container->singleton(
+            AuditLogService::class,
+            fn (Container $c) => new AuditLogService(
+                $c->get(AuditLogRepository::class),
+                $c->get(Auth::class)
+            )
+        );
+
+
         $this->container->singleton(
             RegistrationService::class,
             fn (Container $c) => new RegistrationService(
                 $c->get(UserService::class),
-                $c->get(RoleService::class)
+                $c->get(RoleService::class),
+                $c->get(AuditLogService::class)
             )
         );
+
+
         $this->container->singleton(
             View::class,
             fn () => new View()
         );
+
 
         $this->container->singleton(
             Request::class,
             fn () => new Request()
         );
 
+
         $this->router = new Router(
             $this->container
         );
     }
+
+
 
     public function run(): void
     {
@@ -128,9 +172,11 @@ final class Application
             require dirname(__DIR__, 2)
             . '/routes/web.php';
 
+
         $routes(
             $this->router
         );
+
 
         $this->router->dispatch(
             $this->container->get(
@@ -139,9 +185,10 @@ final class Application
         );
     }
 
+
+
     public function container(): Container
     {
         return $this->container;
     }
 }
-

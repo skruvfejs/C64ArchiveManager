@@ -8,6 +8,7 @@ use App\Core\Auth;
 use App\Core\Flash;
 use App\Core\Role;
 use App\Core\View;
+use App\Services\AuditLogService;
 use App\Services\UserService;
 
 final class DeletedUsersController extends Controller
@@ -16,7 +17,8 @@ final class DeletedUsersController extends Controller
         private readonly UserService $users,
         private readonly Auth $auth,
         private readonly View $view,
-        private readonly Flash $flash
+        private readonly Flash $flash,
+        private readonly AuditLogService $auditLog
     ) {
     }
 
@@ -125,6 +127,16 @@ final class DeletedUsersController extends Controller
 
         $this->users->restore(
             $id
+        );
+
+
+
+        $this->auditLog->log(
+            'RESTORE',
+            'User',
+            $id,
+            'Återställde användaren '
+            . $user->getUsername()
         );
 
 
