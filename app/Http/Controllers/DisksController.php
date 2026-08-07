@@ -51,7 +51,7 @@ final class DisksController extends Controller
 
 
         /*
-         * Sökning i disklistan
+         * Sökning och sortering i disklistan
          */
 
         $search =
@@ -60,15 +60,15 @@ final class DisksController extends Controller
             );
 
 
+        $sort =
+            (string) $this->request->query('sort', 'id');
 
-        /*
-         * Annars visa lista
-         */
+
 
         $disks =
             $search === ''
-                ? $this->files->findAllDisks()
-                : $this->files->searchDisks($search);
+                ? $this->files->findAllDisks($sort)
+                : $this->files->searchDisks($search, $sort);
 
 
 
@@ -83,8 +83,10 @@ final class DisksController extends Controller
 
                 'search' =>
                     $search,
+
+                'sort' =>
+                    $sort,
             ]
         );
     }
 }
-

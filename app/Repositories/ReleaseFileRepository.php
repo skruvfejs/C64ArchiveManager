@@ -154,15 +154,44 @@ final class ReleaseFileRepository extends Repository
         );
     }
 
-
-
     /**
      * Hämta alla diskfiler
      *
      * @return ReleaseFile[]
      */
-    public function findAllDisks(): array
-    {
+    public function findAllDisks(
+        string $sort = 'id'
+    ): array {
+
+
+        $orderBy = [
+
+            'id' =>
+                'rf.id',
+
+            'title' =>
+                'e.title',
+
+            'format' =>
+                'rf.format',
+
+            'size' =>
+                'rf.size',
+
+            'filename' =>
+                'rf.filename'
+
+        ];
+
+
+
+        $orderColumn =
+            $orderBy[$sort]
+            ??
+            $orderBy['id'];
+
+
+
         $stmt = $this->prepare(
             '
             SELECT
@@ -178,12 +207,13 @@ final class ReleaseFileRepository extends Repository
             LEFT JOIN entries e
                 ON e.id = r.entry_id
 
-            ORDER BY rf.id DESC
+            ORDER BY ' . $orderColumn . ' ASC
             '
         );
 
 
         $stmt->execute();
+
 
 
         return array_map(
@@ -204,8 +234,36 @@ final class ReleaseFileRepository extends Repository
      * @return ReleaseFile[]
      */
     public function searchDisks(
-        string $query
+        string $query,
+        string $sort = 'id'
     ): array {
+
+
+        $orderBy = [
+
+            'id' =>
+                'rf.id',
+
+            'title' =>
+                'e.title',
+
+            'format' =>
+                'rf.format',
+
+            'size' =>
+                'rf.size',
+
+            'filename' =>
+                'rf.filename'
+
+        ];
+
+
+
+        $orderColumn =
+            $orderBy[$sort]
+            ??
+            $orderBy['id'];
 
         $stmt = $this->prepare(
             '
@@ -230,9 +288,11 @@ final class ReleaseFileRepository extends Repository
                 OR r.notes LIKE :query5
                 OR e.title LIKE :query6
 
-            ORDER BY rf.id DESC
+            ORDER BY ' . $orderColumn . ' ASC
             '
         );
+
+
         $stmt->execute([
 
             'query1' =>
@@ -354,7 +414,6 @@ final class ReleaseFileRepository extends Repository
     }
 
 
-
     /**
      * @return ReleaseFile[]
      */
@@ -389,6 +448,9 @@ final class ReleaseFileRepository extends Repository
 
         );
     }
+
+
+
     public function delete(
         int $id
     ): bool {

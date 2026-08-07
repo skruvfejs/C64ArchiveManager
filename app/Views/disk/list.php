@@ -74,13 +74,19 @@ declare(strict_types=1);
         <tr>
 
             <th>
-                ID
+                <a href="/disk?sort=id">
+                    ID
+                </a>
             </th>
+
 
 
             <th>
-                Titel
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=title">
+                    Titel
+                </a>
             </th>
+
 
 
             <th>
@@ -88,24 +94,35 @@ declare(strict_types=1);
             </th>
 
 
+
             <th>
                 Disk-ID
             </th>
 
 
+
             <th>
-                Filnamn
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=filename">
+                    Filnamn
+                </a>
             </th>
 
 
+
             <th>
-                Format
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=format">
+                    Format
+                </a>
             </th>
 
 
+
             <th>
-                Storlek
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=size">
+                    Storlek
+                </a>
             </th>
+
 
 
             <th>
@@ -113,9 +130,11 @@ declare(strict_types=1);
             </th>
 
 
+
             <th>
                 Kommentar
             </th>
+
 
 
             <th>
@@ -125,6 +144,10 @@ declare(strict_types=1);
         </tr>
 
     </thead>
+
+
+
+    <tbody>
 
     <tbody>
 
