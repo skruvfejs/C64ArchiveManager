@@ -160,7 +160,9 @@ final class ReleaseFileRepository extends Repository
      * @return ReleaseFile[]
      */
     public function findAllDisks(
-        string $sort = 'id'
+        string $sort = 'id',
+        int $limit = 50,
+        int $offset = 0
     ): array {
 
 
@@ -208,7 +210,24 @@ final class ReleaseFileRepository extends Repository
                 ON e.id = r.entry_id
 
             ORDER BY ' . $orderColumn . ' ASC
+
+            LIMIT :limit
+            OFFSET :offset
             '
+        );
+
+
+        $stmt->bindValue(
+            ':limit',
+            $limit,
+            \PDO::PARAM_INT
+        );
+
+
+        $stmt->bindValue(
+            ':offset',
+            $offset,
+            \PDO::PARAM_INT
         );
 
 
@@ -235,9 +254,10 @@ final class ReleaseFileRepository extends Repository
      */
     public function searchDisks(
         string $query,
-        string $sort = 'id'
+        string $sort = 'id',
+        int $limit = 50,
+        int $offset = 0
     ): array {
-
 
         $orderBy = [
 
@@ -265,6 +285,8 @@ final class ReleaseFileRepository extends Repository
             ??
             $orderBy['id'];
 
+
+
         $stmt = $this->prepare(
             '
             SELECT
@@ -289,9 +311,121 @@ final class ReleaseFileRepository extends Repository
                 OR e.title LIKE :query6
 
             ORDER BY ' . $orderColumn . ' ASC
+
+            LIMIT :limit
+            OFFSET :offset
             '
         );
 
+
+        $stmt->bindValue(
+            ':query1',
+            '%' . $query . '%'
+        );
+
+        $stmt->bindValue(
+            ':query2',
+            '%' . $query . '%'
+        );
+
+        $stmt->bindValue(
+            ':query3',
+            '%' . $query . '%'
+        );
+
+        $stmt->bindValue(
+            ':query4',
+            '%' . $query . '%'
+        );
+
+        $stmt->bindValue(
+            ':query5',
+            '%' . $query . '%'
+        );
+
+        $stmt->bindValue(
+            ':query6',
+            '%' . $query . '%'
+        );
+
+
+        $stmt->bindValue(
+            ':limit',
+            $limit,
+            \PDO::PARAM_INT
+        );
+
+
+        $stmt->bindValue(
+            ':offset',
+            $offset,
+            \PDO::PARAM_INT
+        );
+
+
+        $stmt->execute();
+
+
+
+        return array_map(
+
+            fn(array $row): ReleaseFile =>
+                $this->hydrate($row),
+
+            $this->fetchAll($stmt)
+
+        );
+    }
+
+
+
+    /**
+     * Räkna antal diskfiler
+     */
+    public function countDisks(
+        string $query = ''
+    ): int {
+
+        if ($query === '') {
+
+            $stmt = $this->prepare(
+                '
+                SELECT COUNT(*)
+                FROM release_files
+                '
+            );
+
+
+            $stmt->execute();
+
+
+            return (int)
+                $stmt->fetchColumn();
+        }
+
+
+
+        $stmt = $this->prepare(
+            '
+            SELECT COUNT(*)
+
+            FROM release_files rf
+
+            LEFT JOIN releases r
+                ON r.id = rf.release_id
+
+            LEFT JOIN entries e
+                ON e.id = r.entry_id
+
+            WHERE
+                rf.filename LIKE :query1
+                OR rf.disk_name LIKE :query2
+                OR rf.format LIKE :query3
+                OR rf.md5 LIKE :query4
+                OR r.notes LIKE :query5
+                OR e.title LIKE :query6
+            '
+        );
 
         $stmt->execute([
 
@@ -316,14 +450,8 @@ final class ReleaseFileRepository extends Repository
         ]);
 
 
-        return array_map(
-
-            fn(array $row): ReleaseFile =>
-                $this->hydrate($row),
-
-            $this->fetchAll($stmt)
-
-        );
+        return (int)
+            $stmt->fetchColumn();
     }
 
 
@@ -412,6 +540,7 @@ final class ReleaseFileRepository extends Repository
 
         return $this->hydrate($row);
     }
+
 
 
     /**
@@ -532,3 +661,4 @@ final class ReleaseFileRepository extends Repository
             );
     }
 }
+

@@ -51,7 +51,7 @@ final class DisksController extends Controller
 
 
         /*
-         * Sökning och sortering i disklistan
+         * Sökning, sortering och pagination i disklistan
          */
 
         $search =
@@ -64,11 +64,46 @@ final class DisksController extends Controller
             (string) $this->request->query('sort', 'id');
 
 
+        $page =
+            max(
+                1,
+                (int) $this->request->query('page', 1)
+            );
+
+
+        $perPage = 50;
+
+
+        $total =
+            $this->files->countDisks($search);
+
+
+        $pages =
+            (int) ceil(
+                $total / $perPage
+            );
+
+
+        $offset =
+            ($page - 1) * $perPage;
+
+
 
         $disks =
             $search === ''
-                ? $this->files->findAllDisks($sort)
-                : $this->files->searchDisks($search, $sort);
+
+                ? $this->files->findAllDisks(
+                    $sort,
+                    $perPage,
+                    $offset
+                )
+
+                : $this->files->searchDisks(
+                    $search,
+                    $sort,
+                    $perPage,
+                    $offset
+                );
 
 
 
@@ -86,6 +121,18 @@ final class DisksController extends Controller
 
                 'sort' =>
                     $sort,
+
+                'page' =>
+                    $page,
+
+                'pages' =>
+                    $pages,
+
+                'total' =>
+                    $total,
+
+                'perPage' =>
+                    $perPage,
             ]
         );
     }

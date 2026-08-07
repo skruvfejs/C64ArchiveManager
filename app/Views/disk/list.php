@@ -57,6 +57,36 @@ declare(strict_types=1);
 
 
 
+<?php if (($total ?? 0) > 0): ?>
+
+<p>
+
+    Visar
+
+    <?= (($page ?? 1) - 1) * ($perPage ?? 50) + 1 ?>
+
+
+    -
+
+
+    <?= min(
+        ($page ?? 1) * ($perPage ?? 50),
+        $total
+    ) ?>
+
+
+    av
+
+    <?= $total ?>
+
+    diskar
+
+</p>
+
+<?php endif; ?>
+
+
+
 <?php if (empty($disks)): ?>
 
 <p>
@@ -74,17 +104,25 @@ declare(strict_types=1);
         <tr>
 
             <th>
-                <a href="/disk?sort=id">
+
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=id">
+
                     ID
+
                 </a>
+
             </th>
 
 
 
             <th>
+
                 <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=title">
+
                     Titel
+
                 </a>
+
             </th>
 
 
@@ -102,25 +140,37 @@ declare(strict_types=1);
 
 
             <th>
+
                 <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=filename">
+
                     Filnamn
+
                 </a>
+
             </th>
 
 
 
             <th>
+
                 <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=format">
+
                     Format
+
                 </a>
+
             </th>
 
 
 
             <th>
+
                 <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=size">
+
                     Storlek
+
                 </a>
+
             </th>
 
 
@@ -272,5 +322,68 @@ declare(strict_types=1);
 
 </table>
 
+
+
+<?php endif; ?>
+
+
+
+<?php if (($pages ?? 1) > 1): ?>
+
+<p>
+
+
+<?php if (($page ?? 1) > 1): ?>
+
+<a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=<?= urlencode($sort ?? 'id') ?>&page=<?= $page - 1 ?>">
+
+    Föregående
+
+</a>
+
+<?php endif; ?>
+
+
+
+<?php for ($i = 1; $i <= $pages; $i++): ?>
+
+
+<?php if ($i === ($page ?? 1)): ?>
+
+<strong>
+
+    <?= $i ?>
+
+</strong>
+
+
+<?php else: ?>
+
+<a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=<?= urlencode($sort ?? 'id') ?>&page=<?= $i ?>">
+
+    <?= $i ?>
+
+</a>
+
+
+<?php endif; ?>
+
+
+<?php endfor; ?>
+
+
+
+<?php if (($page ?? 1) < $pages): ?>
+
+<a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=<?= urlencode($sort ?? 'id') ?>&page=<?= $page + 1 ?>">
+
+    Nästa
+
+</a>
+
+<?php endif; ?>
+
+
+</p>
 
 <?php endif; ?>
