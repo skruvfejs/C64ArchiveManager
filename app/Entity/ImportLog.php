@@ -8,6 +8,10 @@ final class ImportLog
 {
     private ?int $id = null;
 
+    private ?int $userId = null;
+
+    private ?string $username = null;
+
     private string $filename = '';
 
     private string $format = '';
@@ -25,18 +29,56 @@ final class ImportLog
     private ?string $finishedAt = null;
 
 
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
 
-    public function setId(?int $id): self
-    {
+    public function setId(
+        ?int $id
+    ): self {
+
         $this->id = $id;
 
         return $this;
     }
+
+
+
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+
+
+    public function setUserId(
+        ?int $userId
+    ): self {
+
+        $this->userId = $userId;
+
+        return $this;
+    }
+
+
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+
+    public function setUsername(
+        ?string $username
+    ): self {
+
+        $this->username = $username;
+
+        return $this;
+    }
+
 
 
     public function getFilename(): string
@@ -55,6 +97,7 @@ final class ImportLog
     }
 
 
+
     public function getFormat(): string
     {
         return $this->format;
@@ -69,6 +112,7 @@ final class ImportLog
 
         return $this;
     }
+
 
 
     public function getStatus(): string
@@ -87,6 +131,7 @@ final class ImportLog
     }
 
 
+
     public function getReleaseId(): ?int
     {
         return $this->releaseId;
@@ -101,6 +146,7 @@ final class ImportLog
 
         return $this;
     }
+
 
 
     public function getFilesImported(): int
@@ -119,6 +165,7 @@ final class ImportLog
     }
 
 
+
     public function getMessage(): ?string
     {
         return $this->message;
@@ -133,6 +180,7 @@ final class ImportLog
 
         return $this;
     }
+
 
 
     public function getStartedAt(): ?string
@@ -151,6 +199,7 @@ final class ImportLog
     }
 
 
+
     public function getFinishedAt(): ?string
     {
         return $this->finishedAt;
@@ -166,4 +215,3 @@ final class ImportLog
         return $this;
     }
 }
-

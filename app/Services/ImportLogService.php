@@ -15,17 +15,20 @@ final class ImportLogService
     }
 
 
+
     /**
      * Startar en importlogg.
      */
     public function start(
         string $filename,
-        string $format
+        string $format,
+        ?int $userId = null
     ): int {
 
         $log = new ImportLog();
 
         $log
+            ->setUserId($userId)
             ->setFilename($filename)
             ->setFormat($format)
             ->setStatus('RUNNING');
@@ -34,6 +37,7 @@ final class ImportLogService
         return $this->repository
                     ->create($log);
     }
+
 
 
     /**
@@ -54,6 +58,7 @@ final class ImportLogService
     }
 
 
+
     /**
      * Markerar import som misslyckad.
      */
@@ -70,6 +75,7 @@ final class ImportLogService
     }
 
 
+
     /**
      * Hämtar senaste importer.
      *
@@ -84,6 +90,7 @@ final class ImportLogService
     }
 
 
+
     /**
      * Hämtar en specifik import.
      */
@@ -95,3 +102,4 @@ final class ImportLogService
                     ->findById($id);
     }
 }
+

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Core\Auth;
 use App\Core\View;
 use App\Http\Request;
 use App\Repositories\EntryRepository;
@@ -22,7 +23,8 @@ final class ImportController extends Controller
         private ReleaseRepository $releases,
         private DirectoryEntryRepository $directories,
         private ChecksumService $checksum,
-        private ImporterService $importer
+        private ImporterService $importer,
+        private Auth $auth
     ) {
     }
 
@@ -68,16 +70,6 @@ final class ImportController extends Controller
 
             return;
         }
-
-
-
-        error_log(
-            'UPLOAD DEBUG: '
-            . print_r(
-                $_FILES['disk'],
-                true
-            )
-        );
 
 
 
@@ -134,11 +126,101 @@ final class ImportController extends Controller
             $_FILES['disk']['tmp_name'],
             $target
         );
+
+
+
         $result =
             $this->importer
                  ->import(
                      $target,
-                     $entryId
+                     $entryId,
+                     false,
+                     $this->auth->id()
+                 );
+
+
+
+        if ($result->isDuplicate()) {
+
+            $view = new View();
+
+            $view->render(
+                'import/duplicate',
+                $result->getDuplicateData()
+            );
+
+            return;
+        }
+
+
+
+        $this->renderImportResult(
+            $result->getReleaseId()
+        );
+    }
+
+
+
+    public function force(): void
+    {
+        $entryValue =
+            $this->request->post(
+                'entry_id'
+            );
+
+
+        $entryId =
+            $entryValue !== null &&
+            $entryValue !== ''
+                ? (int) $entryValue
+                : null;
+
+
+
+        $path =
+            $this->request->post(
+                'path'
+            );
+
+
+
+        if (empty($path)) {
+
+            $this->render(
+                'import/index',
+                [
+                    'message' =>
+                        'Felaktiga importdata.'
+                ]
+            );
+
+            return;
+        }
+
+
+
+        if (!is_file($path)) {
+
+            $this->render(
+                'import/index',
+                [
+                    'message' =>
+                        'Importfil saknas.'
+                ]
+            );
+
+            return;
+        }
+
+
+
+        $result =
+            $this->importer
+                 ->import(
+                     $path,
+                     $entryId,
+                     true,
+                     $this->auth->id()
                  );
 
 
@@ -175,23 +257,13 @@ final class ImportController extends Controller
                  );
 
 
-        $entryName =
-            'Okänd';
+        $entryName = 'Okänd';
 
-        $filename =
-            null;
-
-        $format =
-            null;
-
-        $md5 =
-            null;
-
-        $size =
-            null;
-
-        $fileCount =
-            0;
+        $filename = null;
+        $format = null;
+        $md5 = null;
+        $size = null;
+        $fileCount = 0;
 
 
 
@@ -290,90 +362,6 @@ final class ImportController extends Controller
                 'message' =>
                     $message
             ]
-        );
-    }
-
-
-
-    public function force(): void
-    {
-        $entryValue =
-            $this->request->post(
-                'entry_id'
-            );
-
-
-        $entryId =
-            $entryValue !== null &&
-            $entryValue !== ''
-                ? (int) $entryValue
-                : null;
-
-
-
-        $path =
-            $this->request->post(
-                'path'
-            );
-
-
-
-        if (empty($path)) {
-
-            $this->render(
-                'import/index',
-                [
-                    'message' =>
-                        'Felaktiga importdata.'
-                ]
-            );
-
-            return;
-        }
-
-
-
-        if (!is_file($path)) {
-
-            $this->render(
-                'import/index',
-                [
-                    'message' =>
-                        'Importfil saknas.'
-                ]
-            );
-
-            return;
-        }
-
-
-
-        $result =
-            $this->importer
-                 ->import(
-                     $path,
-                     $entryId,
-                     true
-                 );
-
-
-
-        if ($result->isDuplicate()) {
-
-            $view = new View();
-
-            $view->render(
-                'import/duplicate',
-                $result->getDuplicateData()
-            );
-
-            return;
-        }
-
-
-
-        $this->renderImportResult(
-            $result->getReleaseId()
         );
     }
 

@@ -33,7 +33,8 @@ final class ImporterService
     public function import(
         string $filename,
         ?int $entryId,
-        bool $forceDuplicate = false
+        bool $forceDuplicate = false,
+        ?int $userId = null
     ): ImportResult {
 
 
@@ -97,7 +98,8 @@ final class ImporterService
             $this->importLogService
                  ->start(
                      basename($filename),
-                     $format
+                     $format,
+                     $userId
                  );
 
 
@@ -135,7 +137,9 @@ final class ImporterService
             }
 
 
+
             return $result;
+
 
 
         } catch (Throwable $e) {
@@ -162,8 +166,8 @@ final class ImporterService
 
 
         return match ($format) {
-            'D64' =>
 
+            'D64' =>
                 $this->d64Importer
                      ->import(
                          $filename,
@@ -174,7 +178,6 @@ final class ImporterService
 
 
             'T64' =>
-
                 $this->t64Importer
                      ->import(
                          $filename,
@@ -185,7 +188,6 @@ final class ImporterService
 
 
             'D71' =>
-
                 $this->d71Importer
                      ->import(
                          $filename,
@@ -196,7 +198,6 @@ final class ImporterService
 
 
             'D81' =>
-
                 $this->d81Importer
                      ->import(
                          $filename,
@@ -207,7 +208,6 @@ final class ImporterService
 
 
             'PRG' =>
-
                 $this->prgImporter
                      ->import(
                          $filename,
@@ -218,7 +218,6 @@ final class ImporterService
 
 
             'P00' =>
-
                 $this->importP00(
                     $filename,
                     $entryId,

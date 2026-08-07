@@ -18,6 +18,10 @@
     <tr>
 
         <th>
+            Användare
+        </th>
+
+        <th>
             Fil
         </th>
 
@@ -44,9 +48,17 @@
     </tr>
 
 
+
     <?php foreach ($logs as $log): ?>
 
     <tr>
+
+        <td>
+            <?= htmlspecialchars(
+                $log->getUsername() ?? 'Gäst'
+            ) ?>
+        </td>
+
 
         <td>
             <?= htmlspecialchars(

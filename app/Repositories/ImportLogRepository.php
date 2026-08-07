@@ -13,10 +13,10 @@ final class ImportLogRepository extends Repository
         ImportLog $log
     ): int {
 
-        $stmt = $this->prepare(
-            '
+        $sql = "
             INSERT INTO import_logs
             (
+                user_id,
                 filename,
                 format,
                 status,
@@ -26,6 +26,7 @@ final class ImportLogRepository extends Repository
             )
             VALUES
             (
+                :user_id,
                 :filename,
                 :format,
                 :status,
@@ -33,72 +34,78 @@ final class ImportLogRepository extends Repository
                 :files_imported,
                 :message
             )
-            '
+        ";
+
+
+        $stmt =
+            $this->prepare($sql);
+
+
+        $stmt->execute(
+            [
+                'user_id' =>
+                    $log->getUserId(),
+
+                'filename' =>
+                    $log->getFilename(),
+
+                'format' =>
+                    $log->getFormat(),
+
+                'status' =>
+                    $log->getStatus(),
+
+                'release_id' =>
+                    $log->getReleaseId(),
+
+                'files_imported' =>
+                    $log->getFilesImported(),
+
+                'message' =>
+                    $log->getMessage()
+            ]
         );
-
-
-        $stmt->execute([
-
-            'filename' =>
-                $log->getFilename(),
-
-            'format' =>
-                $log->getFormat(),
-
-            'status' =>
-                $log->getStatus(),
-
-            'release_id' =>
-                $log->getReleaseId(),
-
-            'files_imported' =>
-                $log->getFilesImported(),
-
-            'message' =>
-                $log->getMessage()
-
-        ]);
 
 
         return $this->lastInsertId();
     }
 
 
+
     public function markSuccess(
         int $id,
-        ?int $releaseId = null,
-        int $filesImported = 0
+        ?int $releaseId,
+        int $filesImported
     ): bool {
 
-        $stmt = $this->prepare(
-            '
-            UPDATE import_logs
-            SET
-                status = :status,
-                release_id = :release_id,
-                files_imported = :files_imported,
-                finished_at = NOW()
-            WHERE id = :id
-            '
+        $stmt =
+            $this->prepare(
+                "
+                UPDATE import_logs
+                SET
+                    status = 'SUCCESS',
+                    release_id = :release_id,
+                    files_imported = :files_imported,
+                    finished_at = NOW()
+                WHERE id = :id
+                "
+            );
+
+
+        return $stmt->execute(
+            [
+                'id' =>
+                    $id,
+
+                'release_id' =>
+                    $releaseId,
+
+                'files_imported' =>
+                    $filesImported
+            ]
         );
-
-
-        return $stmt->execute([
-
-            'id' =>
-                $id,
-
-            'status' =>
-                'SUCCESS',
-
-            'release_id' =>
-                $releaseId,
-
-            'files_imported' =>
-                $filesImported
-
-        ]);
     }
+
 
 
     public function markFailed(
@@ -106,67 +113,30 @@ final class ImportLogRepository extends Repository
         string $message
     ): bool {
 
-        $stmt = $this->prepare(
-            '
-            UPDATE import_logs
-            SET
-                status = :status,
-                message = :message,
-                finished_at = NOW()
-            WHERE id = :id
-            '
+        $stmt =
+            $this->prepare(
+                "
+                UPDATE import_logs
+                SET
+                    status = 'FAILED',
+                    message = :message,
+                    finished_at = NOW()
+                WHERE id = :id
+                "
+            );
+
+
+        return $stmt->execute(
+            [
+                'id' =>
+                    $id,
+
+                'message' =>
+                    $message
+            ]
         );
-
-
-        return $stmt->execute([
-
-            'id' =>
-                $id,
-
-            'status' =>
-                'FAILED',
-
-            'message' =>
-                $message
-
-        ]);
     }
 
-
-    public function findById(
-        int $id
-    ): ?ImportLog {
-
-        $stmt = $this->prepare(
-            '
-            SELECT *
-            FROM import_logs
-            WHERE id = :id
-            LIMIT 1
-            '
-        );
-
-
-        $stmt->execute([
-
-            'id' =>
-                $id
-
-        ]);
-
-
-        $row =
-            $this->fetchOne($stmt);
-
-
-        if ($row === null) {
-
-            return null;
-        }
-
-
-        return $this->hydrate($row);
-    }
 
 
     /**
@@ -176,14 +146,23 @@ final class ImportLogRepository extends Repository
         int $limit = 50
     ): array {
 
-        $stmt = $this->prepare(
-            '
-            SELECT *
-            FROM import_logs
-            ORDER BY started_at DESC
-            LIMIT :limit
-            '
-        );
+        $stmt =
+            $this->prepare(
+                "
+                SELECT
+                    import_logs.*,
+                    users.username AS username
+
+                FROM import_logs
+
+                LEFT JOIN users
+                    ON users.id = import_logs.user_id
+
+                ORDER BY import_logs.id DESC
+
+                LIMIT :limit
+                "
+            );
 
 
         $stmt->bindValue(
@@ -197,14 +176,55 @@ final class ImportLogRepository extends Repository
 
 
         return array_map(
-
             fn(array $row): ImportLog =>
                 $this->hydrate($row),
-
             $this->fetchAll($stmt)
-
         );
     }
+
+
+
+    public function findById(
+        int $id
+    ): ?ImportLog {
+
+        $stmt =
+            $this->prepare(
+                "
+                SELECT
+                    import_logs.*,
+                    users.username AS username
+
+                FROM import_logs
+
+                LEFT JOIN users
+                    ON users.id = import_logs.user_id
+
+                WHERE import_logs.id = :id
+                "
+            );
+
+
+        $stmt->execute(
+            [
+                'id' =>
+                    $id
+            ]
+        );
+
+
+        $row =
+            $this->fetchOne($stmt);
+
+
+        if ($row === null) {
+            return null;
+        }
+
+
+        return $this->hydrate($row);
+    }
+
 
 
     private function hydrate(
@@ -215,6 +235,16 @@ final class ImportLogRepository extends Repository
 
             ->setId(
                 (int) $row['id']
+            )
+
+            ->setUserId(
+                isset($row['user_id'])
+                    ? (int) $row['user_id']
+                    : null
+            )
+
+            ->setUsername(
+                $row['username'] ?? null
             )
 
             ->setFilename(
@@ -241,6 +271,14 @@ final class ImportLogRepository extends Repository
 
             ->setMessage(
                 $row['message']
+            )
+
+            ->setStartedAt(
+                $row['started_at']
+            )
+
+            ->setFinishedAt(
+                $row['finished_at']
             );
     }
 }

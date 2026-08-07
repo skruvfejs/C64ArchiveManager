@@ -13,12 +13,12 @@ final class LogoutController extends Controller
     ) {
     }
 
+
     public function index(): void
     {
         $this->auth->logout();
 
-        header('Location: /login');
+        header('Location: /');
         exit;
     }
 }
-
