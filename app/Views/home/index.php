@@ -20,6 +20,7 @@ $user = $auth->user();
 </h1>
 
 
+
 <?php if ($user): ?>
 
 
@@ -35,6 +36,86 @@ $user = $auth->user();
         Du är inloggad och kan använda arkivet.
     </p>
 
+
+
+    <h2>
+        Senast importerade releaser
+    </h2>
+
+
+    <?php if (!empty($imports)): ?>
+
+        <table border="1" cellpadding="5" cellspacing="0">
+
+            <thead>
+
+                <tr>
+                    <th>Fil</th>
+                    <th>Format</th>
+                    <th>Status</th>
+                    <th>Importerad av</th>
+                    <th>Startad</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            <?php foreach ($imports as $import): ?>
+
+                <tr>
+
+                    <td>
+                        <?= htmlspecialchars(
+                            $import->getFilename()
+                        ) ?>
+                    </td>
+
+
+                    <td>
+                        <?= htmlspecialchars(
+                            $import->getFormat()
+                        ) ?>
+                    </td>
+
+
+                    <td>
+                        <?= htmlspecialchars(
+                            $import->getStatus()
+                        ) ?>
+                    </td>
+
+
+                    <td>
+                        <?= htmlspecialchars(
+                            $import->getUsername() ?? ''
+                        ) ?>
+                    </td>
+
+
+                    <td>
+                        <?= htmlspecialchars(
+                            $import->getStartedAt()
+                        ) ?>
+                    </td>
+
+                </tr>
+
+            <?php endforeach; ?>
+
+            </tbody>
+
+        </table>
+
+
+    <?php else: ?>
+
+        <p>
+            Inga importer ännu.
+        </p>
+
+    <?php endif; ?>
 
 
 <?php else: ?>
