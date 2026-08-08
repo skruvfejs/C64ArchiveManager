@@ -43,18 +43,34 @@ declare(strict_types=1);
 
 <p>
 
-    <a href="/import">
-        Importera ny release
-    </a>
+    <?php if (
+        $authorization->can(
+            \App\Core\Permission::IMPORT
+        )
+    ): ?>
 
-    |
+        <a href="/import">
+            Importera ny release
+        </a>
 
-    <a href="/import/logs">
-        Importlogg
-    </a>
+        |
+
+    <?php endif; ?>
+
+
+    <?php if (
+        $authorization->can(
+            \App\Core\Permission::VIEW_LOGS
+        )
+    ): ?>
+
+        <a href="/import/logs">
+            Importlogg
+        </a>
+
+    <?php endif; ?>
 
 </p>
-
 
 
 <?php if (($total ?? 0) > 0): ?>

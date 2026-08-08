@@ -13,8 +13,10 @@ $session = new Session();
 
 $auth = new Auth($session);
 
+
 $authorization =
     new Authorization($auth);
+
 
 $user = $auth->user();
 
@@ -145,6 +147,7 @@ $title ??= 'C64 Archive Manager';
         <?php if ($user): ?>
 
             Inloggad som
+
             <strong>
                 <?= htmlspecialchars($user['username']) ?>
             </strong>
@@ -200,9 +203,11 @@ $title ??= 'C64 Archive Manager';
                 Dashboard
             </a>
 
+
             <a href="/disk">
                 Diskar
             </a>
+
 
             <a href="/search">
                 Sök

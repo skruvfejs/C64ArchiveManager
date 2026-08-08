@@ -5,18 +5,22 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Core\Auth;
+use App\Core\Authorization;
 use App\Core\View;
 use App\Http\Request;
 use App\Repositories\ReleaseFileRepository;
 
+
 final class DisksController extends Controller
 {
+
     public function __construct(
         private readonly ReleaseFileRepository $files,
         private readonly View $view,
         private readonly Request $request,
         private readonly DiskController $diskController,
-        private readonly Auth $auth
+        private readonly Auth $auth,
+        private readonly Authorization $authorization
     ) {
     }
 
@@ -24,12 +28,14 @@ final class DisksController extends Controller
 
     public function index(): void
     {
+
         if (!$this->auth->check()) {
 
             header('Location: /login');
 
             exit;
         }
+
 
 
         $id =
@@ -60,8 +66,10 @@ final class DisksController extends Controller
             );
 
 
+
         $sort =
             (string) $this->request->query('sort', 'id');
+
 
 
         $page =
@@ -71,17 +79,21 @@ final class DisksController extends Controller
             );
 
 
+
         $perPage = 50;
+
 
 
         $total =
             $this->files->countDisks($search);
 
 
+
         $pages =
             (int) ceil(
                 $total / $perPage
             );
+
 
 
         $offset =
@@ -110,30 +122,44 @@ final class DisksController extends Controller
         $this->view->render(
             'disk/list',
             [
+
                 'title' =>
                     'Diskar',
+
 
                 'disks' =>
                     $disks,
 
+
                 'search' =>
                     $search,
+
 
                 'sort' =>
                     $sort,
 
+
                 'page' =>
                     $page,
+
 
                 'pages' =>
                     $pages,
 
+
                 'total' =>
                     $total,
 
+
                 'perPage' =>
                     $perPage,
+
+
+                'authorization' =>
+                    $this->authorization,
+
             ]
         );
     }
 }
+

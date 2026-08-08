@@ -32,6 +32,7 @@ use App\Http\Controllers\ReleaseController;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\ManageUsersMiddleware;
 use App\Http\Middleware\ImportMiddleware;
+use App\Http\Middleware\ViewLogsMiddleware;
 
 
 return function (Router $router): void {
@@ -331,6 +332,7 @@ return function (Router $router): void {
         ],
         [
             AuthMiddleware::class,
+            ImportMiddleware::class,
         ]
     );
 
@@ -369,9 +371,9 @@ return function (Router $router): void {
         ],
         [
             AuthMiddleware::class,
+            ViewLogsMiddleware::class,
         ]
     );
-
 
 
     $router->get(

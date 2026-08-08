@@ -43,6 +43,7 @@ final class Authorization
             Permission::DOWNLOAD,
 
             Permission::IMPORT,
+            Permission::VIEW_LOGS,
 
             Permission::EDIT,
             Permission::DELETE,
@@ -55,6 +56,7 @@ final class Authorization
             Permission::DOWNLOAD,
 
             Permission::IMPORT,
+            Permission::VIEW_LOGS,
         ],
 
 
