@@ -128,17 +128,7 @@ final class D64ImporterService
                     $version
                 );
         }
-
-
-
-        $release
-            ->setEntryId($entryId)
-            ->setName($diskName)
-            ->setVersion($version)
-            ->setNotes($notes);
-
         if (
-            !$forceDuplicate &&
             $this->releaseRepository
                  ->existsByEntryNameVersion(
                      $entryId,
@@ -147,10 +137,21 @@ final class D64ImporterService
                  )
         ) {
 
-            throw new RuntimeException(
-                'Release already exists.'
-            );
+            $diskName =
+                $this->createDuplicateName(
+                    $entryId,
+                    $diskName,
+                    $version
+                );
         }
+
+
+
+        $release
+            ->setEntryId($entryId)
+            ->setName($diskName)
+            ->setVersion($version)
+            ->setNotes($notes);
 
 
 

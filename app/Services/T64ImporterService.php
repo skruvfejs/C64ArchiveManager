@@ -42,9 +42,11 @@ final class T64ImporterService
         }
 
 
+
         $header =
             $this->parser
                  ->parse($filename);
+
 
 
         $checksum =
@@ -54,6 +56,7 @@ final class T64ImporterService
 
 
         $existingReleaseFile = null;
+
 
 
         if (!$forceDuplicate) {
@@ -102,10 +105,12 @@ final class T64ImporterService
             new Release();
 
 
+
         $name =
             $header['description'] !== ''
                 ? $header['description']
                 : basename($filename);
+
 
 
         $version = 'T64';
@@ -124,6 +129,22 @@ final class T64ImporterService
 
 
 
+        if (
+            $this->releaseRepository
+                 ->existsByEntryNameVersion(
+                     $entryId,
+                     $name,
+                     $version
+                 )
+        ) {
+
+            $name =
+                $this->createDuplicateName(
+                    $entryId,
+                    $name,
+                    $version
+                );
+        }
         $release
             ->setEntryId($entryId)
             ->setName($name)
@@ -142,6 +163,7 @@ final class T64ImporterService
             new ReleaseFile();
 
 
+
         $releaseFile
             ->setReleaseId($releaseId)
             ->setFilename(
@@ -155,6 +177,9 @@ final class T64ImporterService
             ->setMd5(
                 $checksum['md5']
             );
+
+
+
         $releaseFileId =
             $this->releaseFileRepository
                  ->create($releaseFile);
@@ -256,4 +281,3 @@ final class T64ImporterService
         return $duplicateName;
     }
 }
-

@@ -127,6 +127,22 @@ final class D71ImporterService
                     $version
                 );
         }
+        if (
+            $this->releaseRepository
+                 ->existsByEntryNameVersion(
+                     $entryId,
+                     $diskName,
+                     $version
+                 )
+        ) {
+
+            $diskName =
+                $this->createDuplicateName(
+                    $entryId,
+                    $diskName,
+                    $version
+                );
+        }
 
 
 
@@ -144,7 +160,9 @@ final class D71ImporterService
 
 
 
-        $releaseFile = new ReleaseFile();
+        $releaseFile =
+            new ReleaseFile();
+
 
 
         $releaseFile
@@ -172,6 +190,8 @@ final class D71ImporterService
             ->setSha1(
                 $checksum['sha1']
             );
+
+
 
         $releaseFileId =
             $this->releaseFileRepository
@@ -244,6 +264,7 @@ final class D71ImporterService
 
         $duplicateName =
             $name . ' (duplicate)';
+
 
 
         $counter = 2;

@@ -140,59 +140,29 @@ final class PrgImporterService
 
             ]);
         }
+
+
+
         $name =
             pathinfo(
                 $filename,
                 PATHINFO_FILENAME
             );
+        if (
+            $this->releaseRepository
+                 ->existsByEntryNameVersion(
+                     $entryId,
+                     $name,
+                     $format
+                 )
+        ) {
 
-
-
-        if (!$forceDuplicate) {
-
-            $existingRelease =
-                $this->releaseRepository
-                     ->findByEntryNameVersion(
-                         $entryId,
-                         $name,
-                         $format
-                     );
-
-
-            if ($existingRelease !== null) {
-
-                $existingFiles =
-                    $this->releaseFileRepository
-                         ->findByRelease(
-                             $existingRelease->getId()
-                         );
-
-
-                return (new ImportResult(
-                    0,
-                    0
-                ))->setDuplicate([
-
-                    'entryId' =>
-                        $entryId,
-
-                    'path' =>
-                        $sourcePath,
-
-                    'filename' =>
-                        $filename,
-
-                    'md5' =>
-                        $checksum['md5'],
-
-                    'existing' =>
-                        $existingFiles[0] ?? null,
-
-                    'notes' =>
-                        $notes
-
-                ]);
-            }
+            $name =
+                $this->createDuplicateName(
+                    $entryId,
+                    $name,
+                    $format
+                );
         }
 
 
