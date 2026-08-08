@@ -22,6 +22,10 @@
         </th>
 
         <th>
+            Datum
+        </th>
+
+        <th>
             Fil
         </th>
 
@@ -56,6 +60,13 @@
         <td>
             <?= htmlspecialchars(
                 $log->getUsername() ?? 'Gäst'
+            ) ?>
+        </td>
+
+
+        <td>
+            <?= htmlspecialchars(
+                $log->getStartedAt() ?? '-'
             ) ?>
         </td>
 
@@ -107,4 +118,3 @@
 
 
 <?php endif; ?>
-
