@@ -238,4 +238,21 @@ return [
 'event' => 'Event',
 'description' => 'Description',
 'guest' => 'Guest',
+
+'welcome_back' => 'Welcome back,',
+'logged_in_archive_message' => 'You are logged in and can use the archive.',
+'file' => 'File',
+'format' => 'Format',
+'status' => 'Status',
+'imported_by' => 'Imported by',
+'started' => 'Started',
+'no_imports_yet' => 'No imports yet.',
+'welcome_to_archive' => 'Welcome to C64 Archive Manager.',
+'login' => 'Log in',
+'register' => 'Register user',
+'version' => 'Version',
+
+'user_settings' => 'User Settings',
+'english' => 'English',
+'swedish' => 'Swedish',
 ];

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Core\Auth;
+use App\Core\Session;
 use RuntimeException;
 
 final class LanguageService
@@ -12,14 +14,38 @@ final class LanguageService
 
     private array $translations = [];
 
+
     public function __construct(
-        private readonly SettingsService $settings
+        private readonly SettingsService $settings,
+        private readonly Session $session,
+        private readonly Auth $auth,
+        private readonly UserService $users
     ) {
-        $language =
-            $this->settings->get(
-                'default_language',
-                'sv'
+        $language = null;
+
+        if ($this->auth->check()) {
+            $userId = $this->auth->id();
+
+            if ($userId !== null) {
+                $user = $this->users->findById($userId);
+
+                if ($user !== null) {
+                    $language = $user->getLanguage();
+                }
+            }
+        } else {
+            $language = $this->session->get(
+                'language'
             );
+        }
+
+        if (!in_array($language, ['sv', 'en'], true)) {
+            $language =
+                $this->settings->get(
+                    'default_language',
+                    'sv'
+                );
+        }
 
         if (!in_array($language, ['sv', 'en'], true)) {
             $language = 'sv';
@@ -63,7 +89,12 @@ final class LanguageService
         string $key,
         ?string $default = null
     ): string {
-        if (array_key_exists($key, $this->translations)) {
+        if (
+            array_key_exists(
+                $key,
+                $this->translations
+            )
+        ) {
             return (string) $this->translations[$key];
         }
 

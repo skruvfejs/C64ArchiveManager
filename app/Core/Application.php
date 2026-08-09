@@ -166,7 +166,10 @@ final class Application
         $this->container->singleton(
             LanguageService::class,
             fn (Container $c) => new LanguageService(
-                $c->get(SettingsService::class)
+                $c->get(SettingsService::class),
+                $c->get(Session::class),
+                $c->get(Auth::class),
+                $c->get(UserService::class)
             )
         );
 

@@ -51,7 +51,7 @@ $title ??= $siteName;
 
 ?>
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="<?= htmlspecialchars($language->language()) ?>">
 
 <head>
 
@@ -180,9 +180,9 @@ $title ??= $siteName;
             |
 
 
-            <a href="/account/password">
+            <a href="/account/settings">
                 <?= htmlspecialchars(
-                    $language->get('change_password')
+                    $language->get('user_settings')
                 ) ?>
             </a>
 
@@ -196,6 +196,22 @@ $title ??= $siteName;
                 ) ?>
             </a>
 
+
+        <?php else: ?>
+
+            <a href="/language/en">
+                <?= htmlspecialchars(
+                    $language->get('english')
+                ) ?>
+            </a>
+
+            |
+
+            <a href="/language/sv">
+                <?= htmlspecialchars(
+                    $language->get('swedish')
+                ) ?>
+            </a>
 
         <?php endif; ?>
 

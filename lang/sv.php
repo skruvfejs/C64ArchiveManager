@@ -238,4 +238,21 @@ return [
 'event' => 'Händelse',
 'description' => 'Beskrivning',
 'guest' => 'Gäst',
+
+'welcome_back' => 'Välkommen tillbaka,',
+'logged_in_archive_message' => 'Du är inloggad och kan använda arkivet.',
+'file' => 'Fil',
+'format' => 'Format',
+'status' => 'Status',
+'imported_by' => 'Importerad av',
+'started' => 'Startad',
+'no_imports_yet' => 'Inga importer ännu.',
+'welcome_to_archive' => 'Välkommen till C64 Archive Manager.',
+'login' => 'Logga in',
+'register' => 'Registrera användare',
+'version' => 'Version',
+
+'user_settings' => 'Användarinställningar',
+'english' => 'English',
+'swedish' => 'Svenska',
 ];

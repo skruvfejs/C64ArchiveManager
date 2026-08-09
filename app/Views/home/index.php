@@ -25,7 +25,9 @@ $user = $auth->user();
 
 
     <p>
-        Välkommen tillbaka,
+        <?= htmlspecialchars(
+            $language->get('welcome_back')
+        ) ?>
         <strong>
             <?= htmlspecialchars($user['username']) ?>
         </strong>
@@ -33,7 +35,9 @@ $user = $auth->user();
 
 
     <p>
-        Du är inloggad och kan använda arkivet.
+        <?= htmlspecialchars(
+            $language->get('logged_in_archive_message')
+        ) ?>
     </p>
 
 
@@ -52,11 +56,35 @@ $user = $auth->user();
             <thead>
 
                 <tr>
-                    <th>Fil</th>
-                    <th>Format</th>
-                    <th>Status</th>
-                    <th>Importerad av</th>
-                    <th>Startad</th>
+                    <th>
+                        <?= htmlspecialchars(
+                            $language->get('file')
+                        ) ?>
+                    </th>
+
+                    <th>
+                        <?= htmlspecialchars(
+                            $language->get('format')
+                        ) ?>
+                    </th>
+
+                    <th>
+                        <?= htmlspecialchars(
+                            $language->get('status')
+                        ) ?>
+                    </th>
+
+                    <th>
+                        <?= htmlspecialchars(
+                            $language->get('imported_by')
+                        ) ?>
+                    </th>
+
+                    <th>
+                        <?= htmlspecialchars(
+                            $language->get('started')
+                        ) ?>
+                    </th>
                 </tr>
 
             </thead>
@@ -114,7 +142,9 @@ $user = $auth->user();
     <?php else: ?>
 
         <p>
-            Inga importer ännu.
+            <?= htmlspecialchars(
+                $language->get('no_imports_yet')
+            ) ?>
         </p>
 
     <?php endif; ?>
@@ -124,14 +154,18 @@ $user = $auth->user();
 
 
     <p>
-        Välkommen till C64 Archive Manager.
+        <?= htmlspecialchars(
+            $language->get('welcome_to_archive')
+        ) ?>
     </p>
 
 
     <p>
 
         <a href="/login">
-            Logga in
+            <?= htmlspecialchars(
+                $language->get('login')
+            ) ?>
         </a>
 
     </p>
@@ -140,7 +174,9 @@ $user = $auth->user();
     <p>
 
         <a href="/register">
-            Registrera användare
+            <?= htmlspecialchars(
+                $language->get('register')
+            ) ?>
         </a>
 
     </p>
@@ -152,5 +188,8 @@ $user = $auth->user();
 
 
 <p>
-    Version <?= htmlspecialchars($version) ?>
+    <?= htmlspecialchars(
+        $language->get('version')
+    ) ?>
+    <?= htmlspecialchars($version) ?>
 </p>

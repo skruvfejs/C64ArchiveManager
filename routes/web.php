@@ -9,6 +9,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\UserSettingsController;
+use App\Http\Controllers\LanguageController;
 
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\UserEditController;
@@ -84,6 +86,24 @@ return function (Router $router): void {
         [
             RegisterController::class,
             'register'
+        ]
+    );
+
+
+    $router->get(
+        '/language/en',
+        [
+            LanguageController::class,
+            'english'
+        ]
+    );
+
+
+    $router->get(
+        '/language/sv',
+        [
+            LanguageController::class,
+            'swedish'
         ]
     );
 
