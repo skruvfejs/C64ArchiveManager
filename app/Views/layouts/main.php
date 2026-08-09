@@ -49,9 +49,16 @@ $siteName =
 
 $title ??= $siteName;
 
+
+$theme ??= 'system';
+
+
 ?>
 <!DOCTYPE html>
-<html lang="<?= htmlspecialchars($language->language()) ?>">
+<html
+    lang="<?= htmlspecialchars($language->language()) ?>"
+    data-theme="<?= htmlspecialchars($theme) ?>"
+>
 
 <head>
 
@@ -70,6 +77,11 @@ $title ??= $siteName;
 
         * {
             box-sizing: border-box;
+        }
+
+
+        :root {
+            color-scheme: light dark;
         }
 
 
@@ -151,6 +163,62 @@ $title ??= $siteName;
             padding: 20px;
             color: #666;
             font-size: 13px;
+        }
+
+
+        /*
+         * Dark theme
+         */
+
+        html[data-theme="dark"] body {
+            background: #181818;
+            color: #eee;
+        }
+
+
+        html[data-theme="dark"] .container {
+            background: #242424;
+            color: #eee;
+        }
+
+
+        html[data-theme="dark"] .flash {
+            border-color: #555;
+        }
+
+
+        html[data-theme="dark"] footer {
+            color: #aaa;
+        }
+
+
+        /*
+         * System theme
+         */
+
+        @media (prefers-color-scheme: dark) {
+
+            html[data-theme="system"] body {
+                background: #181818;
+                color: #eee;
+            }
+
+
+            html[data-theme="system"] .container {
+                background: #242424;
+                color: #eee;
+            }
+
+
+            html[data-theme="system"] .flash {
+                border-color: #555;
+            }
+
+
+            html[data-theme="system"] footer {
+                color: #aaa;
+            }
+
         }
 
     </style>

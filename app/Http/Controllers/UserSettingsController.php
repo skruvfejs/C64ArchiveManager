@@ -118,8 +118,34 @@ final class UserSettingsController extends Controller
         }
 
 
+        $theme =
+            $_POST['theme'] ?? '';
+
+
+        if (!in_array(
+            $theme,
+            ['system', 'light', 'dark'],
+            true
+        )) {
+            $this->flash->error(
+                'Ogiltigt tema.'
+            );
+
+            header(
+                'Location: /account/settings'
+            );
+
+            exit;
+        }
+
+
         $user->setLanguage(
             $language
+        );
+
+
+        $user->setTheme(
+            $theme
         );
 
 

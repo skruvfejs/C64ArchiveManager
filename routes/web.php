@@ -151,6 +151,31 @@ return function (Router $router): void {
     );
 
 
+    $router->get(
+        '/account/settings',
+        [
+            UserSettingsController::class,
+            'index'
+        ],
+        [
+            AuthMiddleware::class,
+        ]
+    );
+
+
+    $router->post(
+        '/account/settings',
+        [
+            UserSettingsController::class,
+            'update'
+        ],
+        [
+            AuthMiddleware::class,
+        ]
+    );
+
+
+
 /*
  * Administration
  */

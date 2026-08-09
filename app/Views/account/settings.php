@@ -34,6 +34,49 @@
     </p>
 
 
+    <hr>
+
+
+    <h3>
+        Appearance
+    </h3>
+
+
+    <p>
+        <label>
+            <input
+                type="radio"
+                name="theme"
+                value="system"
+                <?= ($user->getTheme() === 'system') ? 'checked' : '' ?>
+            >
+            System
+        </label>
+        <br>
+
+        <label>
+            <input
+                type="radio"
+                name="theme"
+                value="light"
+                <?= ($user->getTheme() === 'light') ? 'checked' : '' ?>
+            >
+            Light
+        </label>
+        <br>
+
+        <label>
+            <input
+                type="radio"
+                name="theme"
+                value="dark"
+                <?= ($user->getTheme() === 'dark') ? 'checked' : '' ?>
+            >
+            Dark
+        </label>
+    </p>
+
+
     <p>
 
         <button type="submit">

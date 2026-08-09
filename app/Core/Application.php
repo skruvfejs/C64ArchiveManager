@@ -195,6 +195,37 @@ final class Application
                 );
 
 
+                $theme = 'system';
+
+
+                $auth =
+                    $c->get(Auth::class);
+
+
+                $userId =
+                    $auth->id();
+
+
+                if ($userId !== null) {
+
+                    $user =
+                        $c->get(UserService::class)
+                            ->findById($userId);
+
+
+                    if ($user !== null) {
+                        $theme =
+                            $user->getTheme();
+                    }
+                }
+
+
+                $view->share(
+                    'theme',
+                    $theme
+                );
+
+
                 return $view;
             }
         );
