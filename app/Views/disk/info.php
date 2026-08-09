@@ -1,4 +1,3 @@
-
 <h1><?= $title ?></h1>
 
 
@@ -9,48 +8,68 @@
 
 <pre>
 
-DISK:
+<?= htmlspecialchars(
+    $language->get('disk')
+) ?>:
 <?= htmlspecialchars(
     $file->getFilename()
 ) ?>
 
 
-FORMAT:
+<?= htmlspecialchars(
+    $language->get('format')
+) ?>:
 <?= htmlspecialchars(
     $format
 ) ?>
 
 
-TYPE:
+<?= htmlspecialchars(
+    $language->get('type')
+) ?>:
 <?= htmlspecialchars(
     $diskType
 ) ?>
 
 
-TRACKS:
+<?= htmlspecialchars(
+    $language->get('tracks')
+) ?>:
 <?php if ($isT64): ?>
 N/A
 <?php else: ?>
 <?= $tracks ?>
 <?php endif; ?>
 
-FILES:
+
+<?= htmlspecialchars(
+    $language->get('files')
+) ?>:
 <?= $fileCount ?>
 
 
 <?php if ($isT64): ?>
 
-SIZE:
-<?= $fileSize ?> bytes
+<?= htmlspecialchars(
+    $language->get('size')
+) ?>:
+<?= $fileSize ?>
+<?= htmlspecialchars(
+    $language->get('bytes')
+) ?>
 
 
 <?php else: ?>
 
-BLOCKS:
+<?= htmlspecialchars(
+    $language->get('blocks')
+) ?>:
 <?= $blocksUsed ?> / <?= $totalBlocks ?>
 
 
-FREE:
+<?= htmlspecialchars(
+    $language->get('free')
+) ?>:
 <?= $blocksFree ?>
 
 <?php endif; ?>
@@ -61,7 +80,8 @@ FREE:
 
 <p>
     <a href="/disk/directory?id=<?= $release->getId() ?>">
-        ← Back to Directory
+        ← <?= htmlspecialchars(
+            $language->get('back_to_directory')
+        ) ?>
     </a>
 </p>
-

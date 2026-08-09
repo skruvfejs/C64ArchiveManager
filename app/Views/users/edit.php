@@ -1,4 +1,9 @@
-<h2><?= htmlspecialchars($title ?? 'Redigera användare') ?></h2>
+<h2>
+    <?= htmlspecialchars(
+        $language->get('edit_user')
+    ) ?>
+</h2>
+
 
 <form method="post" action="/users/edit">
 
@@ -16,7 +21,9 @@
         <tr>
 
             <td>
-                Användarnamn
+                <?= htmlspecialchars(
+                    $language->get('username')
+                ) ?>
             </td>
 
             <td>
@@ -33,7 +40,9 @@
         <tr>
 
             <td>
-                E-post
+                <?= htmlspecialchars(
+                    $language->get('email')
+                ) ?>
             </td>
 
             <td>
@@ -50,7 +59,9 @@
         <tr>
 
             <td>
-                Förnamn
+                <?= htmlspecialchars(
+                    $language->get('first_name')
+                ) ?>
             </td>
 
             <td>
@@ -67,7 +78,9 @@
         <tr>
 
             <td>
-                Efternamn
+                <?= htmlspecialchars(
+                    $language->get('last_name')
+                ) ?>
             </td>
 
             <td>
@@ -84,7 +97,9 @@
         <tr>
 
             <td>
-                Roll
+                <?= htmlspecialchars(
+                    $language->get('role')
+                ) ?>
             </td>
 
             <td>
@@ -124,11 +139,15 @@
             <td>
 
                 <button type="submit">
-                    Spara
+                    <?= htmlspecialchars(
+                        $language->get('save')
+                    ) ?>
                 </button>
 
                 <a href="/users">
-                    Avbryt
+                    <?= htmlspecialchars(
+                        $language->get('cancel')
+                    ) ?>
                 </a>
 
             </td>

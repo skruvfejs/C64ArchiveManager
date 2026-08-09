@@ -2,7 +2,9 @@
 
 <p>
     <a href="/disk?id=<?= $releaseId ?>">
-        ← Back to Disk Explorer
+        ← <?= htmlspecialchars(
+            $language->get('back_to_disk_explorer')
+        ) ?>
     </a>
 </p>
 
@@ -13,14 +15,21 @@
 
 
 <h2>
-    C64 File Details
+    <?= htmlspecialchars(
+        $language->get('c64_file_details')
+    ) ?>
 </h2>
 
 
 <table border="1" cellpadding="5">
 
 <tr>
-    <th>Filename</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('filename')
+        ) ?>
+    </th>
+
     <td>
         <?= htmlspecialchars(
             $entry->getFilename()
@@ -30,7 +39,12 @@
 
 
 <tr>
-    <th>Type</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('type')
+        ) ?>
+    </th>
+
     <td>
         <?= htmlspecialchars(
             $entry->getFiletype()
@@ -42,7 +56,12 @@
 <?php if ($releaseFile !== null): ?>
 
 <tr>
-    <th>Disk</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('disk')
+        ) ?>
+    </th>
+
     <td>
         <?= htmlspecialchars(
             $releaseFile->getFilename()
@@ -52,7 +71,12 @@
 
 
 <tr>
-    <th>Format</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('format')
+        ) ?>
+    </th>
+
     <td>
         <?= htmlspecialchars(
             $releaseFile->getFormat()
@@ -62,7 +86,12 @@
 
 
 <tr>
-    <th>Disk name</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('disk_name')
+        ) ?>
+    </th>
+
     <td>
         <?= htmlspecialchars(
             $releaseFile->getDiskName() ?? ''
@@ -72,7 +101,12 @@
 
 
 <tr>
-    <th>Disk ID</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('disk_id')
+        ) ?>
+    </th>
+
     <td>
         <?= htmlspecialchars(
             $releaseFile->getDiskId() ?? ''
@@ -81,8 +115,15 @@
 </tr>
 
 <?php endif; ?>
+
+
 <tr>
-    <th>Directory position</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('directory_position')
+        ) ?>
+    </th>
+
     <td>
         <?= $entry->getDirectoryPosition() ?>
     </td>
@@ -90,7 +131,12 @@
 
 
 <tr>
-    <th>Start track</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('start_track')
+        ) ?>
+    </th>
+
     <td>
         <?= $entry->getStartTrack() ?>
     </td>
@@ -98,7 +144,12 @@
 
 
 <tr>
-    <th>Start sector</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('start_sector')
+        ) ?>
+    </th>
+
     <td>
         <?= $entry->getStartSector() ?>
     </td>
@@ -106,7 +157,12 @@
 
 
 <tr>
-    <th>Blocks</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('blocks')
+        ) ?>
+    </th>
+
     <td>
         <?= $entry->getBlocks() ?>
     </td>
@@ -114,9 +170,18 @@
 
 
 <tr>
-    <th>Estimated size</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('estimated_size')
+        ) ?>
+    </th>
+
     <td>
-        <?= $entry->getBlocks() * 254 ?> bytes
+        <?= $entry->getBlocks() * 254 ?>
+
+        <?= htmlspecialchars(
+            $language->get('bytes')
+        ) ?>
     </td>
 </tr>
 
@@ -128,5 +193,7 @@
 
 
 <a href="/file/download?id=<?= $entry->getId() ?>">
-    Download file
+    <?= htmlspecialchars(
+        $language->get('download_file')
+    ) ?>
 </a>

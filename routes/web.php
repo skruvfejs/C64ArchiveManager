@@ -152,17 +152,6 @@ $router->get(
  */
 
 $router->get(
-    '/administration/system',
-    [
-        SystemController::class,
-        'index'
-    ],
-    [
-        ManageSystemMiddleware::class,
-    ]
-);
-
-$router->get(
     '/administration/system/database',
     [
         SystemController::class,
@@ -172,6 +161,7 @@ $router->get(
         ManageSystemMiddleware::class,
     ]
 );
+
 
 $router->post(
     '/administration/system/backup/create',
@@ -184,6 +174,7 @@ $router->post(
     ]
 );
 
+
 $router->post(
     '/administration/system/export',
     [
@@ -194,6 +185,7 @@ $router->post(
         ManageSystemMiddleware::class,
     ]
 );
+
 
 $router->post(
     '/administration/system/import',
@@ -206,6 +198,7 @@ $router->post(
     ]
 );
 
+
 $router->get(
     '/administration/system/backup/download',
     [
@@ -217,6 +210,7 @@ $router->get(
     ]
 );
 
+
 $router->post(
     '/administration/system/backup/delete',
     [
@@ -227,6 +221,7 @@ $router->post(
         ManageSystemMiddleware::class,
     ]
 );
+
 
 $router->post(
     '/administration/system/backup/restore',
@@ -240,6 +235,7 @@ $router->post(
 );
 
 
+
 $router->get(
     '/administration/system/settings',
     [
@@ -250,6 +246,7 @@ $router->get(
         ManageSystemMiddleware::class,
     ]
 );
+
 
 $router->post(
     '/administration/system/settings',
@@ -262,6 +259,7 @@ $router->post(
     ]
 );
 
+
 $router->get(
     '/administration/system/maintenance',
     [
@@ -273,6 +271,7 @@ $router->get(
     ]
 );
 
+
 $router->get(
     '/administration/system/api',
     [
@@ -283,6 +282,7 @@ $router->get(
         ManageSystemMiddleware::class,
     ]
 );
+
 
 $router->get(
     '/administration/system/information',

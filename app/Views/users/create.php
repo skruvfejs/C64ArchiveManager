@@ -1,5 +1,7 @@
 <h2>
-    <?= htmlspecialchars($title ?? 'Skapa användare') ?>
+    <?= htmlspecialchars(
+        $language->get('create_user')
+    ) ?>
 </h2>
 
 
@@ -8,7 +10,9 @@
 
     <p>
         <label>
-            Förnamn
+            <?= htmlspecialchars(
+                $language->get('first_name')
+            ) ?>
         </label>
         <br>
 
@@ -22,7 +26,9 @@
 
     <p>
         <label>
-            Efternamn
+            <?= htmlspecialchars(
+                $language->get('last_name')
+            ) ?>
         </label>
         <br>
 
@@ -36,7 +42,9 @@
 
     <p>
         <label>
-            Användarnamn
+            <?= htmlspecialchars(
+                $language->get('username')
+            ) ?>
         </label>
         <br>
 
@@ -51,7 +59,9 @@
 
     <p>
         <label>
-            E-post
+            <?= htmlspecialchars(
+                $language->get('email')
+            ) ?>
         </label>
         <br>
 
@@ -66,7 +76,9 @@
 
     <p>
         <label>
-            Lösenord
+            <?= htmlspecialchars(
+                $language->get('password')
+            ) ?>
         </label>
         <br>
 
@@ -81,7 +93,9 @@
 
     <p>
         <label>
-            Roll
+            <?= htmlspecialchars(
+                $language->get('role')
+            ) ?>
         </label>
         <br>
 
@@ -111,7 +125,9 @@
     <p>
 
         <button type="submit">
-            Skapa användare
+            <?= htmlspecialchars(
+                $language->get('create_user')
+            ) ?>
         </button>
 
     </p>
@@ -123,7 +139,9 @@
 <p>
 
     <a href="/users">
-        Tillbaka till användare
+        <?= htmlspecialchars(
+            $language->get('back_to_users')
+        ) ?>
     </a>
 
 </p>

@@ -1,7 +1,9 @@
 <?php if (!empty($release->getNotes())): ?>
 
 <h3>
-    Kommentar
+    <?= htmlspecialchars(
+        $language->get('comment')
+    ) ?>
 </h3>
 
 <p>
@@ -21,14 +23,20 @@
 <?php if (!empty($integrity)): ?>
 
 <h3>
-    Disk integrity
+    <?= htmlspecialchars(
+        $language->get('disk_integrity')
+    ) ?>
 </h3>
 
 
 <table border="1" cellpadding="5">
 
 <tr>
-    <th>Status</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('status')
+        ) ?>
+    </th>
 
     <td>
 
@@ -36,17 +44,23 @@
 
             <?php if (($integrity['total_orphan_sectors'] ?? 0) > 0): ?>
 
-                VALID WITH ORPHAN SECTORS
+                <?= htmlspecialchars(
+                    $language->get('valid_with_orphan_sectors')
+                ) ?>
 
             <?php else: ?>
 
-                VALID
+                <?= htmlspecialchars(
+                    $language->get('valid')
+                ) ?>
 
             <?php endif; ?>
 
         <?php else: ?>
 
-            INVALID
+            <?= htmlspecialchars(
+                $language->get('invalid')
+            ) ?>
 
         <?php endif; ?>
 
@@ -57,7 +71,9 @@
 <tr>
 
     <th>
-        Orphan sectors
+        <?= htmlspecialchars(
+            $language->get('orphan_sectors')
+        ) ?>
     </th>
 
     <td>
@@ -77,7 +93,9 @@
 <?php if (!empty($comparison['_summary'])): ?>
 
 <h4>
-    BAM Statistics
+    <?= htmlspecialchars(
+        $language->get('bam_statistics')
+    ) ?>
 </h4>
 
 
@@ -85,7 +103,9 @@
 
 <tr>
     <th>
-        BAM used sectors
+        <?= htmlspecialchars(
+            $language->get('bam_used_sectors')
+        ) ?>
     </th>
 
     <td>
@@ -96,7 +116,9 @@
 
 <tr>
     <th>
-        File used sectors
+        <?= htmlspecialchars(
+            $language->get('file_used_sectors')
+        ) ?>
     </th>
 
     <td>
@@ -107,7 +129,9 @@
 
 <tr>
     <th>
-        Unreferenced sectors
+        <?= htmlspecialchars(
+            $language->get('unreferenced_sectors')
+        ) ?>
     </th>
 
     <td>
@@ -132,7 +156,9 @@
 <?php if (!empty($diskMap)): ?>
 
 <h4>
-    Disk Map
+    <?= htmlspecialchars(
+        $language->get('disk_map')
+    ) ?>
 </h4>
 
 
@@ -147,9 +173,20 @@
 
 <p>
 
-<strong>█</strong> Used<br>
-<strong>▒</strong> Unreferenced<br>
-<strong>░</strong> Free
+<strong>█</strong>
+<?= htmlspecialchars(
+    $language->get('used')
+) ?><br>
+
+<strong>▒</strong>
+<?= htmlspecialchars(
+    $language->get('unreferenced')
+) ?><br>
+
+<strong>░</strong>
+<?= htmlspecialchars(
+    $language->get('free')
+) ?>
 
 </p>
 
@@ -162,7 +199,9 @@
 <?php if (!empty($integrity['warnings'])): ?>
 
 <h4>
-    Warnings
+    <?= htmlspecialchars(
+        $language->get('warnings')
+    ) ?>
 </h4>
 
 
@@ -207,7 +246,9 @@
 <tr>
 
     <th>
-        Disk name
+        <?= htmlspecialchars(
+            $language->get('disk_name')
+        ) ?>
     </th>
 
     <td>
@@ -225,7 +266,9 @@
 <tr>
 
     <th>
-        Disk ID
+        <?= htmlspecialchars(
+            $language->get('disk_id')
+        ) ?>
     </th>
 
     <td>
@@ -243,7 +286,9 @@
 <tr>
 
     <th>
-        Format
+        <?= htmlspecialchars(
+            $language->get('format')
+        ) ?>
     </th>
 
     <td>
@@ -261,7 +306,9 @@
 <tr>
 
     <th>
-        Files on disk
+        <?= htmlspecialchars(
+            $language->get('files_on_disk')
+        ) ?>
     </th>
 
     <td>
@@ -279,14 +326,18 @@
 <tr>
 
     <th>
-        Size
+        <?= htmlspecialchars(
+            $language->get('size')
+        ) ?>
     </th>
 
     <td>
 
         <?= $file->getSize() ?>
 
-        bytes
+        <?= htmlspecialchars(
+            $language->get('bytes')
+        ) ?>
 
     </td>
 
@@ -301,7 +352,9 @@
 
     <a href="/disk/directory?id=<?= $release->getId() ?>">
 
-        C64 Directory
+        <?= htmlspecialchars(
+            $language->get('c64_directory')
+        ) ?>
 
     </a>
 
@@ -318,12 +371,42 @@
 <tr>
 
     <th>#</th>
-    <th>Filename</th>
-    <th>Type</th>
-    <th>Track</th>
-    <th>Sector</th>
-    <th>Blocks</th>
-    <th>Status</th>
+
+    <th>
+        <?= htmlspecialchars(
+            $language->get('filename')
+        ) ?>
+    </th>
+
+    <th>
+        <?= htmlspecialchars(
+            $language->get('type')
+        ) ?>
+    </th>
+
+    <th>
+        <?= htmlspecialchars(
+            $language->get('track')
+        ) ?>
+    </th>
+
+    <th>
+        <?= htmlspecialchars(
+            $language->get('sector')
+        ) ?>
+    </th>
+
+    <th>
+        <?= htmlspecialchars(
+            $language->get('blocks')
+        ) ?>
+    </th>
+
+    <th>
+        <?= htmlspecialchars(
+            $language->get('status')
+        ) ?>
+    </th>
 
 </tr>
 
@@ -393,17 +476,23 @@
 
 <?php if ($entry->isLocked()): ?>
 
-    LOCKED
+    <?= htmlspecialchars(
+        $language->get('locked')
+    ) ?>
 
 
 <?php elseif ($entry->isClosed()): ?>
 
-    CLOSED
+    <?= htmlspecialchars(
+        $language->get('closed')
+    ) ?>
 
 
 <?php else: ?>
 
-    OPEN
+    <?= htmlspecialchars(
+        $language->get('open')
+    ) ?>
 
 
 <?php endif; ?>

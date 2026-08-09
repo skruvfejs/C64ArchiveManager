@@ -7,7 +7,9 @@ declare(strict_types=1);
 <div class="container">
 
     <h1>
-        Audit log
+        <?= htmlspecialchars(
+            $language->get('audit_log')
+        ) ?>
     </h1>
 
 
@@ -18,19 +20,27 @@ declare(strict_types=1);
             <tr>
 
                 <th style="text-align: left;">
-                    Datum
+                    <?= htmlspecialchars(
+                        $language->get('date')
+                    ) ?>
                 </th>
 
                 <th style="text-align: left;">
-                    Användare
+                    <?= htmlspecialchars(
+                        $language->get('user')
+                    ) ?>
                 </th>
 
                 <th style="text-align: left;">
-                    Händelse
+                    <?= htmlspecialchars(
+                        $language->get('event')
+                    ) ?>
                 </th>
 
                 <th style="text-align: left;">
-                    Typ
+                    <?= htmlspecialchars(
+                        $language->get('type')
+                    ) ?>
                 </th>
 
                 <th style="text-align: left;">
@@ -38,7 +48,9 @@ declare(strict_types=1);
                 </th>
 
                 <th style="text-align: left;">
-                    Beskrivning
+                    <?= htmlspecialchars(
+                        $language->get('description')
+                    ) ?>
                 </th>
 
             </tr>
@@ -71,7 +83,9 @@ declare(strict_types=1);
 
                     <?php else: ?>
 
-                        Gäst
+                        <?= htmlspecialchars(
+                            $language->get('guest')
+                        ) ?>
 
                     <?php endif; ?>
 

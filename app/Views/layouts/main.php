@@ -187,24 +187,8 @@ $title ??= $siteName;
             </a>
 
 
-            <?php if (
-                $authorization->can(
-                    Permission::MANAGE_USERS
-                )
-            ): ?>
-
-                |
-
-                <a href="/administration">
-                    <?= htmlspecialchars(
-                        $language->get('administration')
-                    ) ?>
-                </a>
-
-            <?php endif; ?>
-
-
             |
+
 
             <a href="/logout">
                 <?= htmlspecialchars(

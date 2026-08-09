@@ -46,6 +46,12 @@ declare(strict_types=1);
 <hr>
 
 
+<?php if (
+    $authorization->can(
+        \App\Core\Permission::MANAGE_SYSTEM
+    )
+): ?>
+
 <h2>
     <?= htmlspecialchars(
         $language->get('system_administration')
@@ -61,9 +67,47 @@ declare(strict_types=1);
 
 
 <p>
-    <a href="/administration/system">
+    <a href="/administration/system/database">
         <?= htmlspecialchars(
-            $language->get('open_system_administration')
+            $language->get('database')
         ) ?>
     </a>
 </p>
+
+
+<p>
+    <a href="/administration/system/settings">
+        <?= htmlspecialchars(
+            $language->get('system_settings')
+        ) ?>
+    </a>
+</p>
+
+
+<p>
+    <a href="/administration/system/maintenance">
+        <?= htmlspecialchars(
+            $language->get('maintenance')
+        ) ?>
+    </a>
+</p>
+
+
+<p>
+    <a href="/administration/system/api">
+        <?= htmlspecialchars(
+            $language->get('api')
+        ) ?>
+    </a>
+</p>
+
+
+<p>
+    <a href="/administration/system/information">
+        <?= htmlspecialchars(
+            $language->get('information')
+        ) ?>
+    </a>
+</p>
+
+<?php endif; ?>

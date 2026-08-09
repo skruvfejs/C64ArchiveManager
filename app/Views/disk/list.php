@@ -6,7 +6,9 @@ declare(strict_types=1);
 
 
 <h2>
-    <?= htmlspecialchars($title ?? 'Diskar') ?>
+    <?= htmlspecialchars(
+        $language->get('disks')
+    ) ?>
 </h2>
 
 
@@ -14,7 +16,9 @@ declare(strict_types=1);
 <form method="get" action="/disk">
 
     <label>
-        Sök:
+        <?= htmlspecialchars(
+            $language->get('search')
+        ) ?>:
     </label>
 
     <input
@@ -25,14 +29,18 @@ declare(strict_types=1);
 
 
     <button type="submit">
-        Sök
+        <?= htmlspecialchars(
+            $language->get('search')
+        ) ?>
     </button>
 
 
     <?php if (!empty($search)): ?>
 
         <a href="/disk">
-            Rensa
+            <?= htmlspecialchars(
+                $language->get('clear')
+            ) ?>
         </a>
 
     <?php endif; ?>
@@ -50,7 +58,9 @@ declare(strict_types=1);
     ): ?>
 
         <a href="/import">
-            Importera ny release
+            <?= htmlspecialchars(
+                $language->get('import_new_release')
+            ) ?>
         </a>
 
         |
@@ -65,7 +75,9 @@ declare(strict_types=1);
     ): ?>
 
         <a href="/import/logs">
-            Importlogg
+            <?= htmlspecialchars(
+                $language->get('import_log')
+            ) ?>
         </a>
 
     <?php endif; ?>
@@ -77,7 +89,9 @@ declare(strict_types=1);
 
 <p>
 
-    Visar
+    <?= htmlspecialchars(
+        $language->get('showing')
+    ) ?>
 
     <?= (($page ?? 1) - 1) * ($perPage ?? 50) + 1 ?>
 
@@ -91,11 +105,16 @@ declare(strict_types=1);
     ) ?>
 
 
-    av
+    <?= htmlspecialchars(
+        $language->get('of')
+    ) ?>
+
 
     <?= $total ?>
 
-    diskar
+    <?= htmlspecialchars(
+        $language->get('disks')
+    ) ?>
 
 </p>
 
@@ -106,7 +125,9 @@ declare(strict_types=1);
 <?php if (empty($disks)): ?>
 
 <p>
-    Inga diskar hittades.
+    <?= htmlspecialchars(
+        $language->get('no_disks_found')
+    ) ?>
 </p>
 
 
@@ -135,7 +156,9 @@ declare(strict_types=1);
 
                 <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=title">
 
-                    Titel
+                    <?= htmlspecialchars(
+                        $language->get('title')
+                    ) ?>
 
                 </a>
 
@@ -144,13 +167,17 @@ declare(strict_types=1);
 
 
             <th>
-                Disknamn
+                <?= htmlspecialchars(
+                    $language->get('disk_name')
+                ) ?>
             </th>
 
 
 
             <th>
-                Disk-ID
+                <?= htmlspecialchars(
+                    $language->get('disk_id')
+                ) ?>
             </th>
 
 
@@ -159,7 +186,9 @@ declare(strict_types=1);
 
                 <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=filename">
 
-                    Filnamn
+                    <?= htmlspecialchars(
+                        $language->get('filename')
+                    ) ?>
 
                 </a>
 
@@ -171,7 +200,9 @@ declare(strict_types=1);
 
                 <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=format">
 
-                    Format
+                    <?= htmlspecialchars(
+                        $language->get('format')
+                    ) ?>
 
                 </a>
 
@@ -183,7 +214,9 @@ declare(strict_types=1);
 
                 <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=size">
 
-                    Storlek
+                    <?= htmlspecialchars(
+                        $language->get('size')
+                    ) ?>
 
                 </a>
 
@@ -198,13 +231,17 @@ declare(strict_types=1);
 
 
             <th>
-                Kommentar
+                <?= htmlspecialchars(
+                    $language->get('comment')
+                ) ?>
             </th>
 
 
 
             <th>
-                Åtgärd
+                <?= htmlspecialchars(
+                    $language->get('action')
+                ) ?>
             </th>
 
         </tr>
@@ -290,7 +327,9 @@ declare(strict_types=1);
                     (string) $disk->getSize()
                 ) ?>
 
-                bytes
+                <?= htmlspecialchars(
+                    $language->get('bytes')
+                ) ?>
 
             </td>
 
@@ -320,7 +359,9 @@ declare(strict_types=1);
 
                 <a href="/disk?id=<?= $disk->getId() ?>">
 
-                    Visa
+                    <?= htmlspecialchars(
+                        $language->get('view')
+                    ) ?>
 
                 </a>
 
@@ -353,7 +394,9 @@ declare(strict_types=1);
 
 <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=<?= urlencode($sort ?? 'id') ?>&page=<?= $page - 1 ?>">
 
-    Föregående
+    <?= htmlspecialchars(
+        $language->get('previous')
+    ) ?>
 
 </a>
 
@@ -393,7 +436,9 @@ declare(strict_types=1);
 
 <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=<?= urlencode($sort ?? 'id') ?>&page=<?= $page + 1 ?>">
 
-    Nästa
+    <?= htmlspecialchars(
+        $language->get('next')
+    ) ?>
 
 </a>
 

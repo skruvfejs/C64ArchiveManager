@@ -6,7 +6,9 @@
 
 
 <h1>
-    Release
+    <?= htmlspecialchars(
+        $language->get('release')
+    ) ?>
 </h1>
 
 
@@ -16,7 +18,12 @@
 
 
 <p>
-    <strong>Release ID:</strong>
+    <strong>
+        <?= htmlspecialchars(
+            $language->get('release_id')
+        ) ?>:
+    </strong>
+
     <?= $release->getId() ?>
 </p>
 
@@ -25,7 +32,9 @@
 
 <p>
     <a href="/entry?id=<?= $entry->getId() ?>">
-        ← Tillbaka till Entry:
+        ← <?= htmlspecialchars(
+            $language->get('back_to_entry')
+        ) ?>:
         <?= htmlspecialchars($entry->getTitle()) ?>
     </a>
 </p>
@@ -34,7 +43,9 @@
 
 
 <h2>
-    Disk images
+    <?= htmlspecialchars(
+        $language->get('disk_images')
+    ) ?>
 </h2>
 
 
@@ -58,7 +69,12 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
 
 
 <tr>
-    <th>Filename</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('filename')
+        ) ?>
+    </th>
+
     <td>
         <?= htmlspecialchars($file->getFilename()) ?>
     </td>
@@ -66,7 +82,12 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
 
 
 <tr>
-    <th>Format</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('format')
+        ) ?>
+    </th>
+
     <td>
         <?= htmlspecialchars($file->getFormat()) ?>
     </td>
@@ -74,7 +95,12 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
 
 
 <tr>
-    <th>Disk name</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('disk_name')
+        ) ?>
+    </th>
+
     <td>
         <?= htmlspecialchars(
             $file->getDiskName() ?? ''
@@ -84,7 +110,12 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
 
 
 <tr>
-    <th>Disk ID</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('disk_id')
+        ) ?>
+    </th>
+
     <td>
         <?= htmlspecialchars(
             $file->getDiskId() ?? ''
@@ -94,7 +125,10 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
 
 
 <tr>
-    <th>MD5</th>
+    <th>
+        MD5
+    </th>
+
     <td>
         <?= htmlspecialchars(
             $file->getMd5() ?? ''
@@ -108,9 +142,15 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
         <details>
 
             <summary>
-                ⚠ Samma diskimage finns även på
+                ⚠ <?= htmlspecialchars(
+                    $language->get('same_disk_image_also_exists')
+                ) ?>
+
                 <?= count($duplicates) ?>
-                andra ställen
+
+                <?= htmlspecialchars(
+                    $language->get('other_locations')
+                ) ?>
             </summary>
 
 
@@ -122,18 +162,25 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
 
                 <?php if ($duplicate['entry'] !== null): ?>
 
-                    Entry:
+                    <?= htmlspecialchars(
+                        $language->get('entry')
+                    ) ?>:
+
                     <a href="/entry?id=<?= $duplicate['entry']->getId() ?>">
                         <?= htmlspecialchars(
                             $duplicate['entry']->getTitle()
                         ) ?>
                     </a>
+
                     <br>
 
                 <?php endif; ?>
 
 
-                Release ID:
+                <?= htmlspecialchars(
+                    $language->get('release_id')
+                ?>:
+
                 <a href="/release?id=<?= $duplicate['release']->getId() ?>">
                     <?= $duplicate['release']->getId() ?>
                 </a>
@@ -141,7 +188,10 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
                 <br>
 
 
-                Fil:
+                <?= htmlspecialchars(
+                    $language->get('file')
+                ) ?>:
+
                 <?= htmlspecialchars(
                     $duplicate['file']->getFilename()
                 ) ?>
@@ -162,18 +212,31 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
 
 
 <tr>
-    <th>Size</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('size')
+        ) ?>
+    </th>
+
     <td>
         <?= number_format(
             $file->getSize()
         ) ?>
-        bytes
+
+        <?= htmlspecialchars(
+            $language->get('bytes')
+        ) ?>
     </td>
 </tr>
 
 
 <tr>
-    <th>Directory entries</th>
+    <th>
+        <?= htmlspecialchars(
+            $language->get('directory_entries')
+        ) ?>
+    </th>
+
     <td>
         <?= $fileItem['directoryCount'] ?>
     </td>
@@ -185,7 +248,9 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
 
 <p>
     <a href="/disk?id=<?= $release->getId() ?>">
-        Öppna disk
+        <?= htmlspecialchars(
+            $language->get('open_disk')
+        ) ?>
     </a>
 </p>
 
@@ -194,4 +259,3 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
 
 
 <?php endforeach; ?>
-

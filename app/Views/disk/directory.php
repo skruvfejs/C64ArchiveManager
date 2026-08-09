@@ -16,25 +16,35 @@
 ) ?>
 
 
-DISK:
+<?= htmlspecialchars(
+    $language->get('disk')
+) ?>:
 <?= htmlspecialchars($file->getFilename()) ?>
 
 
-FORMAT:
+<?= htmlspecialchars(
+    $language->get('format')
+) ?>:
 <?= htmlspecialchars($file->getFormat()) ?>
 
 
-TYPE:
+<?= htmlspecialchars(
+    $language->get('type')
+) ?>:
 <?= htmlspecialchars(
     $diskTypes[$file->getId()] ?? ''
 ) ?>
 
 
-TRACKS:
+<?= htmlspecialchars(
+    $language->get('tracks')
+) ?>:
 <?= $tracks[$file->getId()] ?? 0 ?>
 
 
-TOTAL BLOCKS:
+<?= htmlspecialchars(
+    $language->get('total_blocks')
+) ?>:
 <?= $totalBlocks[$file->getId()] ?? 0 ?>
 
 </pre>
@@ -43,10 +53,29 @@ TOTAL BLOCKS:
 <table>
     <thead>
         <tr>
-            <th>BLOCKS</th>
-            <th>SIZE</th>
-            <th>FILE</th>
-            <th>TYPE</th>
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('blocks')
+                ) ?>
+            </th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('size')
+                ) ?>
+            </th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('file')
+                ) ?>
+            </th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('type')
+                ) ?>
+            </th>
         </tr>
     </thead>
 
@@ -68,13 +97,15 @@ TOTAL BLOCKS:
 
                 if ($entry->getFileSize() !== null) {
 
-                    echo $entry->getFileSize() . ' bytes';
+                    echo $entry->getFileSize() . ' ' .
+                        $language->get('bytes');
 
                 } else {
 
                     echo (
                         $entry->getBlocks() * 254
-                    ) . ' bytes';
+                    ) . ' ' .
+                        $language->get('bytes');
 
                 }
 
@@ -109,20 +140,30 @@ TOTAL BLOCKS:
 <p>
     <?= count(
         $directories[$file->getId()] ?? []
-    ) ?> FILES
+    ) ?>
+
+    <?= htmlspecialchars(
+        $language->get('files')
+    ) ?>
 </p>
 
 
 
 <p>
-    BLOCKS USED:
+    <?= htmlspecialchars(
+        $language->get('blocks_used')
+    ) ?>:
+
     <?= $blocksUsed[$file->getId()] ?? 0 ?>
 </p>
 
 
 
 <p>
-    BLOCKS FREE:
+    <?= htmlspecialchars(
+        $language->get('blocks_free')
+    ) ?>:
+
     <?= $blocksFree[$file->getId()] ?? 0 ?>
 </p>
 
@@ -134,7 +175,9 @@ TOTAL BLOCKS:
 
 <p>
     <a href="/disk/info?id=<?= $release->getId() ?>">
-        → Disk Information
+        → <?= htmlspecialchars(
+            $language->get('disk_information')
+        ) ?>
     </a>
 </p>
 
@@ -142,7 +185,8 @@ TOTAL BLOCKS:
 
 <p>
     <a href="/disk?id=<?= $release->getId() ?>">
-        ← Back to Disk Explorer
+        ← <?= htmlspecialchars(
+            $language->get('back_to_disk_explorer')
+        ) ?>
     </a>
 </p>
-

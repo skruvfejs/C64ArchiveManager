@@ -1,22 +1,32 @@
-<h2><?= htmlspecialchars($title ?? 'Användare') ?></h2>
+<h2>
+    <?= htmlspecialchars(
+        $language->get('users')
+    ) ?>
+</h2>
 
 
 <p>
 
     <a href="/users/create">
-        Ny användare
+        <?= htmlspecialchars(
+            $language->get('new_user')
+        ) ?>
     </a>
 
     |
 
     <a href="/users/deleted">
-        Borttagna användare
+        <?= htmlspecialchars(
+            $language->get('deleted_users')
+        ) ?>
     </a>
 
     |
 
     <a href="/users/logs">
-        Audit log
+        <?= htmlspecialchars(
+            $language->get('audit_log')
+        ) ?>
     </a>
 
 </p>
@@ -26,7 +36,9 @@
 <?php if (empty($users)): ?>
 
     <p>
-        Inga användare hittades.
+        <?= htmlspecialchars(
+            $language->get('no_users_found')
+        ) ?>
     </p>
 
 
@@ -39,12 +51,42 @@
 
         <tr>
             <th>ID</th>
-            <th>Användarnamn</th>
-            <th>Namn</th>
-            <th>E-post</th>
-            <th>Roll</th>
-            <th>Skapad</th>
-            <th>Åtgärd</th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('username')
+                ) ?>
+            </th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('name')
+                ) ?>
+            </th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('email')
+                ) ?>
+            </th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('role')
+                ) ?>
+            </th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('created')
+                ) ?>
+            </th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('action')
+                ) ?>
+            </th>
         </tr>
 
     </thead>
@@ -57,8 +99,7 @@
 
         <?php
 
-        $roleName = 'Okänd';
-
+        $roleName = $language->get('unknown');
 
         foreach ($roles as $role) {
 
@@ -140,7 +181,9 @@
             <td>
 
                 <a href="/users/edit?id=<?= $user->getId() ?>">
-                    Redigera
+                    <?= htmlspecialchars(
+                        $language->get('edit')
+                    ) ?>
                 </a>
 
 
@@ -156,7 +199,15 @@
                         method="post"
                         action="/users/delete"
                         style="display:inline;"
-                        onsubmit="return confirm('Är du säker på att du vill ta bort användaren?');"
+                        onsubmit="return confirm(
+                            <?= htmlspecialchars(
+                                json_encode(
+                                    $language->get(
+                                        'confirm_delete_user'
+                                    )
+                                )
+                            ) ?>
+                        );"
                     >
 
                         <input
@@ -170,7 +221,9 @@
                             type="submit"
                             style="border:0;background:none;padding:0;cursor:pointer;text-decoration:underline;font:inherit;"
                         >
-                            Ta bort
+                            <?= htmlspecialchars(
+                                $language->get('delete')
+                            ) ?>
                         </button>
 
                     </form>

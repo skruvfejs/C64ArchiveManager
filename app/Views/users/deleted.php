@@ -1,10 +1,16 @@
-<h2><?= htmlspecialchars($title ?? 'Borttagna användare') ?></h2>
+<h2>
+    <?= htmlspecialchars(
+        $language->get('deleted_users')
+    ) ?>
+</h2>
 
 
 <?php if (empty($users)): ?>
 
     <p>
-        Inga borttagna användare hittades.
+        <?= htmlspecialchars(
+            $language->get('no_deleted_users_found')
+        ) ?>
     </p>
 
 
@@ -17,11 +23,36 @@
 
         <tr>
             <th>ID</th>
-            <th>Användarnamn</th>
-            <th>Namn</th>
-            <th>E-post</th>
-            <th>Borttagen</th>
-            <th>Åtgärd</th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('username')
+                ) ?>
+            </th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('name')
+                ) ?>
+            </th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('email')
+                ) ?>
+            </th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('deleted')
+                ) ?>
+            </th>
+
+            <th>
+                <?= htmlspecialchars(
+                    $language->get('action')
+                ) ?>
+            </th>
         </tr>
 
     </thead>
@@ -93,7 +124,9 @@
                         type="submit"
                         style="border:0;background:none;padding:0;cursor:pointer;text-decoration:underline;font:inherit;"
                     >
-                        Återställ
+                        <?= htmlspecialchars(
+                            $language->get('restore')
+                        ) ?>
                     </button>
 
                 </form>
