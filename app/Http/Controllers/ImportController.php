@@ -24,10 +24,10 @@ final class ImportController extends Controller
         private DirectoryEntryRepository $directories,
         private ChecksumService $checksum,
         private ImporterService $importer,
-        private Auth $auth
+        private Auth $auth,
+        private View $view
     ) {
     }
-
 
 
     public function index(): void
@@ -39,7 +39,6 @@ final class ImportController extends Controller
             ]
         );
     }
-
 
 
     public function upload(): void
@@ -57,12 +56,10 @@ final class ImportController extends Controller
                 : null;
 
 
-
         $notes =
             $this->request->post(
                 'notes'
             );
-
 
 
         if (!isset($_FILES['disk'])) {
@@ -77,7 +74,6 @@ final class ImportController extends Controller
 
             return;
         }
-
 
 
         if (
@@ -97,18 +93,15 @@ final class ImportController extends Controller
         }
 
 
-
         $original =
             basename(
                 $_FILES['disk']['name']
             );
 
 
-
         $targetDir =
             dirname(__DIR__, 3)
             . '/storage/imports';
-
 
 
         if (!is_dir($targetDir)) {
@@ -121,19 +114,16 @@ final class ImportController extends Controller
         }
 
 
-
         $target =
             $targetDir
             . '/'
             . $original;
 
 
-
         move_uploaded_file(
             $_FILES['disk']['tmp_name'],
             $target
         );
-
 
 
         $result =
@@ -147,12 +137,9 @@ final class ImportController extends Controller
                  );
 
 
-
         if ($result->isDuplicate()) {
 
-            $view = new View();
-
-            $view->render(
+            $this->view->render(
                 'import/duplicate',
                 $result->getDuplicateData()
             );
@@ -161,12 +148,10 @@ final class ImportController extends Controller
         }
 
 
-
         $this->renderImportResult(
             $result->getReleaseId()
         );
     }
-
 
 
     public function force(): void
@@ -184,19 +169,16 @@ final class ImportController extends Controller
                 : null;
 
 
-
         $notes =
             $this->request->post(
                 'notes'
             );
 
 
-
         $path =
             $this->request->post(
                 'path'
             );
-
 
 
         if (empty($path)) {
@@ -213,7 +195,6 @@ final class ImportController extends Controller
         }
 
 
-
         if (!is_file($path)) {
 
             $this->render(
@@ -228,7 +209,6 @@ final class ImportController extends Controller
         }
 
 
-
         $result =
             $this->importer
                  ->import(
@@ -240,12 +220,9 @@ final class ImportController extends Controller
                  );
 
 
-
         if ($result->isDuplicate()) {
 
-            $view = new View();
-
-            $view->render(
+            $this->view->render(
                 'import/duplicate',
                 $result->getDuplicateData()
             );
@@ -254,12 +231,10 @@ final class ImportController extends Controller
         }
 
 
-
         $this->renderImportResult(
             $result->getReleaseId()
         );
     }
-
 
 
     private function renderImportResult(
@@ -282,7 +257,6 @@ final class ImportController extends Controller
         $fileCount = 0;
 
 
-
         if ($release !== null) {
 
             $entry =
@@ -297,7 +271,6 @@ final class ImportController extends Controller
                 $entryName =
                     $entry->getTitle();
             }
-
 
 
             $files =
@@ -329,7 +302,6 @@ final class ImportController extends Controller
                     $file->getSize();
 
 
-
                 $entries =
                     $this->directories
                          ->findByReleaseFile(
@@ -343,7 +315,6 @@ final class ImportController extends Controller
         }
 
 
-
         $message =
             'Import OK.<br>'
             . 'Release ID: '
@@ -351,7 +322,6 @@ final class ImportController extends Controller
             . '<br>'
             . 'Entry: '
             . $entryName;
-
 
 
         if ($filename !== null) {
@@ -371,7 +341,6 @@ final class ImportController extends Controller
         }
 
 
-
         $this->render(
             'import/index',
             [
@@ -382,17 +351,12 @@ final class ImportController extends Controller
     }
 
 
-
     private function render(
         string $viewName,
         array $data = []
     ): void {
 
-        $view =
-            new View();
-
-
-        $view->render(
+        $this->view->render(
             $viewName,
             array_merge(
                 [

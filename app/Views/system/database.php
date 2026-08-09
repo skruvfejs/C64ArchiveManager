@@ -3,15 +3,29 @@
 declare(strict_types=1);
 ?>
 
-<h1>Databas</h1>
+<h1>
+    <?= htmlspecialchars(
+        $language->get('database')
+    ) ?>
+</h1>
+
 
 <p>
-    Här administrerar du databasen för C64 Archive Manager.
+    <?= htmlspecialchars(
+        $language->get('database_description')
+    ) ?>
 </p>
+
 
 <hr>
 
-<h2>Status</h2>
+
+<h2>
+    <?= htmlspecialchars(
+        $language->get('status')
+    ) ?>
+</h2>
+
 
 <table style="width:100%;">
 
@@ -22,52 +36,139 @@ declare(strict_types=1);
             <table>
 
                 <tr>
-                    <td><strong>Databas</strong></td>
-                    <td><?= htmlspecialchars((string) $database) ?></td>
+                    <td>
+                        <strong>
+                            <?= htmlspecialchars(
+                                $language->get('database')
+                            ) ?>
+                        </strong>
+                    </td>
+
+                    <td>
+                        <?= htmlspecialchars(
+                            (string) $database
+                        ) ?>
+                    </td>
                 </tr>
 
-                <tr>
-                    <td><strong>MariaDB-version</strong></td>
-                    <td><?= htmlspecialchars((string) $version) ?></td>
-                </tr>
 
                 <tr>
-                    <td><strong>Antal tabeller</strong></td>
-                    <td><?= (int) $tables ?></td>
+                    <td>
+                        <strong>
+                            <?= htmlspecialchars(
+                                $language->get('mariadb_version')
+                            ) ?>
+                        </strong>
+                    </td>
+
+                    <td>
+                        <?= htmlspecialchars(
+                            (string) $version
+                        ) ?>
+                    </td>
                 </tr>
 
+
                 <tr>
-                    <td><strong>Databasstorlek</strong></td>
-                    <td><?= htmlspecialchars((string) $size) ?></td>
+                    <td>
+                        <strong>
+                            <?= htmlspecialchars(
+                                $language->get('table_count')
+                            ) ?>
+                        </strong>
+                    </td>
+
+                    <td>
+                        <?= (int) $tables ?>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>
+                        <strong>
+                            <?= htmlspecialchars(
+                                $language->get('database_size')
+                            ) ?>
+                        </strong>
+                    </td>
+
+                    <td>
+                        <?= htmlspecialchars(
+                            (string) $size
+                        ) ?>
+                    </td>
                 </tr>
 
             </table>
 
         </td>
 
+
         <td style="width:50%;">
 
             <table>
 
                 <tr>
-                    <td><strong>Senaste säkerhetskopia</strong></td>
                     <td>
+                        <strong>
+                            <?= htmlspecialchars(
+                                $language->get('latest_backup')
+                            ) ?>
+                        </strong>
+                    </td>
+
+                    <td>
+
                         <?php if (!empty($lastBackup)): ?>
-                            <?= htmlspecialchars($lastBackup['filename']) ?>
+
+                            <?= htmlspecialchars(
+                                $lastBackup['filename']
+                            ) ?>
+
                         <?php else: ?>
-                            Ingen säkerhetskopia funnen
+
+                            <?= htmlspecialchars(
+                                $language->get(
+                                    'no_backup_found'
+                                )
+                            ) ?>
+
                         <?php endif; ?>
+
                     </td>
                 </tr>
 
-                <tr>
-                    <td><strong>Antal säkerhetskopior</strong></td>
-                    <td><?= (int) $backupCount ?></td>
-                </tr>
 
                 <tr>
-                    <td><strong>Backuputrymme</strong></td>
-                    <td><?= htmlspecialchars((string) $backupSize) ?></td>
+                    <td>
+                        <strong>
+                            <?= htmlspecialchars(
+                                $language->get('backup_count')
+                            ) ?>
+                        </strong>
+                    </td>
+
+                    <td>
+                        <?= (int) $backupCount ?>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>
+                        <strong>
+                            <?= htmlspecialchars(
+                                $language->get('backup_storage')
+                            ) ?>
+                        </strong>
+                    </td>
+
+                    <td>
+                        <?= htmlspecialchars(
+                            (string) $backupSize
+                        ) ?>
+                    </td>
                 </tr>
 
             </table>
@@ -78,65 +179,112 @@ declare(strict_types=1);
 
 </table>
 
+
 <hr>
 
-<h2>Snabbåtgärder</h2>
 
-<form method="post" action="/administration/system/backup/create">
+<h2>
+    <?= htmlspecialchars(
+        $language->get('quick_actions')
+    ) ?>
+</h2>
+
+
+<form
+    method="post"
+    action="/administration/system/backup/create"
+>
+
     <button type="submit">
-        Skapa säkerhetskopia nu
+        <?= htmlspecialchars(
+            $language->get('create_backup_now')
+        ) ?>
     </button>
+
 </form>
 
+
 <hr>
 
-<h2>Export</h2>
 
-<form method="post" action="/administration/system/export">
+<h2>
+    <?= htmlspecialchars(
+        $language->get('export')
+    ) ?>
+</h2>
+
+
+<form
+    method="post"
+    action="/administration/system/export"
+>
 
     <p>
 
         <label>
+
             <input
                 type="radio"
                 name="type"
                 value="full"
                 checked
             >
-            Hela databasen
+
+            <?= htmlspecialchars(
+                $language->get('full_database')
+            ) ?>
+
         </label>
+
 
         <br>
 
+
         <label>
+
             <input
                 type="radio"
                 name="type"
                 value="archive"
             >
-            Arkivdata
+
+            <?= htmlspecialchars(
+                $language->get('archive_data')
+            ) ?>
+
         </label>
+
 
         <br>
 
+
         <label>
+
             <input
                 type="radio"
                 name="type"
                 value="system"
             >
-            Systemdata
+
+            <?= htmlspecialchars(
+                $language->get('system_data')
+            ) ?>
+
         </label>
 
     </p>
 
+
     <p>
 
         <label>
-            Beskrivning
+            <?= htmlspecialchars(
+                $language->get('description')
+            ) ?>
         </label>
 
         <br>
+
 
         <input
             type="text"
@@ -146,15 +294,25 @@ declare(strict_types=1);
 
     </p>
 
+
     <button type="submit">
-        Exportera
+        <?= htmlspecialchars(
+            $language->get('export')
+        ) ?>
     </button>
 
 </form>
 
+
 <hr>
 
-<h2>Import</h2>
+
+<h2>
+    <?= htmlspecialchars(
+        $language->get('import')
+    ) ?>
+</h2>
+
 
 <form
     method="post"
@@ -164,148 +322,260 @@ declare(strict_types=1);
 
     <p>
 
-        <label>
-            SQL-fil
+        <label for="backup">
+            <?= htmlspecialchars(
+                $language->get('sql_file')
+            ) ?>
         </label>
 
-        <br>
+        <br><br>
+
+
+        <button
+            type="button"
+            onclick="document.getElementById('backup').click();"
+        >
+            <?= htmlspecialchars(
+                $language->get('choose_file')
+            ) ?>
+        </button>
+
+
+        <span id="backup-file-name">
+            <?= htmlspecialchars(
+                $language->get('no_file_chosen')
+            ) ?>
+        </span>
+
 
         <input
             type="file"
+            id="backup"
             name="backup"
             required
+            style="display:none;"
         >
 
     </p>
 
+
     <button type="submit">
-        Importera
+        <?= htmlspecialchars(
+            $language->get('import')
+        ) ?>
     </button>
 
 </form>
 
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const input = document.getElementById('backup');
+    const fileName = document.getElementById('backup-file-name');
+
+    if (!input || !fileName) {
+        return;
+    }
+
+    input.addEventListener('change', function () {
+
+        if (input.files.length > 0) {
+            fileName.textContent = input.files[0].name;
+        } else {
+            fileName.textContent =
+                <?= json_encode(
+                    $language->get('no_file_chosen')
+                ) ?>;
+        }
+
+    });
+
+});
+</script>
+
+
 <hr>
 
-<h2>Säkerhetskopior</h2>
+
+<h2>
+    <?= htmlspecialchars(
+        $language->get('backups')
+    ) ?>
+</h2>
+
 
 <?php if (empty($backups)): ?>
 
-<p>
-    Inga säkerhetskopior finns.
-</p>
+    <p>
+        <?= htmlspecialchars(
+            $language->get('no_backups')
+        ) ?>
+    </p>
 
 <?php else: ?>
 
-<table>
+    <table>
 
-    <tr>
-        <th style="text-align:left;">Fil</th>
-        <th style="text-align:left;">Typ</th>
-        <th style="text-align:left;">Storlek</th>
-        <th style="text-align:left;">Datum</th>
-        <th style="text-align:left;">Åtgärder</th>
-    </tr>
+        <tr>
 
-    <?php foreach ($backups as $backup): ?>
+            <th style="text-align:left;">
+                <?= htmlspecialchars(
+                    $language->get('file')
+                ) ?>
+            </th>
 
-    <tr>
+            <th style="text-align:left;">
+                <?= htmlspecialchars(
+                    $language->get('type')
+                ) ?>
+            </th>
 
-        <td>
-            <?= htmlspecialchars($backup['filename']) ?>
-        </td>
+            <th style="text-align:left;">
+                <?= htmlspecialchars(
+                    $language->get('size')
+                ) ?>
+            </th>
 
-        <td>
-            <?= htmlspecialchars($backup['type']) ?>
-        </td>
+            <th style="text-align:left;">
+                <?= htmlspecialchars(
+                    $language->get('date')
+                ) ?>
+            </th>
 
-        <td>
-            <?= htmlspecialchars($backup['sizeText']) ?>
-        </td>
+            <th style="text-align:left;">
+                <?= htmlspecialchars(
+                    $language->get('actions')
+                ) ?>
+            </th>
 
-        <td>
-            <?= date(
-                'Y-m-d H:i:s',
-                $backup['modified']
-            ) ?>
-        </td>
+        </tr>
 
-        <td>
 
-            <a href="/administration/system/backup/download?file=<?= urlencode($backup['filename']) ?>">
-                Ladda ner
-            </a>
+        <?php foreach ($backups as $backup): ?>
 
-            |
+            <tr>
 
-            <form
-                method="post"
-                action="/administration/system/backup/restore"
-                style="display:inline;"
-                onsubmit="return confirm('Är du säker på att du vill återställa denna säkerhetskopia? En automatisk säkerhetskopia skapas innan återställningen.');"
-            >
+                <td>
+                    <?= htmlspecialchars(
+                        $backup['filename']
+                    ) ?>
+                </td>
 
-                <input
-                    type="hidden"
-                    name="file"
-                    value="<?= htmlspecialchars($backup['filename']) ?>"
-                >
 
-                <button
-                    type="submit"
-                    style="
-                        background:none;
-                        border:none;
-                        padding:0;
-                        margin:0;
-                        color:#06c;
-                        text-decoration:underline;
-                        cursor:pointer;
-                        font:inherit;
-                    "
-                >
-                    Återställ
-                </button>
+                <td>
+                    <?= htmlspecialchars(
+                        $backup['type']
+                    ) ?>
+                </td>
 
-            </form>
 
-            |
-            <form
-                method="post"
-                action="/administration/system/backup/delete"
-                style="display:inline;"
-                onsubmit="return confirm('Ta bort säkerhetskopian?');"
-            >
+                <td>
+                    <?= htmlspecialchars(
+                        $backup['sizeText']
+                    ) ?>
+                </td>
 
-                <input
-                    type="hidden"
-                    name="file"
-                    value="<?= htmlspecialchars($backup['filename']) ?>"
-                >
 
-                <button
-                    type="submit"
-                    style="
-                        background:none;
-                        border:none;
-                        padding:0;
-                        margin:0;
-                        color:#06c;
-                        text-decoration:underline;
-                        cursor:pointer;
-                        font:inherit;
-                    "
-                >
-                    Ta bort
-                </button>
+                <td>
+                    <?= date(
+                        'Y-m-d H:i:s',
+                        $backup['modified']
+                    ) ?>
+                </td>
 
-            </form>
 
-        </td>
+                <td>
 
-    </tr>
+                    <a
+                        href="/administration/system/backup/download?file=<?= urlencode($backup['filename']) ?>"
+                    >
+                        <?= htmlspecialchars(
+                            $language->get('download')
+                        ) ?>
+                    </a>
 
-    <?php endforeach; ?>
+                    |
 
-</table>
+
+                    <form
+                        method="post"
+                        action="/administration/system/backup/restore"
+                        style="display:inline;"
+                        onsubmit="return confirm('<?= htmlspecialchars($language->get('restore_confirm'), ENT_QUOTES) ?>');"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="file"
+                            value="<?= htmlspecialchars($backup['filename']) ?>"
+                        >
+
+
+                        <button
+                            type="submit"
+                            style="
+                                background:none;
+                                border:none;
+                                padding:0;
+                                margin:0;
+                                color:#06c;
+                                text-decoration:underline;
+                                cursor:pointer;
+                                font:inherit;
+                            "
+                        >
+                            <?= htmlspecialchars(
+                                $language->get('restore')
+                            ) ?>
+                        </button>
+
+                    </form>
+
+
+                    |
+
+
+                    <form
+                        method="post"
+                        action="/administration/system/backup/delete"
+                        style="display:inline;"
+                        onsubmit="return confirm('<?= htmlspecialchars($language->get('delete_backup_confirm'), ENT_QUOTES) ?>');"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="file"
+                            value="<?= htmlspecialchars($backup['filename']) ?>"
+                        >
+
+
+                        <button
+                            type="submit"
+                            style="
+                                background:none;
+                                border:none;
+                                padding:0;
+                                margin:0;
+                                color:#06c;
+                                text-decoration:underline;
+                                cursor:pointer;
+                                font:inherit;
+                            "
+                        >
+                            <?= htmlspecialchars(
+                                $language->get('delete')
+                            ) ?>
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+        <?php endforeach; ?>
+
+    </table>
 
 <?php endif; ?>

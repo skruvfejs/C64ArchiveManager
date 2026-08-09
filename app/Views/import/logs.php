@@ -1,12 +1,16 @@
 <h1>
-    Import Logs
+    <?= htmlspecialchars(
+        $language->get('import_logs')
+    ) ?>
 </h1>
 
 
 <?php if (empty($logs)): ?>
 
 <p>
-    Inga importer hittades.
+    <?= htmlspecialchars(
+        $language->get('no_imports_found')
+    ) ?>
 </p>
 
 
@@ -18,39 +22,54 @@
     <tr>
 
         <th>
-            Användare
+            <?= htmlspecialchars(
+                $language->get('user')
+            ) ?>
         </th>
 
         <th>
-            Datum
+            <?= htmlspecialchars(
+                $language->get('date')
+            ) ?>
         </th>
 
         <th>
-            Fil
+            <?= htmlspecialchars(
+                $language->get('file')
+            ) ?>
         </th>
 
         <th>
-            Format
+            <?= htmlspecialchars(
+                $language->get('format')
+            ) ?>
         </th>
 
         <th>
-            Status
+            <?= htmlspecialchars(
+                $language->get('status')
+            ) ?>
         </th>
 
         <th>
-            Release
+            <?= htmlspecialchars(
+                $language->get('release')
+            ) ?>
         </th>
 
         <th>
-            Antal filer
+            <?= htmlspecialchars(
+                $language->get('files_imported')
+            ) ?>
         </th>
 
         <th>
-            Meddelande
+            <?= htmlspecialchars(
+                $language->get('message')
+            ) ?>
         </th>
 
     </tr>
-
 
 
     <?php foreach ($logs as $log): ?>
@@ -59,7 +78,7 @@
 
         <td>
             <?= htmlspecialchars(
-                $log->getUsername() ?? 'Gäst'
+                $log->getUsername() ?? $language->get('guest')
             ) ?>
         </td>
 

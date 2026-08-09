@@ -7,6 +7,7 @@ use App\Core\Session;
 use App\Core\Flash;
 use App\Core\Authorization;
 use App\Core\Permission;
+use App\Services\SettingsService;
 
 
 $session = new Session();
@@ -29,8 +30,24 @@ $message =
     $flash->get();
 
 
+$settingsService =
+    new SettingsService(
+        new \App\Core\Database(
+            new \App\Core\Config(
+                dirname(__DIR__, 3) . '/config'
+            )
+        )
+    );
 
-$title ??= 'C64 Archive Manager';
+
+$siteName =
+    $settingsService->get(
+        'site_name',
+        'C64 Archive Manager'
+    );
+
+
+$title ??= $siteName;
 
 ?>
 <!DOCTYPE html>
@@ -40,9 +57,14 @@ $title ??= 'C64 Archive Manager';
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title><?= htmlspecialchars($title) ?></title>
+    <title>
+        <?= htmlspecialchars($title) ?>
+    </title>
 
     <style>
 
@@ -146,7 +168,9 @@ $title ??= 'C64 Archive Manager';
 
         <?php if ($user): ?>
 
-            Inloggad som
+            <?= htmlspecialchars(
+                $language->get('logged_in_as')
+            ) ?>
 
             <strong>
                 <?= htmlspecialchars($user['username']) ?>
@@ -157,9 +181,10 @@ $title ??= 'C64 Archive Manager';
 
 
             <a href="/account/password">
-                Ändra lösenord
+                <?= htmlspecialchars(
+                    $language->get('change_password')
+                ) ?>
             </a>
-
 
 
             <?php if (
@@ -170,8 +195,10 @@ $title ??= 'C64 Archive Manager';
 
                 |
 
-                <a href="/users">
-                    Användare
+                <a href="/administration">
+                    <?= htmlspecialchars(
+                        $language->get('administration')
+                    ) ?>
                 </a>
 
             <?php endif; ?>
@@ -179,9 +206,10 @@ $title ??= 'C64 Archive Manager';
 
             |
 
-
             <a href="/logout">
-                Logga ut
+                <?= htmlspecialchars(
+                    $language->get('logout')
+                ) ?>
             </a>
 
 
@@ -191,7 +219,7 @@ $title ??= 'C64 Archive Manager';
 
 
     <h1>
-        C64 Archive Manager
+        <?= htmlspecialchars($siteName) ?>
     </h1>
 
 
@@ -200,18 +228,39 @@ $title ??= 'C64 Archive Manager';
         <nav>
 
             <a href="/">
-                Dashboard
+                <?= htmlspecialchars(
+                    $language->get('dashboard')
+                ) ?>
             </a>
 
 
             <a href="/disk">
-                Diskar
+                <?= htmlspecialchars(
+                    $language->get('disks')
+                ) ?>
             </a>
 
 
             <a href="/search">
-                Sök
+                <?= htmlspecialchars(
+                    $language->get('search')
+                ) ?>
             </a>
+
+
+            <?php if (
+                $authorization->can(
+                    Permission::MANAGE_USERS
+                )
+            ): ?>
+
+                <a href="/administration">
+                    <?= htmlspecialchars(
+                        $language->get('administration')
+                    ) ?>
+                </a>
+
+            <?php endif; ?>
 
         </nav>
 
@@ -245,7 +294,8 @@ $title ??= 'C64 Archive Manager';
 
 <footer>
 
-    C64 Archive Manager &copy; <?= date('Y') ?>
+    <?= htmlspecialchars($siteName) ?>
+    &copy; <?= date('Y') ?>
 
 </footer>
 

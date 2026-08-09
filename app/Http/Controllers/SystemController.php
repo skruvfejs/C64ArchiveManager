@@ -10,6 +10,7 @@ use App\Services\BackupService;
 use App\Services\DatabaseExportService;
 use App\Services\DatabaseImportService;
 use App\Services\DatabaseService;
+use App\Services\SettingsService;
 
 final class SystemController extends Controller
 {
@@ -19,7 +20,8 @@ final class SystemController extends Controller
         private readonly DatabaseService $databaseService,
         private readonly BackupService $backupService,
         private readonly DatabaseExportService $exportService,
-        private readonly DatabaseImportService $importService
+        private readonly DatabaseImportService $importService,
+        private readonly SettingsService $settingsService
     ) {
     }
 
@@ -290,14 +292,99 @@ final class SystemController extends Controller
         header('Location: /administration/system/database');
         exit;
     }
+
     public function settings(): void
     {
+        if (!$this->auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+
+        $settings = $this->settingsService->getAll();
+
         $this->view->render(
             'system/settings',
             [
-                'title' => 'Inställningar',
+                'title'    => 'Inställningar',
+                'settings' => $settings,
             ]
         );
+    }
+
+    public function saveSettings(): void
+    {
+        if (!$this->auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+
+        $siteName = trim(
+            (string) ($_POST['site_name'] ?? '')
+        );
+
+        $language = (string) (
+            $_POST['default_language'] ?? 'sv'
+        );
+
+        $dateFormat = (string) (
+            $_POST['date_format'] ?? 'Y-m-d'
+        );
+
+        $itemsPerPage = (int) (
+            $_POST['items_per_page'] ?? 25
+        );
+
+        $maintenanceMode = isset(
+            $_POST['maintenance_mode']
+        ) ? '1' : '0';
+
+        $registrationEnabled = isset(
+            $_POST['registration_enabled']
+        ) ? '1' : '0';
+
+        if ($siteName === '') {
+            $siteName = 'C64 Archive Manager';
+        }
+
+        if (!in_array($language, ['sv', 'en'], true)) {
+            $language = 'sv';
+        }
+
+        if (
+            !in_array(
+                $dateFormat,
+                [
+                    'Y-m-d',
+                    'd-m-Y',
+                    'Y-m-d H:i',
+                ],
+                true
+            )
+        ) {
+            $dateFormat = 'Y-m-d';
+        }
+
+        if (
+            !in_array(
+                $itemsPerPage,
+                [10, 25, 50, 100],
+                true
+            )
+        ) {
+            $itemsPerPage = 25;
+        }
+
+        $this->settingsService->update([
+            'site_name' => $siteName,
+            'default_language' => $language,
+            'date_format' => $dateFormat,
+            'items_per_page' => (string) $itemsPerPage,
+            'maintenance_mode' => $maintenanceMode,
+            'registration_enabled' => $registrationEnabled,
+        ]);
+
+        header('Location: /administration/system/settings');
+        exit;
     }
 
     public function maintenance(): void

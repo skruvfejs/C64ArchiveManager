@@ -39,7 +39,9 @@ $user = $auth->user();
 
 
     <h2>
-        Senast importerade releaser
+        <?= htmlspecialchars(
+            $language->get('latest_imports')
+        ) ?>
     </h2>
 
 

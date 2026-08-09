@@ -28,11 +28,14 @@ use App\Http\Controllers\ImportLogController;
 
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ReleaseController;
+use App\Http\Controllers\AdministrationController;
+use App\Http\Controllers\SystemController;
 
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\ManageUsersMiddleware;
 use App\Http\Middleware\ImportMiddleware;
 use App\Http\Middleware\ViewLogsMiddleware;
+use App\Http\Middleware\ManageSystemMiddleware;
 
 
 return function (Router $router): void {
@@ -127,6 +130,170 @@ return function (Router $router): void {
         ]
     );
 
+
+/*
+ * Administration
+ */
+
+$router->get(
+    '/administration',
+    [
+        AdministrationController::class,
+        'index'
+    ],
+    [
+        ManageUsersMiddleware::class,
+    ]
+);
+
+
+/*
+ * System administration
+ */
+
+$router->get(
+    '/administration/system',
+    [
+        SystemController::class,
+        'index'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
+$router->get(
+    '/administration/system/database',
+    [
+        SystemController::class,
+        'database'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
+$router->post(
+    '/administration/system/backup/create',
+    [
+        SystemController::class,
+        'createBackup'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
+$router->post(
+    '/administration/system/export',
+    [
+        SystemController::class,
+        'export'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
+$router->post(
+    '/administration/system/import',
+    [
+        SystemController::class,
+        'import'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
+$router->get(
+    '/administration/system/backup/download',
+    [
+        SystemController::class,
+        'downloadBackup'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
+$router->post(
+    '/administration/system/backup/delete',
+    [
+        SystemController::class,
+        'deleteBackup'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
+$router->post(
+    '/administration/system/backup/restore',
+    [
+        SystemController::class,
+        'restoreBackup'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
+
+$router->get(
+    '/administration/system/settings',
+    [
+        SystemController::class,
+        'settings'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
+$router->post(
+    '/administration/system/settings',
+    [
+        SystemController::class,
+        'saveSettings'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
+$router->get(
+    '/administration/system/maintenance',
+    [
+        SystemController::class,
+        'maintenance'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
+$router->get(
+    '/administration/system/api',
+    [
+        SystemController::class,
+        'api'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
+$router->get(
+    '/administration/system/information',
+    [
+        SystemController::class,
+        'information'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
 
 
     /*

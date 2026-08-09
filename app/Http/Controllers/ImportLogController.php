@@ -10,7 +10,8 @@ use App\Services\ImportLogService;
 final class ImportLogController extends Controller
 {
     public function __construct(
-        private ImportLogService $logs
+        private ImportLogService $logs,
+        private View $view
     ) {
     }
 
@@ -21,11 +22,7 @@ final class ImportLogController extends Controller
             $this->logs->latest();
 
 
-        $view =
-            new View();
-
-
-        $view->render(
+        $this->view->render(
             'import/logs',
             [
                 'title' =>
@@ -37,4 +34,3 @@ final class ImportLogController extends Controller
         );
     }
 }
-

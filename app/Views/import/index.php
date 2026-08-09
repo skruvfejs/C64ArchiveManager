@@ -6,7 +6,9 @@ declare(strict_types=1);
 
 
 <h1>
-    C64 Import
+    <?= htmlspecialchars(
+        $language->get('c64_import')
+    ) ?>
 </h1>
 
 
@@ -19,22 +21,26 @@ declare(strict_types=1);
 <?php endif; ?>
 
 
-
-<form method="post"
-      action="/import"
-      enctype="multipart/form-data">
-
+<form
+    method="post"
+    action="/import"
+    enctype="multipart/form-data"
+>
 
 
     <p>
-        Entry:
+        <?= htmlspecialchars(
+            $language->get('entry')
+        ) ?>:
     </p>
 
 
     <select name="entry_id">
 
         <option value="">
-            -- Skapa automatiskt --
+            <?= htmlspecialchars(
+                $language->get('create_automatically')
+            ) ?>
         </option>
 
 
@@ -53,10 +59,10 @@ declare(strict_types=1);
     </select>
 
 
-
-
     <p>
-        Kommentar (valfritt):
+        <?= htmlspecialchars(
+            $language->get('comment_optional')
+        ) ?>:
     </p>
 
 
@@ -64,31 +70,79 @@ declare(strict_types=1);
         name="notes"
         rows="4"
         cols="60"
-        placeholder="T.ex. Mitt original från barndomen 1987"></textarea>
-
-
+        placeholder="<?= htmlspecialchars(
+            $language->get('comment_placeholder')
+        ) ?>"
+    ></textarea>
 
 
     <p>
-        Disk image:
+        <?= htmlspecialchars(
+            $language->get('disk_image')
+        ) ?>:
     </p>
+
+
+    <button
+        type="button"
+        onclick="document.getElementById('disk').click();"
+    >
+        <?= htmlspecialchars(
+            $language->get('choose_file')
+        ) ?>
+    </button>
+
+    <span id="disk-file-name">
+        <?= htmlspecialchars(
+            $language->get('no_file_chosen')
+        ) ?>
+    </span>
 
 
     <input
         type="file"
+        id="disk"
         name="disk"
+        style="display:none;"
     >
-
-
 
 
     <p>
 
         <button type="submit">
-            Import
+            <?= htmlspecialchars(
+                $language->get('import')
+            ) ?>
         </button>
 
     </p>
 
 
 </form>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const input = document.getElementById('disk');
+    const fileName = document.getElementById('disk-file-name');
+
+    if (!input || !fileName) {
+        return;
+    }
+
+    input.addEventListener('change', function () {
+
+        if (input.files.length > 0) {
+            fileName.textContent = input.files[0].name;
+        } else {
+            fileName.textContent =
+                <?= json_encode(
+                    $language->get('no_file_chosen')
+                ) ?>;
+        }
+
+    });
+
+});
+</script>

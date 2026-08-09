@@ -1,10 +1,14 @@
 <h1>
-    Disk finns redan
+    <?= htmlspecialchars(
+        $language->get('disk_already_exists')
+    ) ?>
 </h1>
 
 
 <p>
-    Fil:
+    <?= htmlspecialchars(
+        $language->get('file')
+    ) ?>:
     <?= htmlspecialchars($filename) ?>
 </p>
 
@@ -16,15 +20,17 @@
 
 
 <p>
-    Befintlig release:
+    <?= htmlspecialchars(
+        $language->get('existing_release')
+    ) ?>:
     <?= $existing->getReleaseId() ?>
 </p>
 
 
-
-<form method="post"
-      action="/import/force">
-
+<form
+    method="post"
+    action="/import/force"
+>
 
     <input
         type="hidden"
@@ -47,10 +53,10 @@
     >
 
 
-
     <button type="submit">
-        Importera som ny release
+        <?= htmlspecialchars(
+            $language->get('import_as_new_release')
+        ) ?>
     </button>
-
 
 </form>

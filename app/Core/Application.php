@@ -9,8 +9,10 @@ use App\Repositories\AuditLogRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
 use App\Services\AuditLogService;
+use App\Services\LanguageService;
 use App\Services\RegistrationService;
 use App\Services\RoleService;
+use App\Services\SettingsService;
 use App\Services\UserService;
 
 final class Application
@@ -28,6 +30,7 @@ final class Application
         /*
          * Config
          */
+
         $this->container->singleton(
             Config::class,
             fn () => new Config(
@@ -39,6 +42,7 @@ final class Application
         /*
          * Timezone
          */
+
         date_default_timezone_set(
             $this->container
                 ->get(Config::class)
@@ -49,6 +53,7 @@ final class Application
         /*
          * Core services
          */
+
         $this->container->singleton(
             Database::class,
             fn (Container $c) => new Database(
@@ -60,6 +65,7 @@ final class Application
         /*
          * Database transaction
          */
+
         $this->container->singleton(
             DatabaseTransaction::class,
             fn (Container $c) => new DatabaseTransaction(
@@ -85,6 +91,7 @@ final class Application
         /*
          * Repositories
          */
+
         $this->container->singleton(
             RoleRepository::class,
             fn (Container $c) => new RoleRepository(
@@ -112,6 +119,7 @@ final class Application
         /*
          * Services
          */
+
         $this->container->singleton(
             RoleService::class,
             fn (Container $c) => new RoleService(
@@ -148,8 +156,44 @@ final class Application
 
 
         $this->container->singleton(
+            SettingsService::class,
+            fn (Container $c) => new SettingsService(
+                $c->get(Database::class)
+            )
+        );
+
+
+        $this->container->singleton(
+            LanguageService::class,
+            fn (Container $c) => new LanguageService(
+                $c->get(SettingsService::class)
+            )
+        );
+
+
+        $this->container->singleton(
             View::class,
-            fn () => new View()
+            function (Container $c): View {
+                $view = new View();
+
+
+                $view->share(
+                    'siteName',
+                    $c->get(SettingsService::class)->get(
+                        'site_name',
+                        'C64 Archive Manager'
+                    )
+                );
+
+
+                $view->share(
+                    'language',
+                    $c->get(LanguageService::class)
+                );
+
+
+                return $view;
+            }
         );
 
 
