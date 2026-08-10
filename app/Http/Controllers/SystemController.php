@@ -11,6 +11,7 @@ use App\Services\BackupService;
 use App\Services\DatabaseExportService;
 use App\Services\DatabaseImportService;
 use App\Services\DatabaseService;
+use App\Services\MaintenanceService;
 use App\Services\SettingsService;
 use App\Services\StorageService;
 
@@ -24,7 +25,8 @@ final class SystemController extends Controller
         private readonly DatabaseExportService $exportService,
         private readonly DatabaseImportService $importService,
         private readonly SettingsService $settingsService,
-        private readonly StorageService $storageService
+        private readonly StorageService $storageService,
+        private readonly MaintenanceService $maintenanceService
     ) {
     }
 
@@ -450,10 +452,41 @@ final class SystemController extends Controller
 
     public function maintenance(): void
     {
+        if (!$this->auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+
+
+        $storage =
+            $this->maintenanceService
+                ->getStorageStatus();
+
+
+        $database =
+            $this->maintenanceService
+                ->getDatabaseStatus();
+
+
+        $fileIntegrity =
+            $this->maintenanceService
+                ->getFileIntegrity();
+
+
         $this->view->render(
             'system/maintenance',
             [
-                'title' => 'Underhåll',
+                'title' =>
+                    'Underhåll',
+
+                'storage' =>
+                    $storage,
+
+                'database' =>
+                    $database,
+
+                'fileIntegrity' =>
+                    $fileIntegrity,
             ]
         );
     }
@@ -474,43 +507,67 @@ final class SystemController extends Controller
             [
                 'title' => 'Systeminformation',
 
-                'appName' => $app['name'] ?? 'C64 Archive Manager',
-                'appVersion' => $app['version'] ?? '1.0',
+                'appName' =>
+                    $app['name'] ??
+                    'C64 Archive Manager',
 
-                'phpVersion' => PHP_VERSION,
-                'operatingSystem' => PHP_OS,
-                'serverSoftware' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
-                'phpSapi' => PHP_SAPI,
+                'appVersion' =>
+                    $app['version'] ??
+                    '1.0',
+
+                'phpVersion' =>
+                    PHP_VERSION,
+
+                'operatingSystem' =>
+                    PHP_OS,
+
+                'serverSoftware' =>
+                    $_SERVER['SERVER_SOFTWARE'] ??
+                    'Unknown',
+
+                'phpSapi' =>
+                    PHP_SAPI,
 
                 'databaseName' =>
-                    $this->databaseService->getDatabaseName(),
+                    $this->databaseService
+                        ->getDatabaseName(),
 
                 'databaseVersion' =>
-                    $this->databaseService->getVersion(),
+                    $this->databaseService
+                        ->getVersion(),
 
                 'tableCount' =>
-                    $this->databaseService->getTableCount(),
+                    $this->databaseService
+                        ->getTableCount(),
 
                 'databaseSize' =>
-                    $this->databaseService->getDatabaseSize(),
+                    $this->databaseService
+                        ->getDatabaseSize(),
 
                 'importedFiles' =>
-                    $this->storageService->getFileCount(),
+                    $this->storageService
+                        ->getFileCount(),
 
                 'usedSpace' =>
-                    $this->storageService->formatBytes(
-                        $this->storageService->getUsedSpace()
-                    ),
+                    $this->storageService
+                        ->formatBytes(
+                            $this->storageService
+                                ->getUsedSpace()
+                        ),
 
                 'totalSpace' =>
-                    $this->storageService->formatBytes(
-                        $this->storageService->getTotalSpace()
-                    ),
+                    $this->storageService
+                        ->formatBytes(
+                            $this->storageService
+                                ->getTotalSpace()
+                        ),
 
                 'freeSpace' =>
-                    $this->storageService->formatBytes(
-                        $this->storageService->getFreeSpace()
-                    ),
+                    $this->storageService
+                        ->formatBytes(
+                            $this->storageService
+                                ->getFreeSpace()
+                        ),
             ]
         );
     }

@@ -6,10 +6,12 @@ namespace App\Core;
 
 use App\Http\Request;
 use App\Repositories\AuditLogRepository;
+use App\Repositories\ReleaseFileRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
 use App\Services\AuditLogService;
 use App\Services\LanguageService;
+use App\Services\MaintenanceService;
 use App\Services\RegistrationService;
 use App\Services\RoleService;
 use App\Services\SettingsService;
@@ -117,6 +119,14 @@ final class Application
         );
 
 
+        $this->container->singleton(
+            ReleaseFileRepository::class,
+            fn (Container $c) => new ReleaseFileRepository(
+                $c->get(Database::class)
+            )
+        );
+
+
         /*
          * Services
          */
@@ -167,6 +177,15 @@ final class Application
         $this->container->singleton(
             StorageService::class,
             fn () => new StorageService()
+        );
+
+
+        $this->container->singleton(
+            MaintenanceService::class,
+            fn (Container $c) => new MaintenanceService(
+                $c->get(StorageService::class),
+                $c->get(ReleaseFileRepository::class)
+            )
         );
 
 
