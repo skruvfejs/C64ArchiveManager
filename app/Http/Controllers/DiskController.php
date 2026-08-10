@@ -23,7 +23,8 @@ final class DiskController extends Controller
         private ReleaseFileRepository $files,
         private DirectoryEntryRepository $entries,
         private Request $request,
-        private Auth $auth
+        private Auth $auth,
+        private View $view
     ) {
     }
 
@@ -275,11 +276,7 @@ final class DiskController extends Controller
 
 
 
-        $view =
-            new View();
-
-
-        $view->render(
+        $this->view->render(
             'disk/index',
             [
                 'title' =>

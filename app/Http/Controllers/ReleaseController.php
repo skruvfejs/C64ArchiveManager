@@ -18,7 +18,8 @@ final class ReleaseController extends Controller
         private ReleaseFileRepository $files,
         private EntryRepository $entries,
         private DirectoryEntryRepository $directories,
-        private Request $request
+        private Request $request,
+        private View $view
     ) {
     }
 
@@ -146,11 +147,7 @@ final class ReleaseController extends Controller
         }
 
 
-        $view =
-            new View();
-
-
-        $view->render(
+        $this->view->render(
             'release/index',
             [
                 'title' =>

@@ -17,7 +17,8 @@ final class FileController extends Controller
         private DirectoryEntryRepository $entries,
         private ReleaseFileRepository $files,
         private C64FileExtractorService $extractor,
-        private Request $request
+        private Request $request,
+        private View $view
     ) {
     }
 
@@ -58,11 +59,7 @@ final class FileController extends Controller
             );
 
 
-        $view =
-            new View();
-
-
-        $view->render(
+        $this->view->render(
             'file/index',
             [
                 'title' =>

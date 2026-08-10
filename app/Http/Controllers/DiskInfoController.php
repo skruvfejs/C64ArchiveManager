@@ -18,7 +18,8 @@ final class DiskInfoController extends Controller
         private ReleaseFileRepository $files,
         private DirectoryEntryRepository $entries,
         private DiskGeometry $geometry,
-        private Request $request
+        private Request $request,
+        private View $view
     ) {
     }
 
@@ -137,10 +138,7 @@ final class DiskInfoController extends Controller
 
         }
 
-        $view = new View();
-
-
-        $view->render(
+        $this->view->render(
             'disk/info',
             [
 
