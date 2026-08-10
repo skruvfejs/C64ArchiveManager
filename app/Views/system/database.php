@@ -478,9 +478,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                 <td>
-                    <?= date(
-                        'Y-m-d H:i:s',
-                        $backup['modified']
+                    <?= $dateService->format(
+                        date('Y-m-d H:i:s', $backup['modified'])
                     ) ?>
                 </td>
 

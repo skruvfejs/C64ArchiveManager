@@ -66,7 +66,7 @@ declare(strict_types=1);
 
                 <td style="text-align: left;">
                     <?= htmlspecialchars(
-                        $log['created_at']
+                        $dateService->format($log['created_at'])
                     ) ?>
                 </td>
 

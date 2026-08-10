@@ -126,7 +126,7 @@ $user = $auth->user();
 
                     <td>
                         <?= htmlspecialchars(
-                            $import->getStartedAt()
+                            $dateService->format($import->getStartedAt())
                         ) ?>
                     </td>
 

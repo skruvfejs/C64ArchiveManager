@@ -11,6 +11,7 @@ use App\Repositories\ReleaseFileRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
 use App\Services\AuditLogService;
+use App\Services\DateService;
 use App\Services\LanguageService;
 use App\Services\MaintenanceService;
 use App\Services\RegistrationService;
@@ -176,6 +177,14 @@ final class Application
 
 
         $this->container->singleton(
+            DateService::class,
+            fn (Container $c) => new DateService(
+                $c->get(SettingsService::class)
+            )
+        );
+
+
+        $this->container->singleton(
             StorageService::class,
             fn () => new StorageService()
         );
@@ -227,6 +236,12 @@ final class Application
                 $view->share(
                     'language',
                     $c->get(LanguageService::class)
+                );
+
+
+                $view->share(
+                    'dateService',
+                    $c->get(DateService::class)
                 );
 
 

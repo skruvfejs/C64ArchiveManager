@@ -173,7 +173,7 @@
 
             <td>
                 <?= htmlspecialchars(
-                    (string) $user->getCreatedAt()
+                    (string) $dateService->format($user->getCreatedAt())
                 ) ?>
             </td>
 

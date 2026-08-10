@@ -85,7 +85,9 @@
 
         <td>
             <?= htmlspecialchars(
-                $log->getStartedAt() ?? '-'
+                $log->getStartedAt() !== null
+                ? $dateService->format($log->getStartedAt())
+                : '-'
             ) ?>
         </td>
 
