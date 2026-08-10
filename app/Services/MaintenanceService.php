@@ -230,6 +230,96 @@ final class MaintenanceService
 
 
     /**
+     * Ta bort en fysisk fil som inte är registrerad
+     * i databasen.
+     */
+    public function deleteUnregisteredFile(
+        string $filename
+    ): bool {
+
+        $filename =
+            basename($filename);
+
+
+        if ($filename === '') {
+            return false;
+        }
+
+
+        $directory =
+            $this->storage->getImportDirectory();
+
+
+        if (!is_dir($directory)) {
+            return false;
+        }
+
+
+        $path =
+            $directory
+            . '/'
+            . $filename;
+
+
+        if (!is_file($path)) {
+            return false;
+        }
+
+
+        $integrity =
+            $this->getFileIntegrity();
+
+
+        if (
+            !in_array(
+                $filename,
+                $integrity['orphanFiles'],
+                true
+            )
+        ) {
+            return false;
+        }
+
+
+        $directoryRealPath =
+            realpath($directory);
+
+
+        $fileRealPath =
+            realpath($path);
+
+
+        if (
+            $directoryRealPath === false ||
+            $fileRealPath === false
+        ) {
+            return false;
+        }
+
+
+        $directoryPrefix =
+            rtrim(
+                $directoryRealPath,
+                DIRECTORY_SEPARATOR
+            )
+            . DIRECTORY_SEPARATOR;
+
+
+        if (
+            !str_starts_with(
+                $fileRealPath,
+                $directoryPrefix
+            )
+        ) {
+            return false;
+        }
+
+
+        return unlink($fileRealPath);
+    }
+
+
+    /**
      * Kontrollera sökväg och filstorlek för
      * registrerade filer i databasen.
      *

@@ -12,35 +12,79 @@ declare(strict_types=1);
     td {
         text-align: left;
     }
+
+    .maintenance-action {
+        display: inline;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-decoration: underline;
+        cursor: pointer;
+    }
 </style>
 
 
-<h1>Underhåll</h1>
+<h1>
+    <?= htmlspecialchars(
+        $language->get('maintenance')
+    ) ?>
+</h1>
 
 
-<h2>Importlagring</h2>
+<h2>
+    <?= htmlspecialchars(
+        $language->get('import_storage')
+    ) ?>
+</h2>
 
 <table>
     <tr>
-        <th>Status</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('status')
+            ) ?>
+        </th>
+
         <td>
             <?php if ($storage['exists']): ?>
+
                 <?php if (
                     $storage['readable'] &&
                     $storage['writable']
                 ): ?>
-                    OK
+
+                    <?= htmlspecialchars(
+                        $language->get('ok')
+                    ) ?>
+
                 <?php else: ?>
-                    VARNING
+
+                    <?= htmlspecialchars(
+                        $language->get('warning')
+                    ) ?>
+
                 <?php endif; ?>
+
             <?php else: ?>
-                FEL
+
+                <?= htmlspecialchars(
+                    $language->get('error')
+                ) ?>
+
             <?php endif; ?>
         </td>
     </tr>
 
     <tr>
-        <th>Importkatalog</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('import_directory')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 $storage['directory']
@@ -49,7 +93,12 @@ declare(strict_types=1);
     </tr>
 
     <tr>
-        <th>Antal fysiska filer</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('physical_files')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 (string) $storage['fileCount']
@@ -58,7 +107,12 @@ declare(strict_types=1);
     </tr>
 
     <tr>
-        <th>Använt utrymme</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('used_space')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 $storage['usedSpace']
@@ -67,7 +121,12 @@ declare(strict_types=1);
     </tr>
 
     <tr>
-        <th>Totalt utrymme</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('total_space')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 $storage['totalSpace']
@@ -76,7 +135,12 @@ declare(strict_types=1);
     </tr>
 
     <tr>
-        <th>Ledigt utrymme</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('free_space')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 $storage['freeSpace']
@@ -85,37 +149,73 @@ declare(strict_types=1);
     </tr>
 
     <tr>
-        <th>Läsbar</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('readable')
+            ) ?>
+        </th>
+
         <td>
             <?= $storage['readable']
-                ? 'Ja'
-                : 'Nej'
+                ? htmlspecialchars(
+                    $language->get('yes')
+                )
+                : htmlspecialchars(
+                    $language->get('no')
+                )
             ?>
         </td>
     </tr>
 
     <tr>
-        <th>Skrivbar</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('writable')
+            ) ?>
+        </th>
+
         <td>
             <?= $storage['writable']
-                ? 'Ja'
-                : 'Nej'
+                ? htmlspecialchars(
+                    $language->get('yes')
+                )
+                : htmlspecialchars(
+                    $language->get('no')
+                )
             ?>
         </td>
     </tr>
 </table>
 
 
-<h2>Databas</h2>
+<h2>
+    <?= htmlspecialchars(
+        $language->get('database')
+    ) ?>
+</h2>
 
 <table>
     <tr>
-        <th>Status</th>
-        <td>OK</td>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('status')
+            ) ?>
+        </th>
+
+        <td>
+            <?= htmlspecialchars(
+                $language->get('ok')
+            ) ?>
+        </td>
     </tr>
 
     <tr>
-        <th>Registrerade filer</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('registered_files')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 (string) $database['fileCount']
@@ -125,25 +225,47 @@ declare(strict_types=1);
 </table>
 
 
-<h2>Filintegritet</h2>
+<h2>
+    <?= htmlspecialchars(
+        $language->get('file_integrity')
+    ) ?>
+</h2>
 
 <table>
     <tr>
-        <th>Status</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('status')
+            ) ?>
+        </th>
+
         <td>
             <?php if (
                 $fileIntegrity['missingCount'] === 0 &&
                 $fileIntegrity['orphanCount'] === 0
             ): ?>
-                OK
+
+                <?= htmlspecialchars(
+                    $language->get('ok')
+                ) ?>
+
             <?php else: ?>
-                VARNING
+
+                <?= htmlspecialchars(
+                    $language->get('warning')
+                ) ?>
+
             <?php endif; ?>
         </td>
     </tr>
 
     <tr>
-        <th>Registrerade filer</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('registered_files')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 (string) $fileIntegrity['registeredCount']
@@ -152,7 +274,12 @@ declare(strict_types=1);
     </tr>
 
     <tr>
-        <th>Fysiska filer</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('physical_files')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 (string) $fileIntegrity['physicalCount']
@@ -161,7 +288,12 @@ declare(strict_types=1);
     </tr>
 
     <tr>
-        <th>Saknas på disk</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('missing_on_disk')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 (string) $fileIntegrity['missingCount']
@@ -170,7 +302,12 @@ declare(strict_types=1);
     </tr>
 
     <tr>
-        <th>Finns på disk men saknas i databasen</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('unregistered_on_disk')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 (string) $fileIntegrity['orphanCount']
@@ -182,7 +319,11 @@ declare(strict_types=1);
 
 <?php if ($fileIntegrity['missingCount'] > 0): ?>
 
-    <h3>Saknade filer</h3>
+    <h3>
+        <?= htmlspecialchars(
+            $language->get('missing_files')
+        ) ?>
+    </h3>
 
     <ul>
         <?php foreach (
@@ -191,7 +332,9 @@ declare(strict_types=1);
         ): ?>
 
             <li>
-                <?= htmlspecialchars($filename) ?>
+                <?= htmlspecialchars(
+                    $filename
+                ) ?>
             </li>
 
         <?php endforeach; ?>
@@ -202,43 +345,136 @@ declare(strict_types=1);
 
 <?php if ($fileIntegrity['orphanCount'] > 0): ?>
 
-    <h3>Oregistrerade filer</h3>
+    <h3>
+        <?= htmlspecialchars(
+            $language->get('unregistered_files')
+        ) ?>
+    </h3>
 
-    <ul>
-        <?php foreach (
-            $fileIntegrity['orphanFiles']
-            as $filename
-        ): ?>
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    <?= htmlspecialchars(
+                        $language->get('file')
+                    ) ?>
+                </th>
 
-            <li>
-                <?= htmlspecialchars($filename) ?>
-            </li>
+                <th>
+                    <?= htmlspecialchars(
+                        $language->get('action')
+                    ) ?>
+                </th>
+            </tr>
+        </thead>
 
-        <?php endforeach; ?>
-    </ul>
+        <tbody>
+
+            <?php foreach (
+                $fileIntegrity['orphanFiles']
+                as $filename
+            ): ?>
+
+                <tr>
+                    <td>
+                        <?= htmlspecialchars(
+                            $filename
+                        ) ?>
+                    </td>
+
+                    <td>
+                        <a
+                            href="/import?file=<?= urlencode(
+                                $filename
+                            ) ?>"
+                        ><?= htmlspecialchars(
+                            $language->get('import')
+                        ) ?></a>
+
+                        &nbsp;
+
+                        <form
+                            method="post"
+                            action="/administration/system/maintenance/delete"
+                            style="display: inline;"
+                        >
+                            <input
+                                type="hidden"
+                                name="filename"
+                                value="<?= htmlspecialchars(
+                                    $filename,
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                ) ?>"
+                            >
+
+                            <input
+                                type="submit"
+                                value="<?= htmlspecialchars(
+                                    $language->get('delete')
+                                ) ?>"
+                                class="maintenance-action"
+                                onclick="return confirm(
+                                    <?= json_encode(
+                                        $language->get(
+                                            'delete_file_confirm'
+                                        )
+                                    ) ?>
+                                );"
+                            >
+                        </form>
+                    </td>
+                </tr>
+
+            <?php endforeach; ?>
+
+        </tbody>
+    </table>
 
 <?php endif; ?>
 
 
-<h2>Databasfilkontroll</h2>
+<h2>
+    <?= htmlspecialchars(
+        $language->get('database_file_check')
+    ) ?>
+</h2>
 
 <table>
     <tr>
-        <th>Status</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('status')
+            ) ?>
+        </th>
+
         <td>
             <?php if (
                 $databaseFileIntegrity['missingPathCount'] === 0 &&
                 $databaseFileIntegrity['sizeMismatchCount'] === 0
             ): ?>
-                OK
+
+                <?= htmlspecialchars(
+                    $language->get('ok')
+                ) ?>
+
             <?php else: ?>
-                VARNING
+
+                <?= htmlspecialchars(
+                    $language->get('warning')
+                ) ?>
+
             <?php endif; ?>
         </td>
     </tr>
 
     <tr>
-        <th>Registrerade filer</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('registered_files')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 (string) $databaseFileIntegrity['registeredCount']
@@ -247,7 +483,12 @@ declare(strict_types=1);
     </tr>
 
     <tr>
-        <th>Giltig fysisk sökväg</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('valid_physical_path')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 (string) $databaseFileIntegrity['validPathCount']
@@ -256,7 +497,12 @@ declare(strict_types=1);
     </tr>
 
     <tr>
-        <th>Saknad fysisk fil</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('missing_physical_file')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 (string) $databaseFileIntegrity['missingPathCount']
@@ -265,7 +511,12 @@ declare(strict_types=1);
     </tr>
 
     <tr>
-        <th>Storleksfel</th>
+        <th>
+            <?= htmlspecialchars(
+                $language->get('size_errors')
+            ) ?>
+        </th>
+
         <td>
             <?= htmlspecialchars(
                 (string) $databaseFileIntegrity['sizeMismatchCount']
@@ -279,7 +530,11 @@ declare(strict_types=1);
     $databaseFileIntegrity['missingPathCount'] > 0
 ): ?>
 
-    <h3>Saknade fysiska filer</h3>
+    <h3>
+        <?= htmlspecialchars(
+            $language->get('missing_physical_files')
+        ) ?>
+    </h3>
 
     <ul>
         <?php foreach (
@@ -293,6 +548,7 @@ declare(strict_types=1);
                 ) ?>
 
                 —
+
                 <?= htmlspecialchars(
                     $file['path']
                 ) ?>
@@ -308,16 +564,40 @@ declare(strict_types=1);
     $databaseFileIntegrity['sizeMismatchCount'] > 0
 ): ?>
 
-    <h3>Storleksfel</h3>
+    <h3>
+        <?= htmlspecialchars(
+            $language->get('size_errors')
+        ) ?>
+    </h3>
 
     <table>
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Fil</th>
-                <th>Databas</th>
-                <th>Fysisk</th>
-                <th>Diff</th>
+
+                <th>
+                    <?= htmlspecialchars(
+                        $language->get('file')
+                    ) ?>
+                </th>
+
+                <th>
+                    <?= htmlspecialchars(
+                        $language->get('database_size')
+                    ) ?>
+                </th>
+
+                <th>
+                    <?= htmlspecialchars(
+                        $language->get('physical_size')
+                    ) ?>
+                </th>
+
+                <th>
+                    <?= htmlspecialchars(
+                        $language->get('difference')
+                    ) ?>
+                </th>
             </tr>
         </thead>
 
@@ -352,21 +632,33 @@ declare(strict_types=1);
                         <?= htmlspecialchars(
                             (string) $file['databaseSize']
                         ) ?>
-                        byte
+
+                        <?= htmlspecialchars(
+                            $language->get('bytes')
+                        ) ?>
                     </td>
 
                     <td>
                         <?= htmlspecialchars(
                             (string) $file['actualSize']
                         ) ?>
-                        byte
+
+                        <?= htmlspecialchars(
+                            $language->get('bytes')
+                        ) ?>
                     </td>
 
                     <td>
-                        <?= $difference >= 0 ? '+' : '' ?><?= htmlspecialchars(
+                        <?= $difference >= 0
+                            ? '+'
+                            : ''
+                        ?><?= htmlspecialchars(
                             (string) $difference
                         ) ?>
-                        byte
+
+                        <?= htmlspecialchars(
+                            $language->get('bytes')
+                        ) ?>
                     </td>
                 </tr>
 

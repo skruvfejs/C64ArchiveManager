@@ -500,6 +500,33 @@ final class SystemController extends Controller
     }
 
 
+    public function deleteUnregisteredFile(): void
+    {
+        if (!$this->auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+
+
+        $filename =
+            (string) ($_POST['filename'] ?? '');
+
+
+        if ($filename !== '') {
+            $this->maintenanceService
+                ->deleteUnregisteredFile(
+                    $filename
+                );
+        }
+
+
+        header(
+            'Location: /administration/system/maintenance'
+        );
+        exit;
+    }
+
+
     public function information(): void
     {
         $config = new Config(

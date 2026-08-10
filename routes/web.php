@@ -316,6 +316,17 @@ $router->get(
     ]
 );
 
+$router->post(
+    '/administration/system/maintenance/delete',
+    [
+        SystemController::class,
+        'deleteUnregisteredFile'
+    ],
+    [
+        ManageSystemMiddleware::class,
+    ]
+);
+
 
 $router->get(
     '/administration/system/information',

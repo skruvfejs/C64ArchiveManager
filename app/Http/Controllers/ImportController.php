@@ -32,10 +32,57 @@ final class ImportController extends Controller
 
     public function index(): void
     {
+        $existingFile = null;
+
+
+$filename =
+    $this->request->query(
+        'file'
+    );
+
+        if (
+            $filename !== null &&
+            $filename !== ''
+        ) {
+
+            $filename =
+                basename(
+                    (string) $filename
+                );
+
+
+            $targetDir =
+                dirname(__DIR__, 3)
+                . '/storage/imports';
+
+
+            $path =
+                $targetDir
+                . '/'
+                . $filename;
+
+
+            if (is_file($path)) {
+
+                $existingFile = [
+                    'filename' =>
+                        $filename,
+
+                    'path' =>
+                        $path,
+                ];
+            }
+        }
+
+
         $this->render(
             'import/index',
             [
-                'message' => null
+                'message' =>
+                    null,
+
+                'existingFile' =>
+                    $existingFile,
             ]
         );
     }
@@ -62,6 +109,139 @@ final class ImportController extends Controller
             );
 
 
+        /*
+         * Importera en redan befintlig fil
+         * från storage/imports.
+         */
+        $existingPath =
+            $this->request->post(
+                'existing_path'
+            );
+
+
+        if (
+            $existingPath !== null &&
+            $existingPath !== ''
+        ) {
+
+            $filename =
+                basename(
+                    (string) $existingPath
+                );
+
+
+            $targetDir =
+                dirname(__DIR__, 3)
+                . '/storage/imports';
+
+
+            $targetDirRealPath =
+                realpath($targetDir);
+
+
+            $path =
+                $targetDir
+                . '/'
+                . $filename;
+
+
+            $fileRealPath =
+                realpath($path);
+
+
+            if (
+                $targetDirRealPath === false ||
+                $fileRealPath === false
+            ) {
+
+                $this->render(
+                    'import/index',
+                    [
+                        'message' =>
+                            'Importfil saknas.'
+                    ]
+                );
+
+
+                return;
+            }
+
+
+            $directoryPrefix =
+                rtrim(
+                    $targetDirRealPath,
+                    DIRECTORY_SEPARATOR
+                )
+                . DIRECTORY_SEPARATOR;
+
+
+            if (
+                !str_starts_with(
+                    $fileRealPath,
+                    $directoryPrefix
+                )
+            ) {
+
+                $this->render(
+                    'import/index',
+                    [
+                        'message' =>
+                            'Felaktig importfil.'
+                    ]
+                );
+
+
+                return;
+            }
+
+
+            if (!is_file($fileRealPath)) {
+
+                $this->render(
+                    'import/index',
+                    [
+                        'message' =>
+                            'Importfil saknas.'
+                    ]
+                );
+
+
+                return;
+            }
+
+
+            $result =
+                $this->importer
+                     ->import(
+                         $fileRealPath,
+                         $entryId,
+                         false,
+                         $this->auth->id(),
+                         $notes
+                     );
+
+
+            if ($result->isDuplicate()) {
+
+                $this->view->render(
+                    'import/duplicate',
+                    $result->getDuplicateData()
+                );
+
+
+                return;
+            }
+
+
+            $this->renderImportResult(
+                $result->getReleaseId()
+            );
+
+
+            return;
+        }
+
+
         if (!isset($_FILES['disk'])) {
 
             $this->render(
@@ -71,6 +251,7 @@ final class ImportController extends Controller
                         'Ingen fil vald.'
                 ]
             );
+
 
             return;
         }
@@ -88,6 +269,7 @@ final class ImportController extends Controller
                         'Uppladdningsfel.'
                 ]
             );
+
 
             return;
         }
@@ -144,6 +326,7 @@ final class ImportController extends Controller
                 $result->getDuplicateData()
             );
 
+
             return;
         }
 
@@ -191,6 +374,7 @@ final class ImportController extends Controller
                 ]
             );
 
+
             return;
         }
 
@@ -204,6 +388,7 @@ final class ImportController extends Controller
                         'Importfil saknas.'
                 ]
             );
+
 
             return;
         }
@@ -226,6 +411,7 @@ final class ImportController extends Controller
                 'import/duplicate',
                 $result->getDuplicateData()
             );
+
 
             return;
         }

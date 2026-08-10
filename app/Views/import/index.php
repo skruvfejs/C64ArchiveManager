@@ -83,36 +83,66 @@ declare(strict_types=1);
     </p>
 
 
-    <button
-        type="button"
-        onclick="document.getElementById('disk').click();"
-    >
-        <?= htmlspecialchars(
-            $language->get('choose_file')
-        ) ?>
-    </button>
+    <?php if (
+        !empty($existingFile) &&
+        !empty($existingFile['filename']) &&
+        !empty($existingFile['path'])
+    ): ?>
 
-    <span id="disk-file-name">
-        <?= htmlspecialchars(
-            $language->get('no_file_chosen')
-        ) ?>
-    </span>
+        <p>
+            <strong>
+                <?= htmlspecialchars(
+                    $existingFile['filename']
+                ) ?>
+            </strong>
+        </p>
+
+        <input
+            type="hidden"
+            name="existing_path"
+            value="<?= htmlspecialchars(
+                $existingFile['path'],
+                ENT_QUOTES,
+                'UTF-8'
+            ) ?>"
+        >
+
+    <?php else: ?>
+
+        <button
+            type="button"
+            onclick="document.getElementById('disk').click();"
+        >
+            <?= htmlspecialchars(
+                $language->get('choose_file')
+            ) ?>
+        </button>
+
+        <span id="disk-file-name">
+            <?= htmlspecialchars(
+                $language->get('no_file_chosen')
+            ) ?>
+        </span>
 
 
-    <input
-        type="file"
-        id="disk"
-        name="disk"
-        style="display:none;"
-    >
+        <input
+            type="file"
+            id="disk"
+            name="disk"
+            style="display:none;"
+        >
+
+    <?php endif; ?>
 
 
     <p>
 
         <button type="submit">
+
             <?= htmlspecialchars(
                 $language->get('import')
             ) ?>
+
         </button>
 
     </p>
@@ -121,21 +151,34 @@ declare(strict_types=1);
 </form>
 
 
+<?php if (
+    empty($existingFile)
+): ?>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    const input = document.getElementById('disk');
-    const fileName = document.getElementById('disk-file-name');
+    const input =
+        document.getElementById('disk');
+
+    const fileName =
+        document.getElementById('disk-file-name');
+
 
     if (!input || !fileName) {
         return;
     }
 
+
     input.addEventListener('change', function () {
 
         if (input.files.length > 0) {
-            fileName.textContent = input.files[0].name;
+
+            fileName.textContent =
+                input.files[0].name;
+
         } else {
+
             fileName.textContent =
                 <?= json_encode(
                     $language->get('no_file_chosen')
@@ -146,3 +189,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
+
+<?php endif; ?>
