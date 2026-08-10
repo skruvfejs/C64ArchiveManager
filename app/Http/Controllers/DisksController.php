@@ -9,6 +9,7 @@ use App\Core\Authorization;
 use App\Core\View;
 use App\Http\Request;
 use App\Repositories\ReleaseFileRepository;
+use App\Services\SettingsService;
 
 
 final class DisksController extends Controller
@@ -20,7 +21,8 @@ final class DisksController extends Controller
         private readonly Request $request,
         private readonly DiskController $diskController,
         private readonly Auth $auth,
-        private readonly Authorization $authorization
+        private readonly Authorization $authorization,
+        private readonly SettingsService $settings
     ) {
     }
 
@@ -80,7 +82,11 @@ final class DisksController extends Controller
 
 
 
-        $perPage = 50;
+        $perPage =
+            (int) $this->settings->get(
+                'items_per_page',
+                '25'
+            );
 
 
 

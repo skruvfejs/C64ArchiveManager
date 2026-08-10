@@ -143,7 +143,8 @@ final class ImportLogRepository extends Repository
      * @return ImportLog[]
      */
     public function findLatest(
-        int $limit = 50
+        int $limit = 50,
+        int $offset = 0
     ): array {
 
         $stmt =
@@ -161,6 +162,8 @@ final class ImportLogRepository extends Repository
                 ORDER BY import_logs.id DESC
 
                 LIMIT :limit
+
+                OFFSET :offset
                 "
             );
 
@@ -168,6 +171,13 @@ final class ImportLogRepository extends Repository
         $stmt->bindValue(
             ':limit',
             $limit,
+            \PDO::PARAM_INT
+        );
+
+
+        $stmt->bindValue(
+            ':offset',
+            $offset,
             \PDO::PARAM_INT
         );
 
@@ -180,6 +190,25 @@ final class ImportLogRepository extends Repository
                 $this->hydrate($row),
             $this->fetchAll($stmt)
         );
+    }
+
+
+
+    public function countAll(): int
+    {
+        $stmt =
+            $this->prepare(
+                "
+                    SELECT COUNT(*)
+                    FROM import_logs
+                "
+            );
+
+
+        $stmt->execute();
+
+
+        return (int) $stmt->fetchColumn();
     }
 
 

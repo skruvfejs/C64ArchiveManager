@@ -82,11 +82,26 @@ final class ImportLogService
      * @return ImportLog[]
      */
     public function latest(
-        int $limit = 50
+        int $limit = 50,
+        int $offset = 0
     ): array {
 
         return $this->repository
-                    ->findLatest($limit);
+                    ->findLatest(
+                        $limit,
+                        $offset
+                    );
+    }
+
+
+
+    /**
+     * Hämtar antal importer.
+     */
+    public function count(): int
+    {
+        return $this->repository
+                    ->countAll();
     }
 
 
