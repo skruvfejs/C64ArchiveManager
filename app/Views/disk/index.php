@@ -45,7 +45,7 @@
                 border: none;
                 padding: 0;
                 margin: 0;
-                color: inherit;
+                color: red;
                 text-decoration: underline;
                 cursor: pointer;
                 font: inherit;

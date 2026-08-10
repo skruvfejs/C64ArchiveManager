@@ -1,3 +1,11 @@
+<p>
+    <a href="/users">
+        <?= htmlspecialchars(
+            $language->get('back_to_users')
+        ) ?>
+    </a>
+</p>
+
 <h2>
     <?= htmlspecialchars(
         $language->get('create_user')
@@ -136,12 +144,3 @@
 </form>
 
 
-<p>
-
-    <a href="/users">
-        <?= htmlspecialchars(
-            $language->get('back_to_users')
-        ) ?>
-    </a>
-
-</p>

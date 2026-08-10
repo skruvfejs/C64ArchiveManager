@@ -1,3 +1,11 @@
+<p>
+    <a href="/users">
+        <?= htmlspecialchars(
+            $language->get('back_to_users')
+        ) ?>
+    </a>
+</p>
+
 <h2>
     <?= htmlspecialchars(
         $language->get('deleted_users')
@@ -122,7 +130,7 @@
 
                     <button
                         type="submit"
-                        style="border:0;background:none;padding:0;cursor:pointer;text-decoration:underline;font:inherit;"
+                        style="border:0;background:none;padding:0;cursor:pointer;text-decoration:underline;font:inherit;color:blue;"
                     >
                         <?= htmlspecialchars(
                             $language->get('restore')

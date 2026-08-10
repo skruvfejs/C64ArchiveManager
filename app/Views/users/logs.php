@@ -6,11 +6,19 @@ declare(strict_types=1);
 
 <div class="container">
 
-    <h1>
+    <p>
+        <a href="/users">
+            <?= htmlspecialchars(
+                $language->get('back_to_users')
+            ) ?>
+        </a>
+    </p>
+
+    <h2>
         <?= htmlspecialchars(
             $language->get('audit_log')
         ) ?>
-    </h1>
+    </h2>
 
 
     <?php if (($total ?? 0) > 0): ?>
@@ -45,7 +53,7 @@ declare(strict_types=1);
 <?php endif; ?>
 
 
-<table class="table" style="text-align: left;">
+<table class="table" border="1" cellpadding="5" cellspacing="0" style="text-align: left;">
 
         <thead>
 

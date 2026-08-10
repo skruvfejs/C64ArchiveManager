@@ -5,6 +5,20 @@
 ?>
 
 
+<?php if ($entry !== null): ?>
+
+<p>
+    <a href="/entry?id=<?= $entry->getId() ?>">
+        ← <?= htmlspecialchars(
+            $language->get('back_to_entry')
+        ) ?>:
+        <?= htmlspecialchars($entry->getTitle()) ?>
+    </a>
+</p>
+
+<?php endif; ?>
+
+
 <h1>
     <?= htmlspecialchars(
         $language->get('release')
@@ -28,9 +42,9 @@
 </p>
 
 
-<h3>
+<h2 style="margin-bottom: 5px;">
     <?= htmlspecialchars($language->get('tags')) ?>
-</h3>
+</h2>
 
 <?php if (!empty($releaseTags)): ?>
 
@@ -134,18 +148,7 @@ foreach ($releaseTags as $releaseTag) {
 <?php endif; ?>
 
 
-<?php if ($entry !== null): ?>
 
-<p>
-    <a href="/entry?id=<?= $entry->getId() ?>">
-        ← <?= htmlspecialchars(
-            $language->get('back_to_entry')
-        ) ?>:
-        <?= htmlspecialchars($entry->getTitle()) ?>
-    </a>
-</p>
-
-<?php endif; ?>
 
 
 <h2>

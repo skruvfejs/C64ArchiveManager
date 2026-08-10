@@ -42,16 +42,18 @@ $user = $auth->user();
 
 
 
-    <h2>
+    <div style="margin-top: 2em;"></div>
+
+    <h3 style="margin-bottom: 0;">
         <?= htmlspecialchars(
             $language->get('latest_imports')
         ) ?>
-    </h2>
+    </h3>
 
 
     <?php if (!empty($imports)): ?>
 
-        <table border="1" cellpadding="5" cellspacing="0">
+        <table border="1" cellpadding="5" cellspacing="0" style="margin-top: 0;">
 
             <thead>
 
@@ -187,7 +189,7 @@ $user = $auth->user();
 
 
 
-<p>
+<p style="margin-top: 2em;">
     <?= htmlspecialchars(
         $language->get('version')
     ) ?>

@@ -48,7 +48,7 @@ foreach ($entryTags as $entryTag) {
 </p>
 
 
-<h2>
+<h2 style="margin-bottom: 5px;">
     <?= htmlspecialchars(
         $language->get('tags')
     ) ?>
@@ -217,14 +217,18 @@ $availableTags = array_filter(
 <?php endif; ?>
 
 
-<h2>
+<h2 style="margin-top: 2em; margin-bottom: 0;">
     <?= htmlspecialchars(
         $language->get('releases')
     ) ?>
 </h2>
 
 
-<?php foreach ($releases as $item): ?>
+<?php foreach ($releases as $releaseIndex => $item): ?>
+
+<?php if ($releaseIndex > 0): ?>
+    <hr>
+<?php endif; ?>
 
 <?php
 
@@ -239,7 +243,7 @@ $files =
 
 <div class="card">
 
-    <h3>
+    <h3 style="margin-top: 0;">
 
         <a
             href="/release?id=<?= $release->getId() ?>"

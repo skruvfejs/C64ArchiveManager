@@ -4,7 +4,15 @@ declare(strict_types=1);
 
 ?>
 
-<h1>
+<p>
+    <a href="/administration">
+        <?= htmlspecialchars(
+            $language->get('back_to_administration')
+        ) ?>
+    </a>
+</p>
+
+<h2>
     <?= htmlspecialchars(
         $language->get('tags')
     ) ?>
@@ -102,6 +110,10 @@ declare(strict_types=1);
                 </a>
 
 
+                <span>
+                    |
+                </span>
+
                 <form
                     method="post"
                     action="/administration/tags/delete"
@@ -117,6 +129,7 @@ declare(strict_types=1);
 
                     <a
                         href="#"
+                        style="color: red;"
                         onclick="if (confirm('<?= htmlspecialchars(
                             $language->get('confirm_delete_tag'),
                             ENT_QUOTES

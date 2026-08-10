@@ -12,21 +12,33 @@ declare(strict_types=1);
     td {
         text-align: left;
     }
+
+    h3 {
+        margin-bottom: 5px;
+    }
 </style>
 
 
-<h1>
-    <?= htmlspecialchars(
-        $language->get('system_information')
-    ) ?>
-</h1>
-
+<p>
+    <a href="/administration">
+        <?= htmlspecialchars(
+            $language->get('back_to_administration')
+        ) ?>
+    </a>
+</p>
 
 <h2>
     <?= htmlspecialchars(
-        $language->get('application')
+        $language->get('system_information')
     ) ?>
 </h2>
+
+
+<h3>
+    <?= htmlspecialchars(
+        $language->get('application')
+    ) ?>
+</h3>
 
 <table>
     <tr>
@@ -55,11 +67,11 @@ declare(strict_types=1);
 </table>
 
 
-<h2>
+<h3>
     <?= htmlspecialchars(
         $language->get('environment')
     ) ?>
-</h2>
+</h3>
 
 <table>
     <tr>
@@ -112,11 +124,11 @@ declare(strict_types=1);
 </table>
 
 
-<h2>
+<h3>
     <?= htmlspecialchars(
         $language->get('database')
     ) ?>
-</h2>
+</h3>
 
 <table>
     <tr>
@@ -171,11 +183,11 @@ declare(strict_types=1);
 </table>
 
 
-<h2>
+<h3>
     <?= htmlspecialchars(
         $language->get('storage')
     ) ?>
-</h2>
+</h3>
 
 <table>
     <tr>

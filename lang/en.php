@@ -324,6 +324,7 @@ return [
     'back_to_tags' => 'Back to tags',
 
     'back_to_users' => 'Back to users',
+    'back_to_administration' => 'Back to administration',
 
     'no_deleted_users_found' => 'No deleted users found.',
     'deleted' => 'Deleted',

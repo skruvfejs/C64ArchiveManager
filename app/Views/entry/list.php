@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 ?>
 
-<h2>
+<h1>
     <?= htmlspecialchars(
         $language->get('archive')
     ) ?>
-</h2>
+</h1>
 
 
 <form method="get" action="/entry">

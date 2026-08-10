@@ -3,6 +3,22 @@
 declare(strict_types=1);
 ?>
 
+<style>
+    h1,
+    h2 {
+        margin-bottom: 0;
+    }
+
+    h2 + p,
+    h1 + p {
+        margin-top: 0;
+    }
+
+    .administration-description {
+        margin-top: 0;
+    }
+</style>
+
 <h1>
     <?= htmlspecialchars(
         $language->get('administration')
@@ -10,7 +26,7 @@ declare(strict_types=1);
 </h1>
 
 
-<p>
+<p class="administration-description">
     <?= htmlspecialchars(
         $language->get('administration_description')
     ) ?>
@@ -20,7 +36,7 @@ declare(strict_types=1);
 <hr>
 
 
-<h2>
+<h2 style="margin-bottom: 0;">
     <?= htmlspecialchars(
         $language->get('users')
     ) ?>
@@ -52,7 +68,7 @@ declare(strict_types=1);
     )
 ): ?>
 
-<h2>
+<h2 style="margin-bottom: 0;">
     <?= htmlspecialchars(
         $language->get('tags')
     ) ?>
@@ -87,7 +103,7 @@ declare(strict_types=1);
     )
 ): ?>
 
-<h2>
+<h2 style="margin-bottom: 0;">
     <?= htmlspecialchars(
         $language->get('system_administration')
     ) ?>

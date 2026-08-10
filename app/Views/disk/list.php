@@ -30,11 +30,11 @@ declare(strict_types=1);
 ?>
 
 
-<h2>
+<h1>
     <?= htmlspecialchars(
         $language->get('disks')
     ) ?>
-</h2>
+</h1>
 
 
 

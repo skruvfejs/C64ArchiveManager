@@ -332,6 +332,7 @@ return [
     'back_to_tags' => 'Tillbaka till taggar',
 
     'back_to_users' => 'Tillbaka till användare',
+    'back_to_administration' => 'Tillbaka till administration',
 
     'no_deleted_users_found' => 'Inga borttagna användare hittades.',
     'deleted' => 'Borttagen',

@@ -1,3 +1,11 @@
+<p>
+    <a href="/administration">
+        <?= htmlspecialchars(
+            $language->get('back_to_administration')
+        ) ?>
+    </a>
+</p>
+
 <h2>
     <?= htmlspecialchars(
         $language->get('users')
@@ -251,7 +259,7 @@
 
                         <button
                             type="submit"
-                            style="border:0;background:none;padding:0;cursor:pointer;text-decoration:underline;font:inherit;"
+                            style="border:0;background:none;padding:0;cursor:pointer;text-decoration:underline;font:inherit;color:red;"
                         >
                             <?= htmlspecialchars(
                                 $language->get('delete')
