@@ -99,9 +99,12 @@ final class AuditLogRepository
 
 
 
-    public function findAllWithUsers(): array
+    public function findAllWithUsers(
+        int $limit = 50,
+        int $offset = 0
+    ): array
     {
-        $stmt = $this->pdo->query(
+        $stmt = $this->pdo->prepare(
             "
             SELECT
                 audit_logs.*,
@@ -110,13 +113,49 @@ final class AuditLogRepository
             LEFT JOIN users
                 ON users.id = audit_logs.user_id
             ORDER BY audit_logs.created_at DESC
+
+            LIMIT :limit
+            OFFSET :offset
             "
         );
+
+
+        $stmt->bindValue(
+            ':limit',
+            $limit,
+            PDO::PARAM_INT
+        );
+
+
+        $stmt->bindValue(
+            ':offset',
+            $offset,
+            PDO::PARAM_INT
+        );
+
+
+        $stmt->execute();
 
 
         return $stmt->fetchAll(
             PDO::FETCH_ASSOC
         );
+    }
+
+
+
+    public function countAll(): int
+    {
+        $stmt =
+            $this->pdo->query(
+                "
+                    SELECT COUNT(*)
+                    FROM audit_logs
+                "
+            );
+
+
+        return (int) $stmt->fetchColumn();
     }
 
 
