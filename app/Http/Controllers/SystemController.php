@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Core\Auth;
+use App\Core\Config;
 use App\Core\View;
 use App\Services\BackupService;
 use App\Services\DatabaseExportService;
 use App\Services\DatabaseImportService;
 use App\Services\DatabaseService;
 use App\Services\SettingsService;
+use App\Services\StorageService;
 
 final class SystemController extends Controller
 {
@@ -21,9 +23,11 @@ final class SystemController extends Controller
         private readonly BackupService $backupService,
         private readonly DatabaseExportService $exportService,
         private readonly DatabaseImportService $importService,
-        private readonly SettingsService $settingsService
+        private readonly SettingsService $settingsService,
+        private readonly StorageService $storageService
     ) {
     }
+
 
     public function index(): void
     {
@@ -31,6 +35,7 @@ final class SystemController extends Controller
             header('Location: /login');
             exit;
         }
+
 
         $this->view->render(
             'system/index',
@@ -40,6 +45,7 @@ final class SystemController extends Controller
         );
     }
 
+
     public function database(): void
     {
         if (!$this->auth->check()) {
@@ -47,7 +53,9 @@ final class SystemController extends Controller
             exit;
         }
 
+
         $statistics = $this->backupService->getStatistics();
+
 
         $this->view->render(
             'system/database',
@@ -65,20 +73,24 @@ final class SystemController extends Controller
         );
     }
 
+
     public function createBackup(): void
     {
         $this->exportService->exportFull(
             'Manual backup'
         );
 
+
         header('Location: /administration/system/database');
         exit;
     }
+
 
     public function export(): void
     {
         $type = $_POST['type'] ?? 'full';
         $description = trim($_POST['description'] ?? '');
+
 
         switch ($type) {
 
@@ -95,9 +107,11 @@ final class SystemController extends Controller
                 break;
         }
 
+
         header('Location: /administration/system/database');
         exit;
     }
+
 
     public function import(): void
     {
@@ -109,6 +123,7 @@ final class SystemController extends Controller
             exit;
         }
 
+
         if (
             ($_FILES['backup']['error'] ?? UPLOAD_ERR_NO_FILE) !==
             UPLOAD_ERR_OK
@@ -117,7 +132,9 @@ final class SystemController extends Controller
             exit;
         }
 
+
         $temporaryFile = $_FILES['backup']['tmp_name'] ?? '';
+
 
         if (
             $temporaryFile === '' ||
@@ -127,9 +144,11 @@ final class SystemController extends Controller
             exit;
         }
 
+
         $filename = basename(
             (string) ($_FILES['backup']['name'] ?? '')
         );
+
 
         if (
             $filename === '' ||
@@ -142,14 +161,17 @@ final class SystemController extends Controller
             exit;
         }
 
+
         $metadata = $this->backupService->loadMetadata(
             $filename
         );
+
 
         if (empty($metadata)) {
             $backupPath = $this->backupService->downloadPath(
                 $filename
             );
+
 
             if (is_file($backupPath)) {
                 $metadata = $this->backupService->loadMetadata(
@@ -158,9 +180,12 @@ final class SystemController extends Controller
             }
         }
 
+
         $type = $metadata['backup_type'] ?? 'full';
 
+
         $importFile = $temporaryFile;
+
 
         switch ($type) {
 
@@ -186,25 +211,31 @@ final class SystemController extends Controller
                 break;
         }
 
+
         header('Location: /administration/system/database');
         exit;
     }
 
+
     public function downloadBackup(): void
     {
         $filename = $_GET['file'] ?? '';
+
 
         if ($filename === '') {
             http_response_code(404);
             exit;
         }
 
+
         $path = $this->backupService->downloadPath($filename);
+
 
         if (!is_file($path)) {
             http_response_code(404);
             exit;
         }
+
 
         header('Content-Type: application/sql');
         header(
@@ -214,21 +245,26 @@ final class SystemController extends Controller
         );
         header('Content-Length: ' . filesize($path));
 
+
         readfile($path);
         exit;
     }
+
 
     public function deleteBackup(): void
     {
         $filename = $_POST['file'] ?? '';
 
+
         if ($filename !== '') {
             $this->backupService->delete($filename);
         }
 
+
         header('Location: /administration/system/database');
         exit;
     }
+
 
     public function restoreBackup(): void
     {
@@ -236,30 +272,37 @@ final class SystemController extends Controller
             (string) ($_POST['file'] ?? '')
         );
 
+
         if ($filename === '') {
             http_response_code(400);
             exit;
         }
 
+
         $path = $this->backupService->downloadPath(
             $filename
         );
+
 
         if (!is_file($path)) {
             http_response_code(404);
             exit;
         }
 
+
         $metadata = $this->backupService->loadMetadata(
             $filename
         );
+
 
         if (empty($metadata)) {
             http_response_code(400);
             exit;
         }
 
+
         $type = $metadata['backup_type'] ?? 'full';
+
 
         switch ($type) {
 
@@ -289,9 +332,11 @@ final class SystemController extends Controller
                 exit;
         }
 
+
         header('Location: /administration/system/database');
         exit;
     }
+
 
     public function settings(): void
     {
@@ -300,7 +345,9 @@ final class SystemController extends Controller
             exit;
         }
 
+
         $settings = $this->settingsService->getAll();
+
 
         $this->view->render(
             'system/settings',
@@ -311,6 +358,7 @@ final class SystemController extends Controller
         );
     }
 
+
     public function saveSettings(): void
     {
         if (!$this->auth->check()) {
@@ -318,37 +366,46 @@ final class SystemController extends Controller
             exit;
         }
 
+
         $siteName = trim(
             (string) ($_POST['site_name'] ?? '')
         );
+
 
         $language = (string) (
             $_POST['default_language'] ?? 'sv'
         );
 
+
         $dateFormat = (string) (
             $_POST['date_format'] ?? 'Y-m-d'
         );
+
 
         $itemsPerPage = (int) (
             $_POST['items_per_page'] ?? 25
         );
 
+
         $maintenanceMode = isset(
             $_POST['maintenance_mode']
         ) ? '1' : '0';
+
 
         $registrationEnabled = isset(
             $_POST['registration_enabled']
         ) ? '1' : '0';
 
+
         if ($siteName === '') {
             $siteName = 'C64 Archive Manager';
         }
 
+
         if (!in_array($language, ['sv', 'en'], true)) {
             $language = 'sv';
         }
+
 
         if (
             !in_array(
@@ -364,6 +421,7 @@ final class SystemController extends Controller
             $dateFormat = 'Y-m-d';
         }
 
+
         if (
             !in_array(
                 $itemsPerPage,
@@ -374,6 +432,7 @@ final class SystemController extends Controller
             $itemsPerPage = 25;
         }
 
+
         $this->settingsService->update([
             'site_name' => $siteName,
             'default_language' => $language,
@@ -383,9 +442,11 @@ final class SystemController extends Controller
             'registration_enabled' => $registrationEnabled,
         ]);
 
+
         header('Location: /administration/system/settings');
         exit;
     }
+
 
     public function maintenance(): void
     {
@@ -397,6 +458,7 @@ final class SystemController extends Controller
         );
     }
 
+
     public function api(): void
     {
         $this->view->render(
@@ -407,12 +469,59 @@ final class SystemController extends Controller
         );
     }
 
+
     public function information(): void
     {
+        $config = new Config(
+            dirname(__DIR__, 3) . '/config'
+        );
+
+
+        $app = $config->get('app');
+
+
         $this->view->render(
             'system/information',
             [
                 'title' => 'Systeminformation',
+
+                'appName' => $app['name'] ?? 'C64 Archive Manager',
+                'appVersion' => $app['version'] ?? '1.0',
+
+                'phpVersion' => PHP_VERSION,
+                'operatingSystem' => PHP_OS,
+                'serverSoftware' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
+                'phpSapi' => PHP_SAPI,
+
+                'databaseName' =>
+                    $this->databaseService->getDatabaseName(),
+
+                'databaseVersion' =>
+                    $this->databaseService->getVersion(),
+
+                'tableCount' =>
+                    $this->databaseService->getTableCount(),
+
+                'databaseSize' =>
+                    $this->databaseService->getDatabaseSize(),
+
+                'importedFiles' =>
+                    $this->storageService->getFileCount(),
+
+                'usedSpace' =>
+                    $this->storageService->formatBytes(
+                        $this->storageService->getUsedSpace()
+                    ),
+
+                'totalSpace' =>
+                    $this->storageService->formatBytes(
+                        $this->storageService->getTotalSpace()
+                    ),
+
+                'freeSpace' =>
+                    $this->storageService->formatBytes(
+                        $this->storageService->getFreeSpace()
+                    ),
             ]
         );
     }

@@ -54,7 +54,7 @@ return [
         'Open user administration',
 
     'system_administration_description' =>
-        'Database, settings, maintenance, API and system information.',
+        'Database, settings, maintenance and system information.',
 
     'open_system_administration' =>
         'Open system administration',
@@ -255,4 +255,23 @@ return [
 'user_settings' => 'User Settings',
 'english' => 'English',
 'swedish' => 'Swedish',
+
+'system_information' => 'System Information',
+'application' => 'Application',
+'environment' => 'Environment',
+'name' => 'Name',
+'version' => 'Version',
+'php_version' => 'PHP Version',
+'operating_system' => 'Operating System',
+'server_software' => 'Server Software',
+'php_sapi' => 'PHP SAPI',
+'database_name' => 'Database Name',
+'database_version' => 'Database Version',
+'tables' => 'Tables',
+'database_size' => 'Database Size',
+'storage' => 'Storage',
+'imported_files' => 'Imported Files',
+'used_space' => 'Used Space',
+'total_space' => 'Total Space',
+'free_space' => 'Free Space',
 ];

@@ -94,15 +94,6 @@ declare(strict_types=1);
 
 
 <p>
-    <a href="/administration/system/api">
-        <?= htmlspecialchars(
-            $language->get('api')
-        ) ?>
-    </a>
-</p>
-
-
-<p>
     <a href="/administration/system/information">
         <?= htmlspecialchars(
             $language->get('information')

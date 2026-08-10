@@ -309,13 +309,6 @@ $theme ??= 'system';
             </a>
 
 
-            <a href="/search">
-                <?= htmlspecialchars(
-                    $language->get('search')
-                ) ?>
-            </a>
-
-
             <?php if (
                 $authorization->can(
                     Permission::MANAGE_USERS

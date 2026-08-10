@@ -54,7 +54,7 @@ return [
         'Öppna användaradministration',
 
     'system_administration_description' =>
-        'Databas, inställningar, underhåll, API och systeminformation.',
+        'Databas, inställningar, underhåll och systeminformation.',
 
     'open_system_administration' =>
         'Öppna systemadministration',
@@ -255,4 +255,23 @@ return [
 'user_settings' => 'Användarinställningar',
 'english' => 'English',
 'swedish' => 'Svenska',
+
+'system_information' => 'Systeminformation',
+'application' => 'Applikation',
+'environment' => 'Miljö',
+'name' => 'Namn',
+'version' => 'Version',
+'php_version' => 'PHP-version',
+'operating_system' => 'Operativsystem',
+'server_software' => 'Serverprogramvara',
+'php_sapi' => 'PHP SAPI',
+'database_name' => 'Databasnamn',
+'database_version' => 'Databasversion',
+'tables' => 'Tabeller',
+'database_size' => 'Databasstorlek',
+'storage' => 'Lagring',
+'imported_files' => 'Importerade filer',
+'used_space' => 'Använt utrymme',
+'total_space' => 'Totalt utrymme',
+'free_space' => 'Ledigt utrymme',
 ];

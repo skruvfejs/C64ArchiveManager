@@ -13,6 +13,7 @@ use App\Services\LanguageService;
 use App\Services\RegistrationService;
 use App\Services\RoleService;
 use App\Services\SettingsService;
+use App\Services\StorageService;
 use App\Services\UserService;
 
 final class Application
@@ -160,6 +161,12 @@ final class Application
             fn (Container $c) => new SettingsService(
                 $c->get(Database::class)
             )
+        );
+
+
+        $this->container->singleton(
+            StorageService::class,
+            fn () => new StorageService()
         );
 
 
