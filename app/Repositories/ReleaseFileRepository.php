@@ -167,30 +167,101 @@ final class ReleaseFileRepository extends Repository
 
 
         $orderBy = [
+            'id' => [
+                'column' => 'rf.id',
+                'empty' => null
+            ],
 
-            'id' =>
-                'rf.id',
+            'title' => [
+                'column' => 'e.title',
+                'empty' => "CASE
+                    WHEN e.title IS NULL
+                         OR TRIM(e.title) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
 
-            'title' =>
-                'e.title',
+            'disk_name' => [
+                'column' => 'rf.disk_name',
+                'empty' => "CASE
+                    WHEN rf.disk_name IS NULL
+                         OR TRIM(rf.disk_name) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
 
-            'format' =>
-                'rf.format',
+            'disk_id' => [
+                'column' => 'rf.disk_id',
+                'empty' => "CASE
+                    WHEN rf.disk_id IS NULL
+                         OR TRIM(rf.disk_id) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
 
-            'size' =>
-                'rf.size',
+            'format' => [
+                'column' => 'rf.format',
+                'empty' => "CASE
+                    WHEN rf.format IS NULL
+                         OR TRIM(rf.format) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
 
-            'filename' =>
-                'rf.filename'
+            'size' => [
+                'column' => 'rf.size',
+                'empty' => "CASE
+                    WHEN rf.size IS NULL
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
 
+            'filename' => [
+                'column' => 'rf.filename',
+                'empty' => "CASE
+                    WHEN rf.filename IS NULL
+                         OR TRIM(rf.filename) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'tags' => [
+                'column' => '(SELECT MIN(t.name)
+                    FROM disk_tags dt_sort
+                    INNER JOIN tags t
+                        ON t.id = dt_sort.tag_id
+                    WHERE dt_sort.release_file_id = rf.id)',
+                'empty' => "CASE
+                    WHEN (
+                        SELECT MIN(t_empty.name)
+                        FROM disk_tags dt_empty
+                        INNER JOIN tags t_empty
+                            ON t_empty.id = dt_empty.tag_id
+                        WHERE dt_empty.release_file_id = rf.id
+                    ) IS NULL
+                    THEN 1
+                    ELSE 0
+                END"
+            ]
         ];
 
 
+        $sortDefinition =
+            $orderBy[$sort]
+            ?? $orderBy['id'];
 
         $orderColumn =
-            $orderBy[$sort]
-            ??
-            $orderBy['id'];
+            $sortDefinition['column'];
+
+        $orderEmpty =
+            $sortDefinition['empty'];
+
 
 
 
@@ -209,7 +280,13 @@ final class ReleaseFileRepository extends Repository
             LEFT JOIN entries e
                 ON e.id = r.entry_id
 
-            ORDER BY ' . $orderColumn . ' ASC
+            ORDER BY
+                ' . (
+                    $orderEmpty !== null
+                        ? $orderEmpty . ' ASC,'
+                        : ''
+                ) . '
+                ' . $orderColumn . ' ASC
 
             LIMIT :limit
             OFFSET :offset
@@ -260,30 +337,101 @@ final class ReleaseFileRepository extends Repository
     ): array {
 
         $orderBy = [
+            'id' => [
+                'column' => 'rf.id',
+                'empty' => null
+            ],
 
-            'id' =>
-                'rf.id',
+            'title' => [
+                'column' => 'e.title',
+                'empty' => "CASE
+                    WHEN e.title IS NULL
+                         OR TRIM(e.title) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
 
-            'title' =>
-                'e.title',
+            'disk_name' => [
+                'column' => 'rf.disk_name',
+                'empty' => "CASE
+                    WHEN rf.disk_name IS NULL
+                         OR TRIM(rf.disk_name) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
 
-            'format' =>
-                'rf.format',
+            'disk_id' => [
+                'column' => 'rf.disk_id',
+                'empty' => "CASE
+                    WHEN rf.disk_id IS NULL
+                         OR TRIM(rf.disk_id) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
 
-            'size' =>
-                'rf.size',
+            'format' => [
+                'column' => 'rf.format',
+                'empty' => "CASE
+                    WHEN rf.format IS NULL
+                         OR TRIM(rf.format) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
 
-            'filename' =>
-                'rf.filename'
+            'size' => [
+                'column' => 'rf.size',
+                'empty' => "CASE
+                    WHEN rf.size IS NULL
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
 
+            'filename' => [
+                'column' => 'rf.filename',
+                'empty' => "CASE
+                    WHEN rf.filename IS NULL
+                         OR TRIM(rf.filename) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'tags' => [
+                'column' => '(SELECT MIN(t.name)
+                    FROM disk_tags dt_sort
+                    INNER JOIN tags t
+                        ON t.id = dt_sort.tag_id
+                    WHERE dt_sort.release_file_id = rf.id)',
+                'empty' => "CASE
+                    WHEN (
+                        SELECT MIN(t_empty.name)
+                        FROM disk_tags dt_empty
+                        INNER JOIN tags t_empty
+                            ON t_empty.id = dt_empty.tag_id
+                        WHERE dt_empty.release_file_id = rf.id
+                    ) IS NULL
+                    THEN 1
+                    ELSE 0
+                END"
+            ]
         ];
 
 
+        $sortDefinition =
+            $orderBy[$sort]
+            ?? $orderBy['id'];
 
         $orderColumn =
-            $orderBy[$sort]
-            ??
-            $orderBy['id'];
+            $sortDefinition['column'];
+
+        $orderEmpty =
+            $sortDefinition['empty'];
+
 
 
 
@@ -310,7 +458,13 @@ final class ReleaseFileRepository extends Repository
                 OR r.notes LIKE :query5
                 OR e.title LIKE :query6
 
-            ORDER BY ' . $orderColumn . ' ASC
+            ORDER BY
+                ' . (
+                    $orderEmpty !== null
+                        ? $orderEmpty . ' ASC,'
+                        : ''
+                ) . '
+                ' . $orderColumn . ' ASC
 
             LIMIT :limit
             OFFSET :offset
@@ -377,6 +531,468 @@ final class ReleaseFileRepository extends Repository
         );
     }
 
+
+
+    /**
+     * Hämta diskfiler som har en viss tagg.
+     *
+     * @return ReleaseFile[]
+     */
+    public function findAllDisksByTag(
+        int $tagId,
+        string $sort = 'id',
+        int $limit = 50,
+        int $offset = 0
+    ): array {
+        $orderBy = [
+            'id' => [
+                'column' => 'rf.id',
+                'empty' => null
+            ],
+
+            'title' => [
+                'column' => 'e.title',
+                'empty' => "CASE
+                    WHEN e.title IS NULL
+                         OR TRIM(e.title) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'disk_name' => [
+                'column' => 'rf.disk_name',
+                'empty' => "CASE
+                    WHEN rf.disk_name IS NULL
+                         OR TRIM(rf.disk_name) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'disk_id' => [
+                'column' => 'rf.disk_id',
+                'empty' => "CASE
+                    WHEN rf.disk_id IS NULL
+                         OR TRIM(rf.disk_id) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'format' => [
+                'column' => 'rf.format',
+                'empty' => "CASE
+                    WHEN rf.format IS NULL
+                         OR TRIM(rf.format) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'size' => [
+                'column' => 'rf.size',
+                'empty' => "CASE
+                    WHEN rf.size IS NULL
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'filename' => [
+                'column' => 'rf.filename',
+                'empty' => "CASE
+                    WHEN rf.filename IS NULL
+                         OR TRIM(rf.filename) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'tags' => [
+                'column' => '(SELECT MIN(t.name)
+                    FROM disk_tags dt_sort
+                    INNER JOIN tags t
+                        ON t.id = dt_sort.tag_id
+                    WHERE dt_sort.release_file_id = rf.id)',
+                'empty' => "CASE
+                    WHEN (
+                        SELECT MIN(t_empty.name)
+                        FROM disk_tags dt_empty
+                        INNER JOIN tags t_empty
+                            ON t_empty.id = dt_empty.tag_id
+                        WHERE dt_empty.release_file_id = rf.id
+                    ) IS NULL
+                    THEN 1
+                    ELSE 0
+                END"
+            ]
+        ];
+
+
+        $sortDefinition =
+            $orderBy[$sort]
+            ?? $orderBy['id'];
+
+        $orderColumn =
+            $sortDefinition['column'];
+
+        $orderEmpty =
+            $sortDefinition['empty'];
+
+
+        $stmt = $this->prepare(
+            '
+            SELECT
+                rf.*,
+                e.title AS entry_title,
+                r.notes AS release_notes
+
+            FROM release_files rf
+
+            INNER JOIN disk_tags dt
+                ON dt.release_file_id = rf.id
+
+            LEFT JOIN releases r
+                ON r.id = rf.release_id
+
+            LEFT JOIN entries e
+                ON e.id = r.entry_id
+
+            WHERE dt.tag_id = :tag_id
+
+            ORDER BY
+                ' . (
+                    $orderEmpty !== null
+                        ? $orderEmpty . ' ASC,'
+                        : ''
+                ) . '
+                ' . $orderColumn . ' ASC
+
+            LIMIT :limit
+            OFFSET :offset
+            '
+        );
+
+        $stmt->bindValue(
+            ':tag_id',
+            $tagId,
+            \PDO::PARAM_INT
+        );
+
+        $stmt->bindValue(
+            ':limit',
+            $limit,
+            \PDO::PARAM_INT
+        );
+
+        $stmt->bindValue(
+            ':offset',
+            $offset,
+            \PDO::PARAM_INT
+        );
+
+        $stmt->execute();
+
+        return array_map(
+            fn(array $row): ReleaseFile =>
+                $this->hydrate($row),
+            $this->fetchAll($stmt)
+        );
+    }
+
+
+    /**
+     * Sök diskfiler inom en viss tagg.
+     *
+     * @return ReleaseFile[]
+     */
+    public function searchDisksByTag(
+        int $tagId,
+        string $query,
+        string $sort = 'id',
+        int $limit = 50,
+        int $offset = 0
+    ): array {
+        $orderBy = [
+            'id' => [
+                'column' => 'rf.id',
+                'empty' => null
+            ],
+
+            'title' => [
+                'column' => 'e.title',
+                'empty' => "CASE
+                    WHEN e.title IS NULL
+                         OR TRIM(e.title) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'disk_name' => [
+                'column' => 'rf.disk_name',
+                'empty' => "CASE
+                    WHEN rf.disk_name IS NULL
+                         OR TRIM(rf.disk_name) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'disk_id' => [
+                'column' => 'rf.disk_id',
+                'empty' => "CASE
+                    WHEN rf.disk_id IS NULL
+                         OR TRIM(rf.disk_id) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'format' => [
+                'column' => 'rf.format',
+                'empty' => "CASE
+                    WHEN rf.format IS NULL
+                         OR TRIM(rf.format) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'size' => [
+                'column' => 'rf.size',
+                'empty' => "CASE
+                    WHEN rf.size IS NULL
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'filename' => [
+                'column' => 'rf.filename',
+                'empty' => "CASE
+                    WHEN rf.filename IS NULL
+                         OR TRIM(rf.filename) = ''
+                    THEN 1
+                    ELSE 0
+                END"
+            ],
+
+            'tags' => [
+                'column' => '(SELECT MIN(t.name)
+                    FROM disk_tags dt_sort
+                    INNER JOIN tags t
+                        ON t.id = dt_sort.tag_id
+                    WHERE dt_sort.release_file_id = rf.id)',
+                'empty' => "CASE
+                    WHEN (
+                        SELECT MIN(t_empty.name)
+                        FROM disk_tags dt_empty
+                        INNER JOIN tags t_empty
+                            ON t_empty.id = dt_empty.tag_id
+                        WHERE dt_empty.release_file_id = rf.id
+                    ) IS NULL
+                    THEN 1
+                    ELSE 0
+                END"
+            ]
+        ];
+
+
+        $sortDefinition =
+            $orderBy[$sort]
+            ?? $orderBy['id'];
+
+        $orderColumn =
+            $sortDefinition['column'];
+
+        $orderEmpty =
+            $sortDefinition['empty'];
+
+
+        $stmt = $this->prepare(
+            '
+            SELECT
+                rf.*,
+                e.title AS entry_title,
+                r.notes AS release_notes
+
+            FROM release_files rf
+
+            INNER JOIN disk_tags dt
+                ON dt.release_file_id = rf.id
+
+            LEFT JOIN releases r
+                ON r.id = rf.release_id
+
+            LEFT JOIN entries e
+                ON e.id = r.entry_id
+
+            WHERE dt.tag_id = :tag_id
+              AND (
+                    rf.filename LIKE :query1
+                    OR rf.disk_name LIKE :query2
+                    OR rf.format LIKE :query3
+                    OR rf.md5 LIKE :query4
+                    OR r.notes LIKE :query5
+                    OR e.title LIKE :query6
+              )
+
+            ORDER BY
+                ' . (
+                    $orderEmpty !== null
+                        ? $orderEmpty . ' ASC,'
+                        : ''
+                ) . '
+                ' . $orderColumn . ' ASC
+
+            LIMIT :limit
+            OFFSET :offset
+            '
+        );
+
+        $stmt->bindValue(
+            ':tag_id',
+            $tagId,
+            \PDO::PARAM_INT
+        );
+
+        $stmt->bindValue(
+            ':query1',
+            '%' . $query . '%'
+        );
+
+        $stmt->bindValue(
+            ':query2',
+            '%' . $query . '%'
+        );
+
+        $stmt->bindValue(
+            ':query3',
+            '%' . $query . '%'
+        );
+
+        $stmt->bindValue(
+            ':query4',
+            '%' . $query . '%'
+        );
+
+        $stmt->bindValue(
+            ':query5',
+            '%' . $query . '%'
+        );
+
+        $stmt->bindValue(
+            ':query6',
+            '%' . $query . '%'
+        );
+
+        $stmt->bindValue(
+            ':limit',
+            $limit,
+            \PDO::PARAM_INT
+        );
+
+        $stmt->bindValue(
+            ':offset',
+            $offset,
+            \PDO::PARAM_INT
+        );
+
+        $stmt->execute();
+
+        return array_map(
+            fn(array $row): ReleaseFile =>
+                $this->hydrate($row),
+            $this->fetchAll($stmt)
+        );
+    }
+
+
+    /**
+     * Räkna diskfiler med en viss tagg.
+     */
+    public function countDisksByTag(
+        int $tagId,
+        string $query = ''
+    ): int {
+        $stmt = $this->prepare(
+            '
+            SELECT COUNT(*)
+
+            FROM release_files rf
+
+            INNER JOIN disk_tags dt
+                ON dt.release_file_id = rf.id
+
+            LEFT JOIN releases r
+                ON r.id = rf.release_id
+
+            LEFT JOIN entries e
+                ON e.id = r.entry_id
+
+            WHERE dt.tag_id = :tag_id
+            '
+            . (
+                $query !== ''
+                    ? '
+            AND (
+                rf.filename LIKE :query1
+                OR rf.disk_name LIKE :query2
+                OR rf.format LIKE :query3
+                OR rf.md5 LIKE :query4
+                OR r.notes LIKE :query5
+                OR e.title LIKE :query6
+            )
+            '
+                    : ''
+            )
+        );
+
+        $stmt->bindValue(
+            ':tag_id',
+            $tagId,
+            \PDO::PARAM_INT
+        );
+
+        if ($query !== '') {
+            $stmt->bindValue(
+                ':query1',
+                '%' . $query . '%'
+            );
+
+            $stmt->bindValue(
+                ':query2',
+                '%' . $query . '%'
+            );
+
+            $stmt->bindValue(
+                ':query3',
+                '%' . $query . '%'
+            );
+
+            $stmt->bindValue(
+                ':query4',
+                '%' . $query . '%'
+            );
+
+            $stmt->bindValue(
+                ':query5',
+                '%' . $query . '%'
+            );
+
+            $stmt->bindValue(
+                ':query6',
+                '%' . $query . '%'
+            );
+        }
+
+        $stmt->execute();
+
+        return (int)
+            $stmt->fetchColumn();
+    }
 
 
     /**

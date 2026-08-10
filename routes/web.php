@@ -29,8 +29,10 @@ use App\Http\Controllers\ImportController;
 use App\Http\Controllers\ImportLogController;
 
 use App\Http\Controllers\EntryController;
+use App\Http\Controllers\EntryTagController;
 use App\Http\Controllers\ReleaseController;
 use App\Http\Controllers\ReleaseTagController;
+use App\Http\Controllers\DiskTagController;
 use App\Http\Controllers\AdministrationController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\SystemController;
@@ -41,6 +43,7 @@ use App\Http\Middleware\ImportMiddleware;
 use App\Http\Middleware\ViewLogsMiddleware;
 use App\Http\Middleware\ManageSystemMiddleware;
 use App\Http\Middleware\ManageTagsMiddleware;
+use App\Http\Middleware\EditMiddleware;
 use App\Http\Middleware\MaintenanceMiddleware;
 
 
@@ -747,10 +750,100 @@ $router->get(
     );
 
 
+
+    $router->get(
+        '/disk/comment/edit',
+        [
+            DiskController::class,
+            'editComment'
+        ],
+        [
+            EditMiddleware::class,
+            MaintenanceMiddleware::class,
+        ]
+    );
+
+
+    $router->post(
+        '/disk/comment/delete',
+        [
+            DiskController::class,
+            'deleteComment'
+        ],
+        [
+            EditMiddleware::class,
+            MaintenanceMiddleware::class,
+        ]
+    );
+
+
+    $router->post(
+        '/disk/comment/edit',
+        [
+            DiskController::class,
+            'updateComment'
+        ],
+        [
+            EditMiddleware::class,
+            MaintenanceMiddleware::class,
+        ]
+    );
+
+
+    $router->post(
+        '/disk/tags/add',
+        [
+            DiskTagController::class,
+            'add'
+        ],
+        [
+            EditMiddleware::class,
+            MaintenanceMiddleware::class,
+        ]
+    );
+
+    $router->post(
+        '/disk/tags/remove',
+        [
+            DiskTagController::class,
+            'remove'
+        ],
+        [
+            EditMiddleware::class,
+            MaintenanceMiddleware::class,
+        ]
+    );
+
     $router->post(
         '/release/tags/add',
         [
             ReleaseTagController::class,
+            'add'
+        ],
+        [
+            EditMiddleware::class,
+            MaintenanceMiddleware::class,
+        ]
+    );
+
+
+    $router->post(
+        '/release/tags/remove',
+        [
+            ReleaseTagController::class,
+            'remove'
+        ],
+        [
+            EditMiddleware::class,
+            MaintenanceMiddleware::class,
+        ]
+    );
+
+
+    $router->post(
+        '/entry/tags/add',
+        [
+            EntryTagController::class,
             'add'
         ],
         [
@@ -761,9 +854,9 @@ $router->get(
 
 
     $router->post(
-        '/release/tags/remove',
+        '/entry/tags/remove',
         [
-            ReleaseTagController::class,
+            EntryTagController::class,
             'remove'
         ],
         [

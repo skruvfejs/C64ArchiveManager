@@ -14,6 +14,8 @@ use App\Services\C64BamBuilder;
 use App\Services\C64BamReader;
 use App\Services\C64BamComparator;
 use App\Services\C64DiskIntegrityChecker;
+use App\Repositories\DiskTagRepository;
+use App\Repositories\TagRepository;
 use App\Http\Request;
 
 final class DiskController extends Controller
@@ -22,10 +24,134 @@ final class DiskController extends Controller
         private ReleaseRepository $releases,
         private ReleaseFileRepository $files,
         private DirectoryEntryRepository $entries,
+        private DiskTagRepository $diskTags,
+        private TagRepository $tags,
         private Request $request,
         private Auth $auth,
         private View $view
     ) {
+    }
+
+
+    public function editComment(): void
+    {
+        if (!$this->auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+
+        $id =
+            (int) $this->request->query('id');
+
+        if ($id <= 0) {
+            http_response_code(400);
+            echo 'Missing release id';
+            return;
+        }
+
+        $release =
+            $this->releases->findById($id);
+
+        if ($release === null) {
+            http_response_code(404);
+            echo 'Release not found';
+            return;
+        }
+
+        $this->view->render(
+            'disk/comment_edit',
+            [
+                'title' =>
+                    'Redigera kommentar',
+
+                'release' =>
+                    $release
+            ]
+        );
+    }
+
+
+    public function updateComment(): void
+    {
+        if (!$this->auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+
+        $id =
+            (int) $this->request->post('id', 0);
+
+        $notes =
+            trim(
+                (string) $this->request->post(
+                    'notes',
+                    ''
+                )
+            );
+
+        if ($id <= 0) {
+            http_response_code(400);
+            echo 'Missing release id';
+            return;
+        }
+
+        $release =
+            $this->releases->findById($id);
+
+        if ($release === null) {
+            http_response_code(404);
+            echo 'Release not found';
+            return;
+        }
+
+        $this->releases->update(
+            $id,
+            $notes
+        );
+
+        header(
+            'Location: /disk?id=' . $id
+        );
+
+        exit;
+    }
+
+
+    public function deleteComment(): void
+    {
+        if (!$this->auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+
+        $id =
+            (int) $this->request->post('id', 0);
+
+        if ($id <= 0) {
+            http_response_code(400);
+            echo 'Missing release id';
+            return;
+        }
+
+        $release =
+            $this->releases->findById($id);
+
+        if ($release === null) {
+            http_response_code(404);
+            echo 'Release not found';
+            return;
+        }
+
+        $this->releases->update(
+            $id,
+            ''
+        );
+
+        header(
+            'Location: /disk?id=' . $id
+        );
+
+        exit;
     }
 
 
@@ -82,6 +208,7 @@ final class DiskController extends Controller
 
 
         $directories = [];
+        $diskTags = [];
 
         $integrity = null;
 
@@ -90,6 +217,11 @@ final class DiskController extends Controller
 
             $entries =
                 $this->entries->findByReleaseFile(
+                    $file->getId()
+                );
+
+            $diskTags[$file->getId()] =
+                $this->diskTags->findByDiskId(
                     $file->getId()
                 );
 
@@ -293,6 +425,12 @@ final class DiskController extends Controller
 
                 'directories' =>
                     $directories,
+
+                'diskTags' =>
+                    $diskTags,
+
+                'allTags' =>
+                    $this->tags->findAll(),
 
 
                 'search' =>

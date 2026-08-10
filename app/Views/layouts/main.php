@@ -302,6 +302,13 @@ $theme ??= 'system';
             </a>
 
 
+            <a href="/entry">
+                <?= htmlspecialchars(
+                    $language->get('archive')
+                ) ?>
+            </a>
+
+
             <a href="/disk">
                 <?= htmlspecialchars(
                     $language->get('disks')

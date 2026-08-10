@@ -1,10 +1,10 @@
-<?php if (!empty($release->getNotes())): ?>
-
 <h3>
     <?= htmlspecialchars(
         $language->get('comment')
     ) ?>
 </h3>
+
+<?php if (!empty($release->getNotes())): ?>
 
 <p>
     <?= nl2br(
@@ -14,9 +14,66 @@
     ) ?>
 </p>
 
-<br>
+<div style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+
+    <a
+        href="/disk/comment/edit?id=<?= $release->getId() ?>"
+    >
+        <?= htmlspecialchars(
+            $language->get('edit_comment')
+        ) ?>
+    </a>
+
+    <span>|</span>
+
+    <form
+        method="post"
+        action="/disk/comment/delete"
+        style="display: inline-flex; margin: 0; padding: 0;"
+        onsubmit="return confirm('Vill du verkligen ta bort kommentaren?');"
+    >
+        <input
+            type="hidden"
+            name="id"
+            value="<?= $release->getId() ?>"
+        >
+
+        <button
+            type="submit"
+            style="
+                background: none;
+                border: none;
+                padding: 0;
+                margin: 0;
+                color: inherit;
+                text-decoration: underline;
+                cursor: pointer;
+                font: inherit;
+            "
+        >
+            Ta bort kommentar
+        </button>
+    </form>
+
+</div>
+
+<?php else: ?>
+
+<p>
+    Ingen kommentar.
+</p>
+
+<p>
+    <a
+        href="/disk/comment/edit?id=<?= $release->getId() ?>"
+    >
+        Lägg till kommentar
+    </a>
+</p>
 
 <?php endif; ?>
+
+<br>
 
 
 
@@ -237,6 +294,193 @@
     ) ?>)
 
 </h3>
+
+
+<?php
+
+$assignedTagIds = [];
+
+foreach (
+    $diskTags[$file->getId()] ?? []
+    as $diskTag
+) {
+    $assignedTagIds[] =
+        $diskTag->getTagId();
+}
+
+?>
+
+
+<h4>
+    <?= htmlspecialchars(
+        $language->get('tags')
+    ) ?>
+</h4>
+
+
+<div
+    style="
+        white-space: nowrap;
+    "
+>
+
+<?php
+
+$firstTag = true;
+
+foreach ($allTags as $tag):
+
+    if (
+        !in_array(
+            $tag->getId(),
+            $assignedTagIds,
+            true
+        )
+    ) {
+        continue;
+    }
+
+?>
+
+
+<?php if (!$firstTag): ?>
+
+    ,
+
+<?php endif; ?>
+
+
+<span
+    style="
+        white-space: nowrap;
+    "
+>
+
+    <?= htmlspecialchars(
+        $tag->getName()
+    ) ?>
+
+    <form
+        method="post"
+        action="/disk/tags/remove"
+        style="
+            display: inline !important;
+            white-space: nowrap;
+            margin: 0;
+            padding: 0;
+        "
+    >
+
+        <input
+            type="hidden"
+            name="disk_id"
+            value="<?= $file->getId() ?>"
+        >
+
+        <input
+            type="hidden"
+            name="tag_id"
+            value="<?= $tag->getId() ?>"
+        >
+
+        <button
+            type="submit"
+            style="
+                display: inline !important;
+                color: red;
+                background: none;
+                border: none;
+                padding: 0;
+                margin: 0;
+                cursor: pointer;
+                white-space: nowrap;
+            "
+        >
+            [x]
+        </button>
+
+    </form>
+
+</span>
+
+
+<?php
+
+$firstTag = false;
+
+endforeach;
+
+?>
+
+</div>
+
+
+<?php
+
+$availableTags = array_filter(
+    $allTags,
+    function ($tag) use ($assignedTagIds): bool {
+        return !in_array(
+            $tag->getId(),
+            $assignedTagIds,
+            true
+        );
+    }
+);
+
+?>
+
+
+<?php if (!empty($availableTags)): ?>
+
+<form
+    method="post"
+    action="/disk/tags/add"
+>
+
+    <input
+        type="hidden"
+        name="disk_id"
+        value="<?= $file->getId() ?>"
+    >
+
+    <select name="tag_id">
+
+        <option value="">
+            <?= htmlspecialchars(
+                $language->get('select_tag')
+            ) ?>
+        </option>
+
+        <?php foreach (
+            $availableTags as $tag
+        ): ?>
+
+            <option
+                value="<?= $tag->getId() ?>"
+            >
+                <?= htmlspecialchars(
+                    $tag->getName()
+                ) ?>
+            </option>
+
+        <?php endforeach; ?>
+
+    </select>
+
+
+    <button type="submit">
+        <?= htmlspecialchars(
+            $language->get('add_tag')
+        ) ?>
+    </button>
+
+</form>
+
+<?php endif; ?>
+
+
+<br>
 
 
 

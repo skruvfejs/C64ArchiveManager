@@ -230,6 +230,27 @@ final class ReleaseRepository extends Repository
 
 
 
+    public function update(
+        int $id,
+        string $notes
+    ): bool {
+        $stmt = $this->prepare(
+            '
+            UPDATE releases
+            SET notes = :notes
+            WHERE id = :id
+            '
+        );
+
+        return $stmt->execute([
+            'notes' =>
+                $notes,
+            'id' =>
+                $id
+        ]);
+    }
+
+
     public function findByEntry(
         int $entryId
     ): array {

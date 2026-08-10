@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 return [
 
+    'archive' => 'Archive',
     'dashboard' => 'Dashboard',
     'disks' => 'Disks',
     'search' => 'Search',
@@ -194,6 +195,7 @@ return [
     'user' => 'User',
     'format' => 'Format',
     'release' => 'Release',
+    'releases' => 'Releases',
     'files_imported' => 'Number of files',
     'message' => 'Message',
     'guest' => 'Guest',
@@ -204,6 +206,12 @@ return [
 
     'c64_import' => 'C64 Import',
     'entry' => 'Entry',
+    'entries' => 'Entries',
+    'year' => 'Year',
+    'no_entries_found' => 'No entries found.',
+    'entry_id' => 'Entry ID',
+    'release_count' => 'Number of releases',
+    'unique_disk_images' => 'Unique disk images',
     'create_automatically' => '-- Create automatically --',
     'comment_optional' => 'Comment (optional)',
     'comment_placeholder' => 'E.g. My original from childhood in 1987',
@@ -354,4 +362,7 @@ return [
 
     'maintenance_title' => 'Maintenance in progress',
     'maintenance_message' => 'The system is temporarily closed for maintenance. Only Super Admin can log in.',
+
+    'edit_comment' => 'Edit comment',
+
 ];

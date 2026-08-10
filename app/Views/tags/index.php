@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 ?>
 
 <h1>
@@ -40,13 +41,17 @@ declare(strict_types=1);
 <?php else: ?>
 
 <table>
+
     <thead>
+
         <tr>
+
             <th>
                 <?= htmlspecialchars(
                     $language->get('tag_name')
                 ) ?>
             </th>
+
 
             <th>
                 <?= htmlspecialchars(
@@ -54,23 +59,30 @@ declare(strict_types=1);
                 ) ?>
             </th>
 
+
             <th>
                 <?= htmlspecialchars(
                     $language->get('actions')
                 ) ?>
             </th>
+
         </tr>
+
     </thead>
 
+
     <tbody>
+
         <?php foreach ($tags as $tag): ?>
 
         <tr>
+
             <td>
                 <?= htmlspecialchars(
                     $tag->getName()
                 ) ?>
             </td>
+
 
             <td>
                 <?= htmlspecialchars(
@@ -78,41 +90,53 @@ declare(strict_types=1);
                 ) ?>
             </td>
 
+
             <td>
-                <a href="/administration/tags/edit?id=<?= (int) $tag->getId() ?>">
+
+                <a
+                    href="/administration/tags/edit?id=<?= (int) $tag->getId() ?>"
+                >
                     <?= htmlspecialchars(
                         $language->get('edit')
                     ) ?>
                 </a>
+
 
                 <form
                     method="post"
                     action="/administration/tags/delete"
                     style="display: inline;"
                 >
+
                     <input
                         type="hidden"
                         name="id"
                         value="<?= (int) $tag->getId() ?>"
                     >
 
-                    <button
-                        type="submit"
-                        onclick="return confirm('<?= htmlspecialchars(
+
+                    <a
+                        href="#"
+                        onclick="if (confirm('<?= htmlspecialchars(
                             $language->get('confirm_delete_tag'),
                             ENT_QUOTES
-                        ) ?>');"
+                        ) ?>')) { this.closest('form').submit(); } return false;"
                     >
                         <?= htmlspecialchars(
-                            $language->get('delete_tag')
+                            $language->get('remove_tag')
                         ) ?>
-                    </button>
+                    </a>
+
                 </form>
+
             </td>
+
         </tr>
 
         <?php endforeach; ?>
+
     </tbody>
+
 </table>
 
 <?php endif; ?>

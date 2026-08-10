@@ -1,6 +1,31 @@
 <?php
 
 declare(strict_types=1);
+?>
+<style>
+    /*
+     * Disk list page:
+     * Use the available desktop width so the disk table
+     * remains inside the page container.
+     */
+    .disk-page-layout {
+        width: 100%;
+    }
+
+    .disk-page-layout table {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    @media (min-width: 1250px) {
+        body .container {
+            max-width: 1600px;
+            width: calc(100% - 40px);
+        }
+    }
+</style>
+
+<?php
 
 ?>
 
@@ -142,7 +167,7 @@ declare(strict_types=1);
 
             <th>
 
-                <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=id">
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&tag=<?= (int) ($tagId ?? 0) ?>&sort=id">
 
                     ID
 
@@ -154,7 +179,7 @@ declare(strict_types=1);
 
             <th>
 
-                <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=title">
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&tag=<?= (int) ($tagId ?? 0) ?>&sort=title">
 
                     <?= htmlspecialchars(
                         $language->get('title')
@@ -167,24 +192,36 @@ declare(strict_types=1);
 
 
             <th>
-                <?= htmlspecialchars(
-                    $language->get('disk_name')
-                ) ?>
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&tag=<?= (int) ($tagId ?? 0) ?>&sort=disk_name">
+                    <?= htmlspecialchars(
+                        $language->get('disk_name')
+                    ) ?>
+                </a>
             </th>
 
 
 
             <th>
-                <?= htmlspecialchars(
-                    $language->get('disk_id')
-                ) ?>
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&tag=<?= (int) ($tagId ?? 0) ?>&sort=disk_id">
+                    <?= htmlspecialchars(
+                        $language->get('disk_id')
+                    ) ?>
+                </a>
             </th>
+            <th>
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&tag=<?= (int) ($tagId ?? 0) ?>&sort=tags">
+                    <?= htmlspecialchars(
+                        $language->get('tags')
+                    ) ?>
+                </a>
+            </th>
+
 
 
 
             <th>
 
-                <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=filename">
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&tag=<?= (int) ($tagId ?? 0) ?>&sort=filename">
 
                     <?= htmlspecialchars(
                         $language->get('filename')
@@ -198,7 +235,7 @@ declare(strict_types=1);
 
             <th>
 
-                <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=format">
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&tag=<?= (int) ($tagId ?? 0) ?>&sort=format">
 
                     <?= htmlspecialchars(
                         $language->get('format')
@@ -212,7 +249,7 @@ declare(strict_types=1);
 
             <th>
 
-                <a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=size">
+                <a href="/disk?search=<?= urlencode($search ?? '') ?>&tag=<?= (int) ($tagId ?? 0) ?>&sort=size">
 
                     <?= htmlspecialchars(
                         $language->get('size')
@@ -298,6 +335,37 @@ declare(strict_types=1);
                 ) ?>
 
             </td>
+            <td>
+                <?php foreach (
+                    $diskTags[$disk->getId()] ?? []
+                    as $tag
+                ): ?>
+
+                    <?php
+                    $tagName = '';
+
+                    foreach ($allTags ?? [] as $availableTag) {
+                        if (
+                            $availableTag->getId()
+                            === $tag->getTagId()
+                        ) {
+                            $tagName =
+                                $availableTag->getName();
+
+                            break;
+                        }
+                    }
+                    ?>
+
+                    <a href="/disk?search=<?= urlencode($search ?? '') ?>&tag=<?= (int) $tag->getTagId() ?>">
+                        <?= htmlspecialchars(
+                            $tagName
+                        ) ?>
+                    </a>
+
+                <?php endforeach; ?>
+            </td>
+
 
 
 
@@ -392,7 +460,7 @@ declare(strict_types=1);
 
 <?php if (($page ?? 1) > 1): ?>
 
-<a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=<?= urlencode($sort ?? 'id') ?>&page=<?= $page - 1 ?>">
+<a href="/disk?search=<?= urlencode($search ?? '') ?>&tag=<?= (int) ($tagId ?? 0) ?>&sort=<?= urlencode($sort ?? 'id') ?>&page=<?= $page - 1 ?>">
 
     <?= htmlspecialchars(
         $language->get('previous')
@@ -418,7 +486,7 @@ declare(strict_types=1);
 
 <?php else: ?>
 
-<a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=<?= urlencode($sort ?? 'id') ?>&page=<?= $i ?>">
+<a href="/disk?search=<?= urlencode($search ?? '') ?>&tag=<?= (int) ($tagId ?? 0) ?>&sort=<?= urlencode($sort ?? 'id') ?>&page=<?= $i ?>">
 
     <?= $i ?>
 
@@ -434,7 +502,7 @@ declare(strict_types=1);
 
 <?php if (($page ?? 1) < $pages): ?>
 
-<a href="/disk?search=<?= urlencode($search ?? '') ?>&sort=<?= urlencode($sort ?? 'id') ?>&page=<?= $page + 1 ?>">
+<a href="/disk?search=<?= urlencode($search ?? '') ?>&tag=<?= (int) ($tagId ?? 0) ?>&sort=<?= urlencode($sort ?? 'id') ?>&page=<?= $page + 1 ?>">
 
     <?= htmlspecialchars(
         $language->get('next')

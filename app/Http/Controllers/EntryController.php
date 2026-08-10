@@ -4,44 +4,178 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Core\Auth;
+use App\Core\Authorization;
 use App\Core\View;
 use App\Http\Request;
 use App\Repositories\EntryRepository;
+use App\Repositories\EntryTagRepository;
 use App\Repositories\ReleaseRepository;
 use App\Repositories\ReleaseFileRepository;
 use App\Repositories\DirectoryEntryRepository;
+use App\Repositories\TagRepository;
+use App\Services\SettingsService;
 
 final class EntryController extends Controller
 {
     public function __construct(
-        private EntryRepository $entries,
-        private ReleaseRepository $releases,
-        private ReleaseFileRepository $files,
-        private DirectoryEntryRepository $directories,
-        private Request $request,
-        private View $view
+        private readonly EntryRepository $entries,
+        private readonly EntryTagRepository $entryTags,
+        private readonly TagRepository $tags,
+        private readonly ReleaseRepository $releases,
+        private readonly ReleaseFileRepository $files,
+        private readonly DirectoryEntryRepository $directories,
+        private readonly Request $request,
+        private readonly View $view,
+        private readonly Auth $auth,
+        private readonly Authorization $authorization,
+        private readonly SettingsService $settings
     ) {
     }
 
 
     public function index(): void
     {
+        if (!$this->auth->check()) {
+
+            header('Location: /login');
+
+            exit;
+        }
+
+
         $id =
             (int) $this->request->query('id');
 
 
-        if ($id <= 0) {
+        /*
+         * Om ett Entry-id finns,
+         * visa den befintliga Entry-detaljsidan.
+         */
+        if ($id > 0) {
 
-            http_response_code(400);
-
-            echo 'Missing entry id';
+            $this->showEntry($id);
 
             return;
         }
 
 
+        /*
+         * Arkivets Entry-lista.
+         * Samma sökning, sortering och pagination
+         * som används av disklistan.
+         */
+
+        $search =
+            trim(
+                (string) $this->request->query(
+                    'search',
+                    ''
+                )
+            );
+
+
+        $sort =
+            (string) $this->request->query(
+                'sort',
+                'id'
+            );
+
+
+        $page =
+            max(
+                1,
+                (int) $this->request->query(
+                    'page',
+                    1
+                )
+            );
+
+
+        $perPage =
+            (int) $this->settings->get(
+                'items_per_page',
+                '25'
+            );
+
+
+        $total =
+            $this->entries->countEntries(
+                $search
+            );
+
+
+        $pages =
+            (int) ceil(
+                $total / $perPage
+            );
+
+
+        $offset =
+            ($page - 1) * $perPage;
+
+
+        $entries =
+            $search === ''
+
+                ? $this->entries->findAllEntries(
+                    $sort,
+                    $perPage,
+                    $offset
+                )
+
+                : $this->entries->searchEntries(
+                    $search,
+                    $sort,
+                    $perPage,
+                    $offset
+                );
+
+
+        $this->view->render(
+            'entry/list',
+            [
+
+                'title' =>
+                    'Arkiv',
+
+                'entries' =>
+                    $entries,
+
+                'search' =>
+                    $search,
+
+                'sort' =>
+                    $sort,
+
+                'page' =>
+                    $page,
+
+                'pages' =>
+                    $pages,
+
+                'total' =>
+                    $total,
+
+                'perPage' =>
+                    $perPage,
+
+                'authorization' =>
+                    $this->authorization,
+
+            ]
+        );
+    }
+
+
+    private function showEntry(
+        int $id
+    ): void {
+
         $entry =
-            $this->entries->findById($id);
+            $this->entries->findById(
+                $id
+            );
 
 
         if ($entry === null) {
@@ -52,6 +186,26 @@ final class EntryController extends Controller
 
             return;
         }
+
+
+        /*
+         * Entry-tags.
+         *
+         * EntryTagRepository returnerar EntryTag-objekt.
+         * Dessa används av vyn för att identifiera
+         * vilka tags som redan är kopplade till Entry.
+         */
+        $entryTags =
+            $this->entryTags->findByEntryId(
+                $id
+            );
+
+
+        /*
+         * Hämta alla tillgängliga tags för dropdownen.
+         */
+        $allTags =
+            $this->tags->findAll();
 
 
         $releases =
@@ -80,9 +234,9 @@ final class EntryController extends Controller
 
                 $directoryEntries =
                     $this->directories
-                         ->findByReleaseFile(
-                             $file->getId()
-                         );
+                        ->findByReleaseFile(
+                            $file->getId()
+                        );
 
 
                 $duplicate =
@@ -96,9 +250,17 @@ final class EntryController extends Controller
                     $file->getMd5();
 
 
-                if ($md5 !== null && $md5 !== '') {
+                if (
+                    $md5 !== null
+                    &&
+                    $md5 !== ''
+                ) {
 
-                    if (isset($seenMd5[$md5])) {
+                    if (
+                        isset(
+                            $seenMd5[$md5]
+                        )
+                    ) {
 
                         $duplicate = true;
 
@@ -114,27 +276,33 @@ final class EntryController extends Controller
 
 
                 $fileData[] = [
+
                     'file' =>
                         $file,
 
                     'directoryCount' =>
-                        count($directoryEntries),
+                        count(
+                            $directoryEntries
+                        ),
 
                     'duplicate' =>
                         $duplicate,
 
                     'duplicateOf' =>
                         $duplicateOf
+
                 ];
             }
 
 
             $releaseData[] = [
+
                 'release' =>
                     $release,
 
                 'files' =>
                     $fileData
+
             ];
         }
 
@@ -142,22 +310,33 @@ final class EntryController extends Controller
         $this->view->render(
             'entry/index',
             [
+
                 'title' =>
                     'Entry',
 
                 'entry' =>
                     $entry,
 
+                'entryTags' =>
+                    $entryTags,
+
+                'allTags' =>
+                    $allTags,
+
                 'releases' =>
                     $releaseData,
 
                 'totalReleases' =>
-                    count($releases),
+                    count(
+                        $releases
+                    ),
 
                 'uniqueImages' =>
-                    count($seenMd5)
+                    count(
+                        $seenMd5
+                    )
+
             ]
         );
     }
 }
-

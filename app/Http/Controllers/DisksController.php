@@ -9,6 +9,8 @@ use App\Core\Authorization;
 use App\Core\View;
 use App\Http\Request;
 use App\Repositories\ReleaseFileRepository;
+use App\Repositories\TagRepository;
+use App\Repositories\DiskTagRepository;
 use App\Services\SettingsService;
 
 
@@ -18,6 +20,8 @@ final class DisksController extends Controller
     public function __construct(
         private readonly ReleaseFileRepository $files,
         private readonly View $view,
+        private readonly DiskTagRepository $diskTags,
+        private readonly TagRepository $tags,
         private readonly Request $request,
         private readonly DiskController $diskController,
         private readonly Auth $auth,
@@ -67,6 +71,12 @@ final class DisksController extends Controller
                 (string) $this->request->query('search', '')
             );
 
+        $tagId =
+            max(
+                0,
+                (int) $this->request->query('tag', 0)
+            );
+
 
 
         $sort =
@@ -91,7 +101,14 @@ final class DisksController extends Controller
 
 
         $total =
-            $this->files->countDisks($search);
+            $tagId > 0
+                ? $this->files->countDisksByTag(
+                    $tagId,
+                    $search
+                )
+                : $this->files->countDisks(
+                    $search
+                );
 
 
 
@@ -107,22 +124,55 @@ final class DisksController extends Controller
 
 
 
-        $disks =
-            $search === ''
+        if ($tagId > 0) {
 
-                ? $this->files->findAllDisks(
-                    $sort,
-                    $perPage,
-                    $offset
-                )
+            $disks =
+                $search === ''
 
-                : $this->files->searchDisks(
-                    $search,
-                    $sort,
-                    $perPage,
-                    $offset
+                    ? $this->files->findAllDisksByTag(
+                        $tagId,
+                        $sort,
+                        $perPage,
+                        $offset
+                    )
+
+                    : $this->files->searchDisksByTag(
+                        $tagId,
+                        $search,
+                        $sort,
+                        $perPage,
+                        $offset
+                    );
+
+        } else {
+
+            $disks =
+                $search === ''
+
+                    ? $this->files->findAllDisks(
+                        $sort,
+                        $perPage,
+                        $offset
+                    )
+
+                    : $this->files->searchDisks(
+                        $search,
+                        $sort,
+                        $perPage,
+                        $offset
+                    );
+        }
+
+
+
+        $diskTags = [];
+
+        foreach ($disks as $disk) {
+            $diskTags[$disk->getId()] =
+                $this->diskTags->findByDiskId(
+                    $disk->getId()
                 );
-
+        }
 
 
         $this->view->render(
@@ -136,9 +186,19 @@ final class DisksController extends Controller
                 'disks' =>
                     $disks,
 
+                'diskTags' =>
+                    $diskTags,
+
+                'allTags' =>
+                    $this->tags->findAll(),
+
 
                 'search' =>
                     $search,
+
+
+                'tagId' =>
+                    $tagId,
 
 
                 'sort' =>

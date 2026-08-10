@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 return [
 
+    'archive' => 'Arkiv',
     'dashboard' => 'Dashboard',
     'disks' => 'Diskar',
     'search' => 'Sök',
@@ -194,6 +195,7 @@ return [
     'user' => 'Användare',
     'format' => 'Format',
     'release' => 'Release',
+    'releases' => 'Releaser',
     'files_imported' => 'Antal filer',
     'message' => 'Meddelande',
     'guest' => 'Gäst',
@@ -204,6 +206,12 @@ return [
 
     'c64_import' => 'C64 Import',
     'entry' => 'Post',
+    'entries' => 'Poster',
+    'year' => 'År',
+    'no_entries_found' => 'Inga poster hittades.',
+    'entry_id' => 'Post-ID',
+    'release_count' => 'Antal releaser',
+    'unique_disk_images' => 'Unika diskbilder',
     'create_automatically' => '-- Skapa automatiskt --',
     'comment_optional' => 'Kommentar (valfritt)',
     'comment_placeholder' => 'T.ex. Mitt original från barndomen 1987',
@@ -377,4 +385,7 @@ return [
 
     'maintenance_title' => 'Underhållsarbete pågår',
     'maintenance_message' => 'Systemet är tillfälligt stängt för underhåll. Endast Super-admin kan logga in.',
+
+    'edit_comment' => 'Redigera kommentar',
+
 ];
