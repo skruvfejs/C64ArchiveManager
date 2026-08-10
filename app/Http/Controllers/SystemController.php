@@ -473,6 +473,11 @@ final class SystemController extends Controller
                 ->getFileIntegrity();
 
 
+        $databaseFileIntegrity =
+            $this->maintenanceService
+                ->getDatabaseFileIntegrity();
+
+
         $this->view->render(
             'system/maintenance',
             [
@@ -487,6 +492,9 @@ final class SystemController extends Controller
 
                 'fileIntegrity' =>
                     $fileIntegrity,
+
+                'databaseFileIntegrity' =>
+                    $databaseFileIntegrity,
             ]
         );
     }

@@ -31,7 +31,8 @@ final class MaintenanceService
 
 
         return [
-            'directory' => $directory,
+            'directory' =>
+                $directory,
 
             'exists' =>
                 $exists,
@@ -224,6 +225,153 @@ final class MaintenanceService
 
             'orphanFiles' =>
                 $orphanFiles,
+        ];
+    }
+
+
+    /**
+     * Kontrollera sökväg och filstorlek för
+     * registrerade filer i databasen.
+     *
+     * @return array<string,mixed>
+     */
+    public function getDatabaseFileIntegrity(): array
+    {
+        $databaseFiles =
+            $this->files->findAllDisks(
+                'id',
+                PHP_INT_MAX,
+                0
+            );
+
+
+        $validPathCount = 0;
+        $missingPathCount = 0;
+        $sizeMismatchCount = 0;
+
+
+        $missingPaths = [];
+        $sizeMismatches = [];
+
+
+        foreach ($databaseFiles as $databaseFile) {
+
+            $path =
+                $databaseFile->getPath();
+
+
+            if (
+                $path === null ||
+                $path === '' ||
+                !is_file($path)
+            ) {
+
+                $missingPathCount++;
+
+
+                $missingPaths[] = [
+                    'id' =>
+                        $databaseFile->getId(),
+
+                    'filename' =>
+                        $databaseFile->getFilename(),
+
+                    'path' =>
+                        $path ?? '',
+                ];
+
+
+                continue;
+            }
+
+
+            $validPathCount++;
+
+
+            $actualSize =
+                filesize($path);
+
+
+            $databaseSize =
+                $databaseFile->getSize();
+
+
+            /*
+             * P00-filer innehåller en 26 byte lång
+             * header före den extraherade PRG-datan.
+             *
+             * Databasens size avser PRG-datan,
+             * medan filesize() avser hela P00-filen.
+             */
+            $extension =
+                strtolower(
+                    pathinfo(
+                        $path,
+                        PATHINFO_EXTENSION
+                    )
+                );
+
+
+            if (
+                $extension === 'p00' &&
+                $actualSize !== false
+            ) {
+
+                if ($actualSize >= 26) {
+                    $actualSize -= 26;
+                }
+            }
+
+
+            if (
+                $actualSize === false ||
+                (int) $actualSize !==
+                (int) $databaseSize
+            ) {
+
+                $sizeMismatchCount++;
+
+
+                $sizeMismatches[] = [
+                    'id' =>
+                        $databaseFile->getId(),
+
+                    'filename' =>
+                        $databaseFile->getFilename(),
+
+                    'path' =>
+                        $path,
+
+                    'databaseSize' =>
+                        (int) $databaseSize,
+
+                    'actualSize' =>
+                        $actualSize === false
+                            ? null
+                            : (int) $actualSize,
+                ];
+            }
+        }
+
+
+        return [
+            'registeredCount' =>
+                count($databaseFiles),
+
+            'validPathCount' =>
+                $validPathCount,
+
+            'missingPathCount' =>
+                $missingPathCount,
+
+            'sizeMismatchCount' =>
+                $sizeMismatchCount,
+
+            'missingPaths' =>
+                $missingPaths,
+
+            'sizeMismatches' =>
+                $sizeMismatches,
         ];
     }
 }

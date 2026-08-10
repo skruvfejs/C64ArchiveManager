@@ -218,3 +218,161 @@ declare(strict_types=1);
     </ul>
 
 <?php endif; ?>
+
+
+<h2>Databasfilkontroll</h2>
+
+<table>
+    <tr>
+        <th>Status</th>
+        <td>
+            <?php if (
+                $databaseFileIntegrity['missingPathCount'] === 0 &&
+                $databaseFileIntegrity['sizeMismatchCount'] === 0
+            ): ?>
+                OK
+            <?php else: ?>
+                VARNING
+            <?php endif; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Registrerade filer</th>
+        <td>
+            <?= htmlspecialchars(
+                (string) $databaseFileIntegrity['registeredCount']
+            ) ?>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Giltig fysisk sökväg</th>
+        <td>
+            <?= htmlspecialchars(
+                (string) $databaseFileIntegrity['validPathCount']
+            ) ?>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Saknad fysisk fil</th>
+        <td>
+            <?= htmlspecialchars(
+                (string) $databaseFileIntegrity['missingPathCount']
+            ) ?>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Storleksfel</th>
+        <td>
+            <?= htmlspecialchars(
+                (string) $databaseFileIntegrity['sizeMismatchCount']
+            ) ?>
+        </td>
+    </tr>
+</table>
+
+
+<?php if (
+    $databaseFileIntegrity['missingPathCount'] > 0
+): ?>
+
+    <h3>Saknade fysiska filer</h3>
+
+    <ul>
+        <?php foreach (
+            $databaseFileIntegrity['missingPaths']
+            as $file
+        ): ?>
+
+            <li>
+                <?= htmlspecialchars(
+                    $file['filename']
+                ) ?>
+
+                —
+                <?= htmlspecialchars(
+                    $file['path']
+                ) ?>
+            </li>
+
+        <?php endforeach; ?>
+    </ul>
+
+<?php endif; ?>
+
+
+<?php if (
+    $databaseFileIntegrity['sizeMismatchCount'] > 0
+): ?>
+
+    <h3>Storleksfel</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fil</th>
+                <th>Databas</th>
+                <th>Fysisk</th>
+                <th>Diff</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <?php foreach (
+                $databaseFileIntegrity['sizeMismatches']
+                as $file
+            ): ?>
+
+                <?php
+                $difference =
+                    (int) $file['actualSize']
+                    -
+                    (int) $file['databaseSize'];
+                ?>
+
+                <tr>
+                    <td>
+                        <?= htmlspecialchars(
+                            (string) $file['id']
+                        ) ?>
+                    </td>
+
+                    <td>
+                        <?= htmlspecialchars(
+                            $file['filename']
+                        ) ?>
+                    </td>
+
+                    <td>
+                        <?= htmlspecialchars(
+                            (string) $file['databaseSize']
+                        ) ?>
+                        byte
+                    </td>
+
+                    <td>
+                        <?= htmlspecialchars(
+                            (string) $file['actualSize']
+                        ) ?>
+                        byte
+                    </td>
+
+                    <td>
+                        <?= $difference >= 0 ? '+' : '' ?><?= htmlspecialchars(
+                            (string) $difference
+                        ) ?>
+                        byte
+                    </td>
+                </tr>
+
+            <?php endforeach; ?>
+
+        </tbody>
+    </table>
+
+<?php endif; ?>
