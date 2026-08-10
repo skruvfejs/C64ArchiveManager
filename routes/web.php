@@ -38,6 +38,7 @@ use App\Http\Middleware\ManageUsersMiddleware;
 use App\Http\Middleware\ImportMiddleware;
 use App\Http\Middleware\ViewLogsMiddleware;
 use App\Http\Middleware\ManageSystemMiddleware;
+use App\Http\Middleware\MaintenanceMiddleware;
 
 
 return function (Router $router): void {
@@ -48,6 +49,9 @@ return function (Router $router): void {
         [
             HomeController::class,
             'index'
+        ],
+        [
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -77,6 +81,9 @@ return function (Router $router): void {
         [
             RegisterController::class,
             'index'
+        ],
+        [
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -86,6 +93,9 @@ return function (Router $router): void {
         [
             RegisterController::class,
             'register'
+        ],
+        [
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -135,6 +145,7 @@ return function (Router $router): void {
         ],
         [
             AuthMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -147,6 +158,7 @@ return function (Router $router): void {
         ],
         [
             AuthMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -159,6 +171,7 @@ return function (Router $router): void {
         ],
         [
             AuthMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -171,6 +184,7 @@ return function (Router $router): void {
         ],
         [
             AuthMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -188,6 +202,7 @@ $router->get(
     ],
     [
         ManageUsersMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -204,6 +219,7 @@ $router->get(
     ],
     [
         ManageSystemMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -216,6 +232,7 @@ $router->post(
     ],
     [
         ManageSystemMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -228,6 +245,7 @@ $router->post(
     ],
     [
         ManageSystemMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -240,6 +258,7 @@ $router->post(
     ],
     [
         ManageSystemMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -252,6 +271,7 @@ $router->get(
     ],
     [
         ManageSystemMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -264,6 +284,7 @@ $router->post(
     ],
     [
         ManageSystemMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -276,6 +297,7 @@ $router->post(
     ],
     [
         ManageSystemMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -289,6 +311,7 @@ $router->get(
     ],
     [
         ManageSystemMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -301,6 +324,7 @@ $router->post(
     ],
     [
         ManageSystemMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -313,6 +337,7 @@ $router->get(
     ],
     [
         ManageSystemMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -324,6 +349,7 @@ $router->post(
     ],
     [
         ManageSystemMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -336,6 +362,7 @@ $router->get(
     ],
     [
         ManageSystemMiddleware::class,
+        MaintenanceMiddleware::class,
     ]
 );
 
@@ -353,6 +380,7 @@ $router->get(
         ],
         [
             ManageUsersMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -365,6 +393,7 @@ $router->get(
         ],
         [
             ManageUsersMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -377,6 +406,7 @@ $router->get(
         ],
         [
             ManageUsersMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -388,6 +418,7 @@ $router->get(
         ],
         [
             ManageUsersMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -400,6 +431,7 @@ $router->get(
         ],
         [
             ManageUsersMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -413,6 +445,7 @@ $router->get(
         ],
         [
             ManageUsersMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -431,6 +464,7 @@ $router->get(
         ],
         [
             ManageUsersMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -443,6 +477,7 @@ $router->get(
         ],
         [
             ManageUsersMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -461,6 +496,7 @@ $router->get(
         ],
         [
             ManageUsersMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -479,6 +515,7 @@ $router->get(
         ],
         [
             AuthMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -491,6 +528,7 @@ $router->get(
         ],
         [
             AuthMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -503,6 +541,7 @@ $router->get(
         ],
         [
             AuthMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -515,6 +554,7 @@ $router->get(
         ],
         [
             AuthMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -527,6 +567,7 @@ $router->get(
         ],
         [
             AuthMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -544,6 +585,7 @@ $router->get(
         [
             AuthMiddleware::class,
             ImportMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -557,6 +599,7 @@ $router->get(
         [
             AuthMiddleware::class,
             ImportMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -570,6 +613,7 @@ $router->get(
         [
             AuthMiddleware::class,
             ImportMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -583,6 +627,7 @@ $router->get(
         [
             AuthMiddleware::class,
             ViewLogsMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -595,6 +640,7 @@ $router->get(
         ],
         [
             AuthMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 
@@ -607,6 +653,7 @@ $router->get(
         ],
         [
             AuthMiddleware::class,
+            MaintenanceMiddleware::class,
         ]
     );
 };

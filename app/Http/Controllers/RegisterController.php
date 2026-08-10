@@ -7,16 +7,19 @@ namespace App\Http\Controllers;
 use App\Core\Auth;
 use App\Core\View;
 use App\Services\RegistrationService;
+use App\Services\SettingsService;
 use RuntimeException;
 
 final class RegisterController extends Controller
 {
     public function __construct(
         private readonly RegistrationService $registration,
+        private readonly SettingsService $settingsService,
         private readonly Auth $auth,
         private readonly View $view
     ) {
     }
+
 
     public function index(): void
     {
@@ -26,13 +29,40 @@ final class RegisterController extends Controller
             exit;
         }
 
+
+        if (
+            $this->settingsService->get(
+                'registration_enabled',
+                '0'
+            ) !== '1'
+        ) {
+
+            http_response_code(403);
+
+            $this->view->render(
+                'auth/register',
+                [
+                    'title' =>
+                        'Registrering avstängd',
+
+                    'error' =>
+                        'Registrering av nya användare är för närvarande avstängd.'
+                ]
+            );
+
+            return;
+        }
+
+
         $this->view->render(
             'auth/register',
             [
-                'title' => 'Registrera användare',
+                'title' =>
+                    'Registrera användare',
             ]
         );
     }
+
 
     public function register(): void
     {
@@ -42,24 +72,54 @@ final class RegisterController extends Controller
             exit;
         }
 
+
+        if (
+            $this->settingsService->get(
+                'registration_enabled',
+                '0'
+            ) !== '1'
+        ) {
+
+            http_response_code(403);
+
+            $this->view->render(
+                'auth/register',
+                [
+                    'title' =>
+                        'Registrering avstängd',
+
+                    'error' =>
+                        'Registrering av nya användare är för närvarande avstängd.'
+                ]
+            );
+
+            return;
+        }
+
+
         $username = trim(
             $_POST['username'] ?? ''
         );
+
 
         $email = trim(
             $_POST['email'] ?? ''
         );
 
+
         $password =
             $_POST['password'] ?? '';
+
 
         $firstName = trim(
             $_POST['first_name'] ?? ''
         );
 
+
         $lastName = trim(
             $_POST['last_name'] ?? ''
         );
+
 
         try {
 
@@ -75,14 +135,18 @@ final class RegisterController extends Controller
                     : null
             );
 
+
             $this->view->render(
                 'auth/register',
                 [
-                    'title'   => 'Registrera användare',
+                    'title' =>
+                        'Registrera användare',
+
                     'success' =>
                         'Kontot har skapats. En administratör måste tilldela en roll innan kontot kan användas.',
                 ]
             );
+
 
             return;
 
@@ -92,9 +156,11 @@ final class RegisterController extends Controller
                 $exception->getMessage()
             );
 
+
             return;
         }
     }
+
 
     private function showError(
         string $message
@@ -103,10 +169,12 @@ final class RegisterController extends Controller
         $this->view->render(
             'auth/register',
             [
-                'title' => 'Registrera användare',
-                'error' => $message,
+                'title' =>
+                    'Registrera användare',
+
+                'error' =>
+                    $message,
             ]
         );
     }
 }
-

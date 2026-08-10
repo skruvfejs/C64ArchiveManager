@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core;
 
 use App\Http\Request;
+use App\Http\Middleware\MaintenanceMiddleware;
 use App\Repositories\AuditLogRepository;
 use App\Repositories\ReleaseFileRepository;
 use App\Repositories\RoleRepository;
@@ -189,6 +190,10 @@ final class Application
         );
 
 
+        /*
+         * Language
+         */
+
         $this->container->singleton(
             LanguageService::class,
             fn (Container $c) => new LanguageService(
@@ -199,6 +204,10 @@ final class Application
             )
         );
 
+
+        /*
+         * View
+         */
 
         $this->container->singleton(
             View::class,
@@ -254,6 +263,21 @@ final class Application
 
                 return $view;
             }
+        );
+
+
+        /*
+         * Maintenance middleware
+         */
+
+        $this->container->singleton(
+            MaintenanceMiddleware::class,
+            fn (Container $c) =>
+                new MaintenanceMiddleware(
+                    $c->get(SettingsService::class),
+                    $c->get(Authorization::class),
+                    $c->get(View::class)
+                )
         );
 
 

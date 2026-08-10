@@ -354,4 +354,7 @@ return [
     'used_space' => 'Använt utrymme',
     'total_space' => 'Totalt utrymme',
     'free_space' => 'Ledigt utrymme',
+
+    'maintenance_title' => 'Underhållsarbete pågår',
+    'maintenance_message' => 'Systemet är tillfälligt stängt för underhåll. Endast Super-admin kan logga in.',
 ];

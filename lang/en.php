@@ -331,4 +331,7 @@ return [
     'tables' => 'Tables',
     'storage' => 'Storage',
     'imported_files' => 'Imported files',
+
+    'maintenance_title' => 'Maintenance in progress',
+    'maintenance_message' => 'The system is temporarily closed for maintenance. Only Super Admin can log in.',
 ];

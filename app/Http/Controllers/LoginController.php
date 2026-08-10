@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Core\Auth;
+use App\Core\Authorization;
 use App\Core\View;
 use App\Entity\User;
+use App\Services\SettingsService;
 use App\Services\UserService;
 
 final class LoginController extends Controller
@@ -21,10 +23,13 @@ final class LoginController extends Controller
 
     public function __construct(
         private readonly UserService $users,
+        private readonly SettingsService $settingsService,
+        private readonly Authorization $authorization,
         private readonly Auth $auth,
         private readonly View $view
     ) {
     }
+
 
     public function index(): void
     {
@@ -34,6 +39,7 @@ final class LoginController extends Controller
             exit;
         }
 
+
         $this->view->render(
             'auth/login',
             [
@@ -42,14 +48,17 @@ final class LoginController extends Controller
         );
     }
 
+
     public function login(): void
     {
         $username = trim(
             $_POST['username'] ?? ''
         );
 
+
         $password =
             $_POST['password'] ?? '';
+
 
         if (
             $username === ''
@@ -63,11 +72,13 @@ final class LoginController extends Controller
             return;
         }
 
+
         $user =
             $this->users
                 ->findByUsername(
                     $username
                 );
+
 
         if (
             $user === null
@@ -84,6 +95,7 @@ final class LoginController extends Controller
             return;
         }
 
+
         /*
          * Pending-användare får inte logga in.
          */
@@ -98,6 +110,31 @@ final class LoginController extends Controller
             return;
         }
 
+
+        /*
+         * Underhållsläge.
+         *
+         * När underhållsläget är aktivt får endast
+         * Super-admin logga in.
+         */
+        if (
+            $this->settingsService->get(
+                'maintenance_mode',
+                '0'
+            ) === '1'
+            && !$this->isSuperAdmin(
+                $user->getRoleId()
+            )
+        ) {
+
+            $this->showError(
+                'Systemet är för närvarande i underhållsläge. Endast Super-admin kan logga in.'
+            );
+
+            return;
+        }
+
+
         $this->auth->login([
             'id'         => $user->getId(),
             'role_id'    => $user->getRoleId(),
@@ -107,13 +144,24 @@ final class LoginController extends Controller
             'last_name'  => $user->getLastName(),
         ]);
 
+
         $this->users->updateLastLogin(
             $user->getId()
         );
 
+
         header('Location: /');
         exit;
     }
+
+
+    private function isSuperAdmin(
+        int $roleId
+    ): bool {
+
+        return $roleId === 1;
+    }
+
 
     private function verifyPassword(
         User $user,
@@ -125,6 +173,7 @@ final class LoginController extends Controller
             $user->getPassword()
         );
     }
+
 
     private function showError(
         string $message
@@ -139,4 +188,3 @@ final class LoginController extends Controller
         );
     }
 }
-
