@@ -72,23 +72,6 @@
 
         <h2>
             <?= htmlspecialchars(
-                $language->get('api')
-            ) ?>
-        </h2>
-
-        <p>
-            <?= htmlspecialchars(
-                $language->get('api_description')
-            ) ?>
-        </p>
-
-    </div>
-
-
-    <div class="system-card">
-
-        <h2>
-            <?= htmlspecialchars(
                 $language->get('system_information')
             ) ?>
         </h2>

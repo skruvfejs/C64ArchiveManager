@@ -459,17 +459,6 @@ final class SystemController extends Controller
     }
 
 
-    public function api(): void
-    {
-        $this->view->render(
-            'system/api',
-            [
-                'title' => 'API',
-            ]
-        );
-    }
-
-
     public function information(): void
     {
         $config = new Config(

@@ -36,6 +36,5 @@ final class Permission
      * Future
      */
     public const MANAGE_PLUGINS = 'manage_plugins';
-    public const MANAGE_API = 'manage_api';
 }
 

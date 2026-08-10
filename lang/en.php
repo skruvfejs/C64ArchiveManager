@@ -26,7 +26,6 @@ return [
     'database' => 'Database',
     'settings' => 'Settings',
     'maintenance' => 'Maintenance',
-    'api' => 'API',
     'system_information' => 'System information',
 
     'save' => 'Save',
@@ -67,9 +66,6 @@ return [
 
     'maintenance_description' =>
         'Verification, cleanup and maintenance.',
-
-    'api_description' =>
-        'API configuration and integrations.',
 
     'system_information_description' =>
         'Version, PHP, database and statistics.',

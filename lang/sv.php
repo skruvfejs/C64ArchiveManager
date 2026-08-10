@@ -26,7 +26,6 @@ return [
     'database' => 'Databas',
     'settings' => 'Inställningar',
     'maintenance' => 'Underhåll',
-    'api' => 'API',
     'system_information' => 'Systeminformation',
 
     'save' => 'Spara',
@@ -67,9 +66,6 @@ return [
 
     'maintenance_description' =>
         'Verifiering, rensning och underhåll.',
-
-    'api_description' =>
-        'API-konfiguration och integrationer.',
 
     'system_information_description' =>
         'Version, PHP, databas och statistik.',

@@ -318,18 +318,6 @@ $router->get(
 
 
 $router->get(
-    '/administration/system/api',
-    [
-        SystemController::class,
-        'api'
-    ],
-    [
-        ManageSystemMiddleware::class,
-    ]
-);
-
-
-$router->get(
     '/administration/system/information',
     [
         SystemController::class,
