@@ -60,17 +60,28 @@ final class UserService
     /**
      * @return User[]
      */
-    public function findActive(): array
+    public function findActive(
+        int $limit = 50,
+        int $offset = 0
+    ): array
     {
         return $this->repository
-                    ->findActive();
+                    ->findActive(
+                        $limit,
+                        $offset
+                    );
     }
 
 
 
-    /**
-     * @return User[]
-     */
+    public function countActive(): int
+    {
+        return $this->repository
+                    ->countActive();
+    }
+
+
+
     public function findDeleted(): array
     {
         return $this->repository

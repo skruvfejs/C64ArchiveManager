@@ -180,7 +180,10 @@ final class UserRepository extends Repository
     /**
      * @return User[]
      */
-    public function findActive(): array
+    public function findActive(
+        int $limit = 50,
+        int $offset = 0
+    ): array
     {
         $stmt = $this->prepare(
             '
@@ -188,18 +191,56 @@ final class UserRepository extends Repository
             FROM users
             WHERE deleted_at IS NULL
             ORDER BY username
+            LIMIT :limit
+            OFFSET :offset
             '
+        );
+
+        $stmt->bindValue(
+            ':limit',
+            $limit,
+            \PDO::PARAM_INT
+        );
+
+        $stmt->bindValue(
+            ':offset',
+            $offset,
+            \PDO::PARAM_INT
         );
 
         $stmt->execute();
 
         return array_map(
-
             fn(array $row): User =>
                 $this->hydrate($row),
 
             $this->fetchAll($stmt)
 
+        );
+    }
+
+
+
+    /**
+     * Count active users.
+     */
+    public function countActive(): int
+    {
+        $stmt = $this->prepare(
+            '
+            SELECT COUNT(*) AS total
+            FROM users
+            WHERE deleted_at IS NULL
+            '
+        );
+
+        $stmt->execute();
+
+        $row =
+            $this->fetchOne($stmt);
+
+        return (int) (
+            $row['total'] ?? 0
         );
     }
 

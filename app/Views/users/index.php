@@ -45,6 +45,38 @@
 <?php else: ?>
 
 
+<?php if (($total ?? 0) > 0): ?>
+
+<p>
+
+    <?= htmlspecialchars(
+        $language->get('showing')
+    ) ?>
+
+    <?= (($page ?? 1) - 1) * ($perPage ?? 25) + 1 ?>
+
+    -
+
+    <?= min(
+        ($page ?? 1) * ($perPage ?? 25),
+        $total
+    ) ?>
+
+    <?= htmlspecialchars(
+        $language->get('of')
+    ) ?>
+
+    <?= $total ?>
+
+    <?= htmlspecialchars(
+        $language->get('users')
+    ) ?>
+
+</p>
+
+<?php endif; ?>
+
+
 <table border="1" cellpadding="5" cellspacing="0">
 
     <thead>
@@ -243,5 +275,65 @@
 
 </table>
 
+
+<?php endif; ?>
+
+
+<?php if (($pages ?? 1) > 1): ?>
+
+<p>
+
+
+<?php if (($page ?? 1) > 1): ?>
+
+<a href="/users?page=<?= $page - 1 ?>">
+
+    <?= htmlspecialchars(
+        $language->get('previous')
+    ) ?>
+
+</a>
+
+<?php endif; ?>
+
+
+<?php for ($i = 1; $i <= $pages; $i++): ?>
+
+<?php if ($i === ($page ?? 1)): ?>
+
+<strong>
+
+    <?= $i ?>
+
+</strong>
+
+<?php else: ?>
+
+<a href="/users?page=<?= $i ?>">
+
+    <?= $i ?>
+
+</a>
+
+<?php endif; ?>
+
+
+<?php endfor; ?>
+
+
+<?php if (($page ?? 1) < $pages): ?>
+
+<a href="/users?page=<?= $page + 1 ?>">
+
+    <?= htmlspecialchars(
+        $language->get('next')
+    ) ?>
+
+</a>
+
+<?php endif; ?>
+
+
+</p>
 
 <?php endif; ?>

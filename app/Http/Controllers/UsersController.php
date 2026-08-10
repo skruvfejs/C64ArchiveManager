@@ -7,7 +7,9 @@ namespace App\Http\Controllers;
 use App\Core\Auth;
 use App\Core\Authorization;
 use App\Core\View;
+use App\Http\Request;
 use App\Services\RoleService;
+use App\Services\SettingsService;
 use App\Services\UserService;
 
 final class UsersController extends Controller
@@ -17,7 +19,9 @@ final class UsersController extends Controller
         private readonly RoleService $roles,
         private readonly Authorization $authorization,
         private readonly Auth $auth,
-        private readonly View $view
+        private readonly View $view,
+        private readonly Request $request,
+        private readonly SettingsService $settings
     ) {
     }
 
@@ -32,6 +36,41 @@ final class UsersController extends Controller
         }
 
 
+        $page =
+            max(
+                1,
+                (int) $this->request->query('page', 1)
+            );
+
+
+        $perPage =
+            (int) $this->settings->get(
+                'items_per_page',
+                '25'
+            );
+
+
+        $total =
+            $this->users->countActive();
+
+
+        $pages =
+            (int) ceil(
+                $total / $perPage
+            );
+
+
+        $offset =
+            ($page - 1) * $perPage;
+
+
+        $users =
+            $this->users->findActive(
+                $perPage,
+                $offset
+            );
+
+
         $this->view->render(
             'users/index',
             [
@@ -43,7 +82,19 @@ final class UsersController extends Controller
                  * under separat vy senare.
                  */
                 'users' =>
-                    $this->users->findActive(),
+                    $users,
+
+                'page' =>
+                    $page,
+
+                'pages' =>
+                    $pages,
+
+                'total' =>
+                    $total,
+
+                'perPage' =>
+                    $perPage,
 
                 'roles' =>
                     $this->roles->findAll(),
