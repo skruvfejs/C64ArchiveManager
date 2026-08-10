@@ -30,6 +30,7 @@ final class Authorization
 
             Permission::MANAGE_USERS,
             Permission::MANAGE_ROLES,
+            Permission::MANAGE_TAGS,
             Permission::MANAGE_IMPORTS,
 
             Permission::VIEW_LOGS,

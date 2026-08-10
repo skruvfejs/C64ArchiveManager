@@ -10,6 +10,8 @@ use App\Repositories\ReleaseRepository;
 use App\Repositories\ReleaseFileRepository;
 use App\Repositories\EntryRepository;
 use App\Repositories\DirectoryEntryRepository;
+use App\Repositories\ReleaseTagRepository;
+use App\Repositories\TagRepository;
 
 final class ReleaseController extends Controller
 {
@@ -18,6 +20,8 @@ final class ReleaseController extends Controller
         private ReleaseFileRepository $files,
         private EntryRepository $entries,
         private DirectoryEntryRepository $directories,
+        private ReleaseTagRepository $releaseTags,
+        private TagRepository $tags,
         private Request $request,
         private View $view
     ) {
@@ -51,6 +55,22 @@ final class ReleaseController extends Controller
             echo 'Release not found';
 
             return;
+        }
+
+
+        $releaseTagRelations =
+            $this->releaseTags->findByReleaseId($id);
+
+        $releaseTags = [];
+
+        foreach ($releaseTagRelations as $releaseTag) {
+            $tag = $this->tags->findById(
+                $releaseTag->getTagId()
+            );
+
+            if ($tag !== null) {
+                $releaseTags[] = $tag;
+            }
         }
 
 
@@ -158,6 +178,12 @@ final class ReleaseController extends Controller
 
                 'entry' =>
                     $entry,
+
+                'releaseTags' =>
+                    $releaseTags,
+
+                'allTags' =>
+                    $this->tags->findAll(),
 
                 'files' =>
                     $fileData

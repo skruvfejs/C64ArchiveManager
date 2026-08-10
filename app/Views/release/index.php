@@ -28,6 +28,112 @@
 </p>
 
 
+<h3>
+    <?= htmlspecialchars($language->get('tags')) ?>
+</h3>
+
+<?php if (!empty($releaseTags)): ?>
+
+<div>
+    <?php foreach ($releaseTags as $index => $tag): ?>
+        <span style="white-space: nowrap;">
+            <?= htmlspecialchars($tag->getName()) ?>
+            <form
+                method="post"
+                action="/release/tags/remove"
+                style="display:inline-block !important; margin:0 !important; padding:0 !important;"
+            >
+                <input
+                    type="hidden"
+                    name="release_id"
+                    value="<?= (int) $release->getId() ?>"
+                >
+                <input
+                    type="hidden"
+                    name="tag_id"
+                    value="<?= (int) $tag->getId() ?>"
+                >
+                <button
+                    type="submit"
+                    style="display:inline !important; background:none; border:0; padding:0; margin:0; color:inherit; font:inherit; cursor:pointer;"
+                ><span style="color:#ff0000;">[x]</span></button>
+            </form><?php if ($index < count($releaseTags) - 1): ?>, <?php endif; ?>
+        </span>
+    <?php endforeach; ?>
+</div>
+
+<?php else: ?>
+
+<p>
+    <?= htmlspecialchars($language->get('no_tags')) ?>
+</p>
+
+<?php endif; ?>
+
+
+<?php
+$releaseTagIds = [];
+
+foreach ($releaseTags as $releaseTag) {
+    $releaseTagIds[] = $releaseTag->getId();
+}
+?>
+
+
+<?php if (!empty($allTags)): ?>
+
+<form
+    method="post"
+    action="/release/tags/add"
+>
+
+    <input
+        type="hidden"
+        name="release_id"
+        value="<?= (int) $release->getId() ?>"
+    >
+
+    <select name="tag_id" required>
+
+        <option value="">
+            <?= htmlspecialchars(
+                $language->get('select_tag')
+            ) ?>
+        </option>
+
+        <?php foreach ($allTags as $tag): ?>
+
+            <?php if (!in_array(
+                $tag->getId(),
+                $releaseTagIds,
+                true
+            )): ?>
+
+                <option
+                    value="<?= (int) $tag->getId() ?>"
+                >
+                    <?= htmlspecialchars(
+                        $tag->getName()
+                    ) ?>
+                </option>
+
+            <?php endif; ?>
+
+        <?php endforeach; ?>
+
+    </select>
+
+    <button type="submit">
+        <?= htmlspecialchars(
+            $language->get('add_tag')
+        ) ?>
+    </button>
+
+</form>
+
+<?php endif; ?>
+
+
 <?php if ($entry !== null): ?>
 
 <p>
@@ -179,7 +285,7 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
 
                 <?= htmlspecialchars(
                     $language->get('release_id')
-                ?>:
+                ) ?>:
 
                 <a href="/release?id=<?= $duplicate['release']->getId() ?>">
                     <?= $duplicate['release']->getId() ?>

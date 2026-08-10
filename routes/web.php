@@ -30,7 +30,9 @@ use App\Http\Controllers\ImportLogController;
 
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ReleaseController;
+use App\Http\Controllers\ReleaseTagController;
 use App\Http\Controllers\AdministrationController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\SystemController;
 
 use App\Http\Middleware\AuthMiddleware;
@@ -38,6 +40,7 @@ use App\Http\Middleware\ManageUsersMiddleware;
 use App\Http\Middleware\ImportMiddleware;
 use App\Http\Middleware\ViewLogsMiddleware;
 use App\Http\Middleware\ManageSystemMiddleware;
+use App\Http\Middleware\ManageTagsMiddleware;
 use App\Http\Middleware\MaintenanceMiddleware;
 
 
@@ -202,6 +205,92 @@ $router->get(
     ],
     [
         ManageUsersMiddleware::class,
+        MaintenanceMiddleware::class,
+    ]
+);
+
+
+/*
+ * Tag administration
+ */
+
+$router->get(
+    '/administration/tags',
+    [
+        TagController::class,
+        'index'
+    ],
+    [
+        ManageTagsMiddleware::class,
+        MaintenanceMiddleware::class,
+    ]
+);
+
+
+/*
+ * System administration
+ */
+
+$router->get(
+    '/administration/tags/edit',
+    [
+        TagController::class,
+        'editForm'
+    ],
+    [
+        ManageTagsMiddleware::class,
+        MaintenanceMiddleware::class,
+    ]
+);
+
+
+$router->post(
+    '/administration/tags/edit',
+    [
+        TagController::class,
+        'update'
+    ],
+    [
+        ManageTagsMiddleware::class,
+        MaintenanceMiddleware::class,
+    ]
+);
+
+
+$router->post(
+    '/administration/tags/delete',
+    [
+        TagController::class,
+        'delete'
+    ],
+    [
+        ManageTagsMiddleware::class,
+        MaintenanceMiddleware::class,
+    ]
+);
+
+
+$router->get(
+    '/administration/tags/create',
+    [
+        TagController::class,
+        'createForm'
+    ],
+    [
+        ManageTagsMiddleware::class,
+        MaintenanceMiddleware::class,
+    ]
+);
+
+
+$router->post(
+    '/administration/tags/create',
+    [
+        TagController::class,
+        'create'
+    ],
+    [
+        ManageTagsMiddleware::class,
         MaintenanceMiddleware::class,
     ]
 );
@@ -653,6 +742,32 @@ $router->get(
         ],
         [
             AuthMiddleware::class,
+            MaintenanceMiddleware::class,
+        ]
+    );
+
+
+    $router->post(
+        '/release/tags/add',
+        [
+            ReleaseTagController::class,
+            'add'
+        ],
+        [
+            ManageTagsMiddleware::class,
+            MaintenanceMiddleware::class,
+        ]
+    );
+
+
+    $router->post(
+        '/release/tags/remove',
+        [
+            ReleaseTagController::class,
+            'remove'
+        ],
+        [
+            ManageTagsMiddleware::class,
             MaintenanceMiddleware::class,
         ]
     );

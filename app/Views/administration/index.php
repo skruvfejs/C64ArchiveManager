@@ -48,6 +48,41 @@ declare(strict_types=1);
 
 <?php if (
     $authorization->can(
+        \App\Core\Permission::MANAGE_TAGS
+    )
+): ?>
+
+<h2>
+    <?= htmlspecialchars(
+        $language->get('tags')
+    ) ?>
+</h2>
+
+
+<p>
+    <?= htmlspecialchars(
+        $language->get('tags_description')
+    ) ?>
+</p>
+
+
+<p>
+    <a href="/administration/tags">
+        <?= htmlspecialchars(
+            $language->get('tags')
+        ) ?>
+    </a>
+</p>
+
+
+<?php endif; ?>
+
+
+<hr>
+
+
+<?php if (
+    $authorization->can(
         \App\Core\Permission::MANAGE_SYSTEM
     )
 ): ?>

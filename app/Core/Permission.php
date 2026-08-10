@@ -28,6 +28,7 @@ final class Permission
      */
     public const MANAGE_USERS = 'manage_users';
     public const MANAGE_ROLES = 'manage_roles';
+    public const MANAGE_TAGS = 'manage_tags';
     public const MANAGE_SYSTEM = 'manage_system';
     public const MANAGE_IMPORTS = 'manage_imports';
     public const VIEW_LOGS = 'view_logs';
