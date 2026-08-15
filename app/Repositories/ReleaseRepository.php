@@ -250,39 +250,68 @@ final class ReleaseRepository extends Repository
         ]);
     }
 
+public function countByEntry(
+    int $entryId
+): int {
+    $stmt = $this->prepare(
+        '
+        SELECT COUNT(*)
+        FROM releases
+        WHERE entry_id = :entry_id
+        '
+    );
 
-    public function findByEntry(
-        int $entryId
-    ): array {
+    $stmt->execute([
+        'entry_id' =>
+            $entryId
+    ]);
 
-        $stmt = $this->prepare(
-            '
-            SELECT *
-            FROM releases
-            WHERE entry_id = :entry_id
-            ORDER BY created_at DESC
-            '
-        );
-
-
-        $stmt->execute([
-
-            'entry_id' =>
-                $entryId
-
-        ]);
+    return (int) $stmt->fetchColumn();
+}
 
 
-        return array_map(
+public function findByEntry(
+    int $entryId,
+    int $limit = 50,
+    int $offset = 0
+): array {
+    $stmt = $this->prepare(
+        '
+        SELECT *
+        FROM releases
+        WHERE entry_id = :entry_id
+        ORDER BY created_at DESC
+        LIMIT :limit
+        OFFSET :offset
+        '
+    );
 
-            fn(array $row): Release =>
-                $this->hydrate($row),
+    $stmt->bindValue(
+        ':entry_id',
+        $entryId,
+        \PDO::PARAM_INT
+    );
 
-            $this->fetchAll($stmt)
+    $stmt->bindValue(
+        ':limit',
+        $limit,
+        \PDO::PARAM_INT
+    );
 
-        );
-    }
+    $stmt->bindValue(
+        ':offset',
+        $offset,
+        \PDO::PARAM_INT
+    );
 
+    $stmt->execute();
+
+    return array_map(
+        fn(array $row): Release =>
+            $this->hydrate($row),
+        $this->fetchAll($stmt)
+    );
+}
 
 
     public function delete(

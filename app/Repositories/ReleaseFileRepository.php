@@ -1196,6 +1196,57 @@ final class ReleaseFileRepository extends Repository
 
 
 
+    /**
+     * Hämta MD5-värden för alla release-filer
+     * som tillhör en Entry.
+     *
+     * Returnerar:
+     * [
+     *     'md5' => release_id
+     * ]
+     *
+     * Den första förekomsten av varje MD5 används
+     * som referens för duplicate-kontrollen.
+     */
+    public function findMd5ByEntry(
+        int $entryId
+    ): array {
+        $stmt = $this->prepare(
+            '
+            SELECT
+                rf.md5,
+                r.id AS release_id
+            FROM release_files rf
+            INNER JOIN releases r
+                ON r.id = rf.release_id
+            WHERE r.entry_id = :entry_id
+              AND rf.md5 IS NOT NULL
+              AND rf.md5 <> \'\'
+            ORDER BY r.created_at DESC, r.id DESC, rf.id ASC
+            '
+        );
+
+        $stmt->execute([
+            'entry_id' =>
+                $entryId
+        ]);
+
+        $result = [];
+
+        foreach ($this->fetchAll($stmt) as $row) {
+            $md5 =
+                $row['md5'];
+
+            if (!isset($result[$md5])) {
+                $result[$md5] =
+                    (int) $row['release_id'];
+            }
+        }
+
+        return $result;
+    }
+
+
     public function delete(
         int $id
     ): bool {

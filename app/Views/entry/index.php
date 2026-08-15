@@ -376,3 +376,58 @@ $files =
 
 
 <?php endforeach; ?>
+
+
+<?php if (($pages ?? 1) > 1): ?>
+
+<div style="margin-top: 1em;">
+
+    <?php if (($page ?? 1) > 1): ?>
+
+        <a href="/entry?id=<?= $entry->getId() ?>&page=<?= $page - 1 ?>">
+            <?= htmlspecialchars(
+                $language->get('previous')
+            ) ?>
+        </a>
+
+    <?php endif; ?>
+
+
+    <?php for (
+        $paginationPage = 1;
+        $paginationPage <= $pages;
+        $paginationPage++
+    ): ?>
+
+        <?php if (
+            $paginationPage === ($page ?? 1)
+        ): ?>
+
+            <strong>
+                <?= $paginationPage ?>
+            </strong>
+
+        <?php else: ?>
+
+            <a href="/entry?id=<?= $entry->getId() ?>&page=<?= $paginationPage ?>">
+                <?= $paginationPage ?>
+            </a>
+
+        <?php endif; ?>
+
+    <?php endfor; ?>
+
+
+    <?php if (($page ?? 1) < $pages): ?>
+
+        <a href="/entry?id=<?= $entry->getId() ?>&page=<?= $page + 1 ?>">
+            <?= htmlspecialchars(
+                $language->get('next')
+            ) ?>
+        </a>
+
+    <?php endif; ?>
+
+</div>
+
+<?php endif; ?>

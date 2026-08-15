@@ -208,15 +208,61 @@ final class EntryController extends Controller
             $this->tags->findAll();
 
 
+        /*
+         * Pagination för releases.
+         * Samma items_per_page som övriga listor.
+         */
+        $page =
+            max(
+                1,
+                (int) $this->request->query(
+                    'page',
+                    1
+                )
+            );
+
+        $perPage =
+            (int) $this->settings->get(
+                'items_per_page',
+                '25'
+            );
+
+        $totalReleases =
+            $this->releases->countByEntry(
+                $id
+            );
+
+        $pages =
+            (int) ceil(
+                $totalReleases / $perPage
+            );
+
+        if ($pages > 0 && $page > $pages) {
+            $page = $pages;
+        }
+
+        $offset =
+            ($page - 1) * $perPage;
+
         $releases =
             $this->releases->findByEntry(
-                $id
+                $id,
+                $perPage,
+                $offset
             );
 
 
         $releaseData = [];
 
-        $seenMd5 = [];
+        /*
+         * Hämta MD5 för alla releases i hela Entry:n.
+         * Detta gör duplicate-kontrollen korrekt även
+         * när original och dubblett ligger på olika sidor.
+         */
+        $seenMd5 =
+            $this->files->findMd5ByEntry(
+                $id
+            );
 
 
         foreach ($releases as $release) {
@@ -260,6 +306,8 @@ final class EntryController extends Controller
                         isset(
                             $seenMd5[$md5]
                         )
+                        && $seenMd5[$md5]
+                            !== $release->getId()
                     ) {
 
                         $duplicate = true;
@@ -327,14 +375,21 @@ final class EntryController extends Controller
                     $releaseData,
 
                 'totalReleases' =>
-                    count(
-                        $releases
-                    ),
+                    $totalReleases,
 
                 'uniqueImages' =>
                     count(
                         $seenMd5
-                    )
+                    ),
+
+                'page' =>
+                    $page,
+
+                'pages' =>
+                    $pages,
+
+                'perPage' =>
+                    $perPage
 
             ]
         );
