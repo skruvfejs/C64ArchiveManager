@@ -37,6 +37,18 @@ The database is MariaDB.
 
 The project uses the Repository Pattern for database access.
 
+## License
+
+C64 Archive Manager is released under the [GNU General Public License v3.0](LICENSE).
+
+The GNU General Public License applies to the project's source code and
+project documentation. It does not automatically grant rights to third-party
+software, disk images, programs, screenshots, artwork, or other copyrighted
+material that may be imported, stored, or managed using the application.
+
+Users are responsible for ensuring that they have the necessary rights and
+permissions for any material they import or distribute using C64 Archive Manager.
+
 ## Documentation
 
 | Document | Contents |
