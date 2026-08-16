@@ -89,7 +89,8 @@ Kontrollera därefter status igen:
 Projektet använder `storage/` för importerade filer och annan
 filbaserad lagring.
 
-Importfiler placeras under:
+Vid uppladdning via `/import` skickas diskimagen från klientens
+dator till servern och sparas under:
 
     storage/imports
 
