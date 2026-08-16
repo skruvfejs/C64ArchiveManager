@@ -3,7 +3,14 @@
 - [x] MVC Framework
 - [x] Authentication
 - [x] Migrations
-- [ ] Database
-- [ ] Importer
-- [ ] Search
+- [x] Database
+- [x] Importer
+- [x] Search
 
+
+- [x] Pagination
+- [x] Diskimage-nedladdning
+- [x] Utskriftsvyer
+- [x] Taggar
+- [x] Användare, roller och behörigheter
+- [x] Systemadministration

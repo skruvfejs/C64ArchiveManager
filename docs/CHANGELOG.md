@@ -10,3 +10,12 @@
 - Entries
 - Releases
 
+
+1.0.0
+
+- Pagination
+- Nedladdning av diskbilder
+- Utskriftsvyer för lista och detaljer
+- Taggar
+- Användare, roller och behörigheter
+- Systemadministration
