@@ -96,6 +96,32 @@ Importfiler placeras under:
 Webbserverns PHP-process måste kunna läsa och skriva till de kataloger
 som används av applikationen.
 
+## Fil- och katalogrättigheter
+
+Projektet behöver kunna läsa PHP-filer och skriva till `storage/`.
+
+Exempel på rättigheter i utvecklingsmiljön:
+
+    chmod 775 storage
+    chmod 775 storage/attachments
+    chmod 775 storage/backups
+    chmod 775 storage/cache
+    chmod 775 storage/imports
+    chmod 775 storage/logs
+    chmod 775 storage/thumbnails
+
+PHP-filer kan ha:
+
+    chmod 664 sökväg/till/fil.php
+
+Projektets filer och kataloger ska ägas av den användare/grupp som kör
+utvecklingsmiljön. Använd inte `chmod 777` på hela projektet.
+
+Kontrollera rättigheterna med:
+
+    ls -ld storage storage/imports
+    find storage -maxdepth 2 -type d -exec ls -ld {} \;
+
 ## Starta lokalt
 
 För lokal utveckling kan PHP:s inbyggda webbserver användas:
