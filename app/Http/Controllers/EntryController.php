@@ -168,6 +168,163 @@ final class EntryController extends Controller
     }
 
 
+    public function printList(): void
+    {
+        if (!$this->auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+
+        $id =
+            (int) $this->request->query('id');
+
+        $data =
+            $this->getPrintData($id);
+
+        if ($data === null) {
+            http_response_code(404);
+            echo 'Entry not found';
+            return;
+        }
+
+        $this->view->render(
+            'entry/print-list',
+            $data,
+            'layouts/print'
+        );
+    }
+
+
+    public function printDetails(): void
+    {
+        if (!$this->auth->check()) {
+            header('Location: /login');
+            exit;
+        }
+
+        $id =
+            (int) $this->request->query('id');
+
+        $data =
+            $this->getPrintData($id);
+
+        if ($data === null) {
+            http_response_code(404);
+            echo 'Entry not found';
+            return;
+        }
+
+        $this->view->render(
+            'entry/print-details',
+            $data,
+            'layouts/print'
+        );
+    }
+
+
+    private function getPrintData(
+        int $id
+    ): ?array {
+        if ($id <= 0) {
+            return null;
+        }
+
+        $entry =
+            $this->entries->findById($id);
+
+        if ($entry === null) {
+            return null;
+        }
+
+        $entryTags =
+            $this->entryTags->findByEntryId($id);
+
+        $allTags =
+            $this->tags->findAll();
+
+        $totalReleases =
+            $this->releases->countByEntry($id);
+
+        $releases =
+            $totalReleases > 0
+                ? $this->releases->findAllByEntry(
+                    $id
+                )
+                : [];
+
+        $releaseData = [];
+        $seenMd5 = [];
+
+        foreach ($releases as $release) {
+            $files =
+                $this->files->findByRelease(
+                    $release->getId()
+                );
+
+            $fileData = [];
+
+            foreach ($files as $file) {
+                $directoryEntries =
+                    $this->directories
+                        ->findByReleaseFile(
+                            $file->getId()
+                        );
+
+                $md5 =
+                    $file->getMd5();
+
+                if (
+                    $md5 !== null &&
+                    $md5 !== ''
+                ) {
+                    $seenMd5[$md5] = true;
+                }
+
+                $fileData[] = [
+                    'file' =>
+                        $file,
+
+                    'directoryCount' =>
+                        count(
+                            $directoryEntries
+                        ),
+                ];
+            }
+
+            $releaseData[] = [
+                'release' =>
+                    $release,
+
+                'files' =>
+                    $fileData,
+            ];
+        }
+
+        return [
+            'title' =>
+                'Entry',
+
+            'entry' =>
+                $entry,
+
+            'entryTags' =>
+                $entryTags,
+
+            'allTags' =>
+                $allTags,
+
+            'releases' =>
+                $releaseData,
+
+            'totalReleases' =>
+                $totalReleases,
+
+            'uniqueImages' =>
+                count($seenMd5),
+        ];
+    }
+
+
     private function showEntry(
         int $id
     ): void {

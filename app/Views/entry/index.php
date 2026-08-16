@@ -17,6 +17,26 @@ foreach ($entryTags as $entryTag) {
 
 ?>
 
+<div
+    style="
+        margin-bottom: 15px;
+    "
+>
+    <a
+        href="/entry/print/list?id=<?= (int) $entry->getId() ?>"
+    >
+        Skriv ut lista
+    </a>
+
+    |
+
+    <a
+        href="/entry/print/details?id=<?= (int) $entry->getId() ?>"
+    >
+        Skriv ut detaljer
+    </a>
+</div>
+
 <h1>
     <?= htmlspecialchars(
         $entry->getTitle()

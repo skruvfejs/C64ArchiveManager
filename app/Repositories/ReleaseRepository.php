@@ -270,6 +270,30 @@ public function countByEntry(
 }
 
 
+public function findAllByEntry(
+    int $entryId
+): array {
+    $stmt = $this->prepare(
+        '
+        SELECT *
+        FROM releases
+        WHERE entry_id = :entry_id
+        ORDER BY id ASC
+        '
+    );
+
+    $stmt->execute([
+        ':entry_id' => $entryId,
+    ]);
+
+    return array_map(
+        fn(array $row) =>
+            $this->hydrate($row),
+        $this->fetchAll($stmt)
+    );
+}
+
+
 public function findByEntry(
     int $entryId,
     int $limit = 50,

@@ -749,6 +749,33 @@ $router->get(
         ]
     );
 
+    $router->get(
+        '/entry/print/list',
+        [
+            EntryController::class,
+            'printList'
+        ],
+        [
+            AuthMiddleware::class,
+            MaintenanceMiddleware::class,
+        ]
+    );
+
+
+    $router->get(
+        '/entry/print/details',
+        [
+            EntryController::class,
+            'printDetails'
+        ],
+        [
+            AuthMiddleware::class,
+            MaintenanceMiddleware::class,
+        ]
+    );
+
+
+
 
     $router->get(
         '/release',
