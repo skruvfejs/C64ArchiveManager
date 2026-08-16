@@ -77,6 +77,78 @@ final class FileController extends Controller
         );
     }
 
+    /**
+     * Ladda ner den ursprungliga diskimagen.
+     */
+    public function downloadDisk(): void
+    {
+        $id =
+            (int) $this->request->query('id');
+
+        if ($id <= 0) {
+            http_response_code(400);
+            echo 'Missing release file id';
+            return;
+        }
+
+        $releaseFile =
+            $this->files->findById($id);
+
+        if ($releaseFile === null) {
+            http_response_code(404);
+            echo 'Disk image not found';
+            return;
+        }
+
+        $path =
+            $releaseFile->getPath();
+
+        if (
+            $path === null ||
+            $path === '' ||
+            !is_file($path) ||
+            !is_readable($path)
+        ) {
+            http_response_code(404);
+            echo 'Disk image file not found';
+            return;
+        }
+
+        $filename =
+            $releaseFile->getFilename();
+
+        if (
+            $filename === null ||
+            $filename === ''
+        ) {
+            $filename =
+                basename($path);
+        }
+
+        header(
+            'Content-Type: application/octet-stream'
+        );
+
+        header(
+            'Content-Disposition: attachment; filename="'
+            . basename($filename)
+            . '"'
+        );
+
+        $size =
+            filesize($path);
+
+        if ($size !== false) {
+            header(
+                'Content-Length: '
+                . $size
+            );
+        }
+
+        readfile($path);
+    }
+
+
     public function download(): void
     {
         $id =

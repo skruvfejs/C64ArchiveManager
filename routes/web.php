@@ -663,6 +663,19 @@ $router->get(
         ]
     );
 
+
+    $router->get(
+        '/file/download-disk',
+        [
+            FileController::class,
+            'downloadDisk'
+        ],
+        [
+            AuthMiddleware::class,
+            MaintenanceMiddleware::class,
+        ]
+    );
+
     /*
      * Import
      */

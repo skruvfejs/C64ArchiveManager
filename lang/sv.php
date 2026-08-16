@@ -389,4 +389,6 @@ return [
 
     'edit_comment' => 'Redigera kommentar',
 
+    'download_disk_image' => 'Ladda ner diskimage',
+
 ];

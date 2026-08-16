@@ -366,4 +366,6 @@ return [
 
     'edit_comment' => 'Edit comment',
 
+     'download_disk_image' => 'Download disk image',
+
 ];

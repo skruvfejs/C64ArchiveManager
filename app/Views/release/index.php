@@ -363,6 +363,14 @@ $duplicates = $fileItem['md5Duplicates'] ?? [];
     </a>
 </p>
 
+<p>
+    <a href="/file/download-disk?id=<?= $file->getId() ?>">
+        <?= htmlspecialchars(
+            $language->get('download_disk_image')
+        ) ?>
+    </a>
+</p>
+
 
 </div>
 
