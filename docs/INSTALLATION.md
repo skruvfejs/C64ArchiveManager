@@ -97,6 +97,24 @@ dator till servern och sparas under:
 Webbserverns PHP-process måste kunna läsa och skriva till de kataloger
 som används av applikationen.
 
+## Importerade filformat
+
+C64 Archive Manager stöder följande filformat vid import:
+
+- D64 – Commodore 1541-diskimage
+- D71 – Commodore 1571-diskimage
+- D81 – Commodore 1581-diskimage
+- T64 – Tape/filarkiv
+- PRG – C64-programfil
+- P00 – PC64-programfil
+
+PRG-filer importeras som PRG-releaser.
+
+P00-filer läses och PRG-innehållet extraheras vid import. Den
+resulterande filen registreras som en PRG-release.
+
+Importformatet identifieras automatiskt av applikationen.
+
 ## Fil- och katalogrättigheter
 
 Projektet behöver kunna läsa PHP-filer och skriva till `storage/`.

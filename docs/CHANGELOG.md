@@ -13,6 +13,8 @@
 
 1.0.0
 
+- Import av D64, D71, D81, T64, PRG och P00
+
 - Pagination
 - Nedladdning av diskbilder
 - Utskriftsvyer för lista och detaljer

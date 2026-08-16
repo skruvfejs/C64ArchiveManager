@@ -15,7 +15,7 @@ En Entry kan ha flera **Releases**, och en Release kan ha en eller flera **Relea
 - Hantering av Entries
 - Hantering av Releases
 - Hantering av diskfiler
-- Import av D64, D71 och D81
+- Import av D64, D71, D81, T64, PRG och P00
 - Webbaserad import
 - MD5-baserad dubblettkontroll
 - Läsning av kataloginnehåll
