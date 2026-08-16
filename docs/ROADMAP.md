@@ -9,8 +9,8 @@
 
 
 - [x] Pagination
-- [x] Diskimage-nedladdning
-- [x] Utskriftsvyer
+- [x] Disk image downloads
+- [x] Print views
 - [x] Taggar
-- [x] Användare, roller och behörigheter
-- [x] Systemadministration
+- [x] Users, roles and permissions
+- [x] System administration

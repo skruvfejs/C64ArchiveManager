@@ -1,6 +1,6 @@
 0.1.0
 
-- MVC Framework klart
+- MVC Framework completed
 - Authentication
 - Migration system
 
@@ -13,11 +13,11 @@
 
 1.0.0
 
-- Import av D64, D71, D81, T64, PRG och P00
+- Import of D64, D71, D81, T64, PRG and P00
 
 - Pagination
-- Nedladdning av diskbilder
-- Utskriftsvyer för lista och detaljer
-- Taggar
-- Användare, roller och behörigheter
-- Systemadministration
+- Disk image downloads
+- List and detail print views
+- Tags
+- Users, roles and permissions
+- System administration

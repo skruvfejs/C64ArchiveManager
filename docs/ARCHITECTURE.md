@@ -1,136 +1,136 @@
-Den viktigaste filen.
+The most important file.
 
-Här dokumenterar vi varför vi byggt systemet som vi gjort.
+This document explains why the system has been built the way it has.
 
 Exempel:
 
-Entry är huvudobjektet.
-Release är en specifik utgåva.
-ReleaseFile är en fysisk fil.
+Entry is the main object.
+Release represents a specific release.
+ReleaseFile represents a physical file.
 DirectoryEntry representerar en katalogpost.
-Repository Pattern används.
+The Repository Pattern is used.
 
 
-## Projektstruktur
+## Project Structure
 
 - `app/Core/` – ramverkets centrala funktioner
 - `app/Entity/` – entities
 - `app/Models/` – modeller
 - `app/Http/Controllers/` – controllers
-- `app/Http/Middleware/` – middleware och behörighetskontroller
-- `app/Repositories/` – databasanrop
-- `app/Services/` – import, diskhantering och övrig affärslogik
-- `app/Views/` – webbgränssnitt och utskriftsvyer
+- `app/Http/Middleware/` – middleware and authorization checks
+- `app/Repositories/` – database access
+- `app/Services/` – imports, disk handling and other business logic
+- `app/Views/` – web interface and print views
 - `routes/` – webbapplikationens routes
 
-## Request-flöde
+## Request Flow
 
-En vanlig request går i huvudsak genom:
+A typical request mainly passes through:
 
 `Router → Middleware → Controller → Service/Repository → View`
 
-Controllers hanterar requesten och förbereder data för vyn.
-Repositories ansvarar för databasanrop och services hanterar mer
+Controllers handle the request and prepare data for the view.
+Repositories are responsible for database access and services handle more
 omfattande logik.
 
 ## Repository Pattern
 
-Repositories i `app/Repositories/` ansvarar för databasanrop.
+Repositories in `app/Repositories/` are responsible for database access.
 
-Exempel är `EntryRepository`, `ReleaseRepository`,
-`ReleaseFileRepository` och `DirectoryEntryRepository`.
+Examples include `EntryRepository`, `ReleaseRepository`,
+`ReleaseFileRepository` and `DirectoryEntryRepository`.
 
-Controllers ska normalt inte innehålla SQL direkt.
+Controllers should normally not contain SQL directly.
 
 ## Services
 
-Services i `app/Services/` innehåller mer omfattande logik som inte hör
+Services in `app/Services/` contain more extensive logic that does not belong
 hemma direkt i controllers eller repositories.
 
-Exempel är import av D64/D71/D81, diskparsning, katalogläsning,
-checksum/MD5, backup, storage och databasimport/export.
+Examples include D64/D71/D81 import, disk parsing, directory reading,
+checksum/MD5, backup, storage and database import/export.
 
 ## Centrala arkivobjekt
 
-`Entry` är det centrala arkivobjektet.
+`Entry` is the central archive object.
 
-En `Entry` kan ha flera `Release`.
+An `Entry` can have multiple `Release` records.
 
-En `Release` representerar en specifik utgåva.
+A `Release` represents a specific release.
 
-En `ReleaseFile` representerar den fysiska filen som hör till en
+A `ReleaseFile` represents the physical file belonging to a
 release.
 
-`DirectoryEntry` representerar en katalogpost från diskens innehåll.
+`DirectoryEntry` represents a directory entry from the disk contents.
 
-Relationen kan förenklat beskrivas som:
+The relationship can be simplified as:
 
 `Entry → Release → ReleaseFile → DirectoryEntry`
 
 ## Views
 
-Views i `app/Views/` ansvarar för presentationen.
+Views in `app/Views/` are responsible for presentation.
 
-Den vanliga layouten är `layouts/main.php`.
+The standard layout is `layouts/main.php`.
 
-Utskriftsvyerna använder en separat layout:
+The print views use a separate layout:
 
 - `entry/print-list.php`
 - `entry/print-details.php`
 - `layouts/print.php`
 - `layouts/print.css`
 
-Print-vyerna använder inte den vanliga huvudlayouten.
+The print views do not use the standard main layout.
 
-## Behörigheter och middleware
+## Authorization and Middleware
 
-Autentisering och behörighetskontroll hanteras centralt.
+Authentication and authorization are handled centrally.
 
-Middleware i `app/Http/Middleware/` används bland annat för:
+Middleware in `app/Http/Middleware/` is used for, among other things:
 
 - inloggning
 - redigering
 - import
-- användaradministration
+- user administration
 - tagghantering
 - systemadministration
 - loggar
-- underhållsläge
+- maintenance mode
 
-Behörigheter och roller hanteras av Core-lagrets auth- och
+Permissions and roles are handled by the Core layer's auth and
 authorization-funktioner.
 
-## Importsystemet
+## Import System
 
-Importfunktionerna finns huvudsakligen i `app/Services/` och hanteras
+Import functionality is primarily located in `app/Services/` and is handled
 via `ImportController`.
 
-Systemet har stöd för import av D64, D71 och D81 samt PRG-relaterade
-filer och T64.
+The system supports import of D64, D71 and D81 as well as PRG-related
+files and T64.
 
-Importerare och parsers är separerade så att format-specifik logik
-hålls åtskild.
+Importers and parsers are separated so that format-specific logic
+is kept separate.
 
-MD5 används för dubblettkontroll och kataloginnehåll kan läsas från
+MD5 is used for duplicate detection and directory contents can be read from
 importerade diskimages.
 
-## Pagination och nedladdning
+## Pagination and Downloads
 
-Listvyer använder pagination för att hantera större mängder poster.
+List views use pagination to handle larger numbers of records.
 
-Själva diskbilden kan laddas ner från arkivet via den separata
+The disk image itself can be downloaded from the archive through the separate
 filhanteringen.
 
-Pagination påverkar inte utskriftsvyerna. Dessa hämtar hela den aktuella
+Pagination does not affect the print views. These retrieve the entire current
 postens relevanta information.
 
-## Språk och databas
+## Language and Database
 
-Systemet har stöd för svenska och engelska via språkfilerna
+The system supports Swedish and English through the language files
 `lang/sv.php` och `lang/en.php`.
 
-MariaDB används som databas. Databasåtkomst sker via Core-lagrets
-databasefunktioner och repositories.
+MariaDB is used as the database. Database access is handled through the Core layer's
+database functions and repositories.
 
-Databasstruktur och relationer dokumenteras separat i
+Database structure and relationships are documented separately in
 `docs/DATABASE.md`.

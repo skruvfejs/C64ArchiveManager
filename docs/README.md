@@ -1,54 +1,54 @@
 # C64 Archive Manager
 
-C64 Archive Manager är ett webbaserat arkivsystem för att katalogisera och hantera ett Commodore 64-arkiv.
+C64 Archive Manager is a web-based archive system for cataloguing and managing a Commodore 64 archive.
 
-## Syfte
+## Purpose
 
-Systemet används för att registrera och söka efter C64-program och releaser samt lagra information om de diskbilder som hör till arkivet.
+The system is used to register and search for C64 programs and releases, and to store information about the disk images belonging to the archive.
 
-En **Entry** representerar det centrala arkivobjektet.
+An **Entry** represents the central archive object.
 
-En Entry kan ha flera **Releases**, och en Release kan ha en eller flera **ReleaseFiles**.
+An Entry can have multiple **Releases**, and a Release can have one or more **ReleaseFiles**.
 
-## Huvudfunktioner
+## Main Features
 
-- Hantering av Entries
-- Hantering av Releases
-- Hantering av diskfiler
-- Import av D64, D71, D81, T64, PRG och P00
-- Webbaserad import
-- MD5-baserad dubblettkontroll
-- Läsning av kataloginnehåll
-- Sökning och sortering
+- Entry management
+- Release management
+- Disk file management
+- Import of D64, D71, D81, T64, PRG and P00
+- Web-based import
+- MD5-based duplicate detection
+- Directory content parsing
+- Search and sorting
 - Pagination
-- Nedladdning av diskbilder
-- Utskriftsvyer för lista och detaljer
-- Taggar
-- Användare, roller och behörigheter
-- Systemadministration
-- Databasimport och export
-- Svenska och engelska språkfiler
+- Disk image downloads
+- List and detail print views
+- Tags
+- Users, roles and permissions
+- System administration
+- Database import and export
+- Swedish and English language files
 
-## Teknik
+## Technology
 
-Projektet är byggt i PHP och använder ett eget MVC-baserat ramverk.
+The project is built in PHP and uses a custom MVC-based framework.
 
-Databasen är MariaDB.
+The database is MariaDB.
 
-Projektet använder Repository Pattern för åtkomst till databasen.
+The project uses the Repository Pattern for database access.
 
-## Dokumentation
+## Documentation
 
-| Dokument | Innehåll |
+| Document | Contents |
 |---|---|
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Systemets arkitektur och centrala objekt |
-| [DATABASE.md](DATABASE.md) | Databasstruktur och relationer |
-| [DECISIONS.md](DECISIONS.md) | Viktiga arkitekturbeslut |
-| [CHANGELOG.md](CHANGELOG.md) | Förändringar mellan versioner |
-| [ROADMAP.md](ROADMAP.md) | Återstående arbete och framtida utveckling |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture and core objects |
+| [DATABASE.md](DATABASE.md) | Database structure and relationships |
+| [DECISIONS.md](DECISIONS.md) | Important architectural decisions |
+| [CHANGELOG.md](CHANGELOG.md) | Changes between versions |
+| [ROADMAP.md](ROADMAP.md) | Remaining work and future development |
 
-## Projektstatus
+## Project Status
 
-Projektet har nått version 1.0-funktionalitet enligt den nuvarande utvecklingsplanen.
+The project has reached version 1.0 functionality according to the current development plan.
 
-Återstående arbete består huvudsakligen av dokumentation, underhåll och eventuell framtida vidareutveckling.
+Remaining work mainly consists of documentation, maintenance and possible future development.

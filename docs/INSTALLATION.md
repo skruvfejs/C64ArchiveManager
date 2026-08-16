@@ -1,8 +1,8 @@
 # Installation
 
-## Systemkrav
+## System Requirements
 
-C64 Archive Manager är utvecklad och testad med:
+C64 Archive Manager is developed and tested with:
 
 - PHP 8.3
 - Composer 2.x
@@ -10,7 +10,7 @@ C64 Archive Manager är utvecklad och testad med:
 - PHP PDO med `pdo_mysql`
 - Git
 
-Följande PHP-extensioner används eller finns i den testade miljön:
+The following PHP extensions are used or available in the tested environment:
 
 - curl
 - fileinfo
@@ -23,83 +23,83 @@ Följande PHP-extensioner används eller finns i den testade miljön:
 - pdo_mysql
 - zip
 
-## Testad miljö
+## Tested Environment
 
-Utvecklingsmiljön som används för projektet:
+The development environment used for the project:
 
 - Debian-baserad Linux
 - PHP 8.3.6
 - Composer 2.7.1
 - MariaDB 10.11.14
 
-## Hämta projektet
+## Get the Project
 
-Klona repositoryt:
+Clone the repository:
 
     git clone git@github.com:skruvfejs/C64ArchiveManager.git
     cd C64ArchiveManager
 
-Installera Composer-beroenden:
+Install Composer dependencies:
 
     composer install
 
 ## MariaDB
 
-Skapa en databas och en användare för C64 Archive Manager.
+Create a database and a user for C64 Archive Manager.
 
-Exempel:
+Example:
 
     CREATE DATABASE c64archive CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    CREATE USER 'c64archive'@'localhost' IDENTIFIED BY 'BYT_TILL_EGET_LÖSENORD';
+    CREATE USER 'c64archive'@'localhost' IDENTIFIED BY 'CHANGE_TO_YOUR_OWN_PASSWORD';
     GRANT ALL PRIVILEGES ON c64archive.* TO 'c64archive'@'localhost';
     FLUSH PRIVILEGES;
 
-## Databaskonfiguration
+## Database Configuration
 
-Applikationen behöver databasuppgifter för MariaDB.
+The application requires MariaDB database credentials.
 
-Använd projektets befintliga konfigurationsmekanism och ange:
+Use the project's existing configuration mechanism and specify:
 
-- databasnamn
-- databasvärd
-- databasport
-- databasanvändare
-- databaslösenord
+- database name
+- database host
+- database port
+- database user
+- database password
 
-Exakta konfigurationsnycklar ska följa projektets aktuella konfigurationsfil.
+The exact configuration keys must follow the project's current configuration file.
 
-## Migrationer
+## Migrations
 
-När databasen är skapad körs projektets migrationer från projektroten.
+Once the database has been created, run the project's migrations from the project root.
 
-Kontrollera först status:
+Check the status first:
 
     php migrate.php status
 
-Kör sedan migrationerna:
+Then run the migrations:
 
     php migrate.php migrate
 
-Kontrollera därefter status igen:
+Check the status again:
 
     php migrate.php status
 
-## Storage och importfiler
+## Storage and Import Files
 
-Projektet använder `storage/` för importerade filer och annan
-filbaserad lagring.
+The project uses `storage/` for imported files and other
+file-based storage.
 
-Vid uppladdning via `/import` skickas diskimagen från klientens
+When uploading through `/import`, the disk image is sent from the client's
 dator till servern och sparas under:
 
     storage/imports
 
-Webbserverns PHP-process måste kunna läsa och skriva till de kataloger
-som används av applikationen.
+The web server's PHP process must be able to read from and write to the
+directories used by the application.
 
-## Importerade filformat
+## Supported Import Formats
 
-C64 Archive Manager stöder följande filformat vid import:
+C64 Archive Manager supports the following file formats for import:
 
 - D64 – Commodore 1541-diskimage
 - D71 – Commodore 1571-diskimage
@@ -108,18 +108,18 @@ C64 Archive Manager stöder följande filformat vid import:
 - PRG – C64-programfil
 - P00 – PC64-programfil
 
-PRG-filer importeras som PRG-releaser.
+PRG files are imported as PRG releases.
 
-P00-filer läses och PRG-innehållet extraheras vid import. Den
-resulterande filen registreras som en PRG-release.
+P00 files are read and the PRG content is extracted during import. The
+resulting file is registered as a PRG release.
 
-Importformatet identifieras automatiskt av applikationen.
+The import format is detected automatically by the application.
 
-## Fil- och katalogrättigheter
+## File and Directory Permissions
 
-Projektet behöver kunna läsa PHP-filer och skriva till `storage/`.
+The project needs to be able to read PHP files and write to `storage/`.
 
-Exempel på rättigheter i utvecklingsmiljön:
+Example permissions for the development environment:
 
     chmod 775 storage
     chmod 775 storage/attachments
@@ -131,68 +131,68 @@ Exempel på rättigheter i utvecklingsmiljön:
 
 PHP-filer kan ha:
 
-    chmod 664 sökväg/till/fil.php
+    chmod 664 path/to/file.php
 
-Projektets filer och kataloger ska ägas av den användare/grupp som kör
-utvecklingsmiljön. Använd inte `chmod 777` på hela projektet.
+The project's files and directories should be owned by the user/group running the
+development environment. Do not use `chmod 777` on the entire project.
 
-Kontrollera rättigheterna med:
+Check the permissions with:
 
     ls -ld storage storage/imports
     find storage -maxdepth 2 -type d -exec ls -ld {} \;
 
-## Starta lokalt
+## Run Locally
 
-För lokal utveckling kan PHP:s inbyggda webbserver användas:
+For local development, PHP's built-in web server can be used:
 
     php -S localhost:8000 -t public
 
-Öppna sedan:
+Then open:
 
     http://localhost:8000
 
-## Första start och test
+## First Start and Testing
 
-Öppna applikationen i webbläsaren och kontrollera att startsidan visas.
+Open the application in a web browser and verify that the start page is displayed.
 
-Testa därefter:
+Then test:
 
-- logga in med ett administratörskonto
-- öppna Arkiv
-- öppna Diskar
-- kontrollera att administrationen är åtkomlig
-- kontrollera att en importerad disk kan öppnas
-- kontrollera att diskbilden kan laddas ner
-- kontrollera att utskriftsvyerna fungerar
+- log in with an administrator account
+- open Archive
+- open Disks
+- verify that administration is accessible
+- verify that an imported disk can be opened
+- verify that the disk image can be downloaded
+- verify that the print views work
 
-## Felsökning
+## Troubleshooting
 
-### Databasanslutningen fungerar inte
+### Database Connection Does Not Work
 
-Kontrollera att MariaDB körs och att databasuppgifterna är korrekta.
+Verify that MariaDB is running and that the database credentials are correct.
 
-Kontrollera även att PHP har `pdo_mysql` installerat:
+Also verify that PHP has `pdo_mysql` installed:
 
     php -m | grep pdo_mysql
 
-### Migrationer fungerar inte
+### Migrations Do Not Work
 
-Kontrollera migrationsstatus:
+Check migration status:
 
     php migrate.php status
 
-Kontrollera även PHP-syntax:
+Also check PHP syntax:
 
     php -l migrate.php
 
-### Import fungerar inte
+### Import Does Not Work
 
-Kontrollera att `storage/imports` finns och att PHP-processen har
-nödvändiga rättigheter till katalogen.
+Verify that `storage/imports` exists and that the PHP process has the
+necessary permissions for the directory.
 
-### Sidan ger HTTP 500
+### The Page Returns HTTP 500
 
-Kontrollera PHP:s felmeddelande och serverlogg. Kör även syntaxkontroll
-på den berörda PHP-filen:
+Check PHP's error message and the server log. Also run a syntax check
+on the affected PHP file:
 
-    php -l sökväg/till/fil.php
+    php -l path/to/file.php

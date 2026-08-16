@@ -1,12 +1,12 @@
 # Database
 
-C64 Archive Manager använder MariaDB.
+C64 Archive Manager uses MariaDB.
 
-Databasschemat byggs och ändras genom migrationssystemet i:
+The database schema is built and modified through the migration system in:
 
     database/migrations/
 
-Migrationsfilerna är den auktoritativa källan för databasschemat.
+The migration files are the authoritative source for the database schema.
 
 ## Centrala relationer
 
@@ -24,15 +24,15 @@ Migrationsfilerna är den auktoritativa källan för databasschemat.
     Release     -- ReleaseTag -- Tag
     ReleaseFile -- DiskTag    -- Tag
 
-## Tabeller
+## Tables
 
 ### roles
 
-Användarroller.
+User roles.
 
 ### users
 
-Användarkonton och användarrelaterade inställningar.
+User accounts and user-related settings.
 
 ### entry_types
 
@@ -42,124 +42,124 @@ Definierar typen av en Entry.
 
 Det centrala arkivobjektet.
 
-Viktiga fält:
+Important fields:
 
-- `id` – primärnyckel
+- `id` – primary key
 - `entry_type_id` – koppling till `entry_types`
 - `title` – titel
-- `sort_title` – titel för sortering
-- `year` – år
+- `sort_title` – title used for sorting
+- `year` – year
 - `description` – beskrivning
 - `status` – status
 - `created_at` – skapad
-- `updated_at` – senast ändrad
+- `updated_at` – last modified
 
-En Entry kan ha flera Releases.
+An Entry can have multiple Releases.
 
 ### releases
 
 Specifika releases kopplade till en Entry.
 
-Viktiga fält:
+Important fields:
 
-- `id` – primärnyckel
+- `id` – primary key
 - `entry_id` – koppling till `entries`
 - `name` – release-namn
 - `version` – version
 - `notes` – anteckningar
 - `created_at` – skapad
-- `updated_at` – senast ändrad
+- `updated_at` – last modified
 
-Kombinationen `entry_id + name + version` är unik.
+The combination `entry_id + name + version` is unique.
 
-När en Entry tas bort tas dess Releases bort genom cascade.
+When an Entry is deleted, its Releases are deleted through cascade.
 
-En Entry kan ha flera Releases.
+An Entry can have multiple Releases.
 
 ### release_files
 
 Fysiska filer kopplade till en Release.
 
-Viktiga fält:
+Important fields:
 
-- `id` – primärnyckel
+- `id` – primary key
 - `release_id` – koppling till `releases`
 - `filename` – filnamn
 - `format` – filformat
 - `disk_name` – diskens namn
 - `disk_id` – disk-ID
-- `path` – fysisk sökväg
+- `path` – physical path
 - `size` – filstorlek
 - `crc32` – CRC32
 - `md5` – MD5
 - `sha1` – SHA1
 - `created_at` – skapad
-- `updated_at` – senast ändrad
+- `updated_at` – last modified
 
-Kombinationen `release_id + filename` är unik.
+The combination `release_id + filename` is unique.
 
-MD5, SHA1 och CRC32 är indexerade.
+MD5, SHA1 and CRC32 are indexed.
 
-En Release kan ha flera ReleaseFiles.
+A Release can have multiple ReleaseFiles.
 
 ### bam
 
-Information som lästs från diskens BAM.
+Information read from the disk's BAM.
 
-Viktiga fält:
+Important fields:
 
-- `id` – primärnyckel
+- `id` – primary key
 - `release_file_id` – koppling till `release_files`
 - `disk_name` – diskens namn
 - `disk_id` – disk-ID
 - `dos_type` – DOS-typ
 - `blocks_free` – lediga block
-- `blocks_used` – använda block
+- `blocks_used` – used blocks
 - `created_at` – skapad
-- `updated_at` – senast ändrad
+- `updated_at` – last modified
 
-Varje ReleaseFile kan ha högst en BAM-post.
+Each ReleaseFile can have at most one BAM record.
 
 ### directory_entries
 
-Katalogposter som lästs från diskbilder.
+Directory entries read from disk images.
 
-Viktiga fält:
+Important fields:
 
-- `id` – primärnyckel
+- `id` – primary key
 - `release_file_id` – koppling till `release_files`
 - `filename` – filnamn
 - `directory_position` – position i katalogen
 - `filetype` – filtyp
-- `start_track` – startspår
+- `start_track` – startspyear
 - `start_sector` – startsektor
 - `blocks` – antal block
 - `file_offset` – offset i filen
 - `file_size` – filstorlek
-- `locked` – låst fil
-- `closed` – stängd fil
+- `locked` – locked file
+- `closed` – closed file
 - `created_at` – skapad
-- `updated_at` – senast ändrad
+- `updated_at` – last modified
 
-Katalogposten är kopplad till den ReleaseFile från vilken den lästes.
+The directory entry is linked to the ReleaseFile from which it was read.
 
-Senare migrationer kompletterar tabellen med T64-relaterade fält.
+Later migrations extend the table with T64-related fields.
 
 ### images
 
 Bildreferenser kopplade till Entries.
 
-Viktiga fält:
+Important fields:
 
-- `id` – primärnyckel
+- `id` – primary key
 - `entry_id` – koppling till `entries`
 - `type` – bildtyp
 - `filename` – filnamn
-- `path` – sökväg
+- `path` – path
 - `width` – bredd
-- `height` – höjd
+- `height` – height
 - `created_at` – skapad
-- `updated_at` – senast ändrad
+- `updated_at` – last modified
 
 `entry_id` refererar till `entries`.
 
@@ -167,31 +167,31 @@ Viktiga fält:
 
 Gemensamma taggar som kan kopplas till Entries, Releases och diskfiler.
 
-Viktiga fält:
+Important fields:
 
-- `id` – primärnyckel
+- `id` – primary key
 - `name` – taggnamn
 - `description` – beskrivning
 - `created_at` – skapad
-- `updated_at` – senast ändrad
+- `updated_at` – last modified
 
-Taggnamnet är unikt.
+The tag name is unique.
 
 ### entry_tags
 
 Koppling mellan Entries och Tags.
 
-Fält:
+Fields:
 
 - `entry_id` – koppling till `entries`
 - `tag_id` – koppling till `tags`
-- `created_at` – när kopplingen skapades
+- `created_at` – when the relationship was created
 
-Primärnyckeln består av:
+The primary key consists of:
 
 `entry_id + tag_id`
 
-Både Entry och Tag har foreign keys med cascade-delete.
+Both Entry and Tag have foreign keys with cascade-delete.
 
 ### release_tags
 
@@ -203,18 +203,18 @@ Koppling mellan ReleaseFiles och Tags.
 
 ### import_logs
 
-Information om genomförda importer.
+Information about completed imports.
 
 ### audit_logs
 
-Logg över viktiga system- och administrationshändelser.
+Log of important system and administrative events.
 
 ### settings
 
-Systeminställningar som nyckel/värde.
+System settings stored as key/value pairs.
 
 ## Migrationssystem
 
-Migrationerna körs i nummerordning och används för att bygga och uppdatera databasschemat.
+Migrations are run in numerical order and are used to build and update the database schema.
 
-Databasschemat ska ändras genom migrationer och inte genom odokumenterade manuella ändringar.
+The database schema must be changed through migrations and not through undocumented manual changes.

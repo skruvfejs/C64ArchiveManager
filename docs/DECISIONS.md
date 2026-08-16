@@ -1,6 +1,6 @@
 2026-07-29
 
-Entry är projektets centrala objekt.
+Entry is the central object of the project.
 
 Inte Game.
 
@@ -8,36 +8,36 @@ Inte Game.
 
 ## Entry och Releases
 
-Entry är det centrala arkivobjektet.
+Entry is the central archive object.
 
-En Entry kan ha flera Releases. Release används för att representera
-en specifik release kopplad till Entry.
+An Entry can have multiple Releases. Release is used to represent
+a specific release associated with an Entry.
 
 ## Repository Pattern
 
-Repository Pattern används för åtkomst till databasen.
+The Repository Pattern is used for database access.
 
-Databasanrop ska ligga i repositories i stället för direkt i controllers.
+Database access should be placed in repositories instead of directly in controllers.
 
 ## Databasschema och migrationer
 
-MariaDB används som databas.
+MariaDB is used as the database.
 
-Migrationsfilerna är den auktoritativa källan för databasschemat.
-Databasschemat ska ändras genom migrationer och inte genom
-odokumenterade manuella ändringar.
+The migration files are the authoritative source for the database schema.
+The database schema must be changed through migrations and not through
+undocumented manual changes.
 
 ## Arkivstruktur
 
-Entry är det centrala arkivobjektet.
+Entry is the central archive object.
 
 En Entry kan ha flera Releases och en Release kan ha flera ReleaseFiles.
-Detta håller den logiska posten separerad från de fysiska arkivfilerna.
+This keeps the logical record separate from the physical archive files.
 
 ## Utskriftsvyer
 
 Utskrifter har separata views och en separat print-layout.
 
-Det finns en lista för utskrift och en detaljerad utskrift.
-Print-vyerna ska inte använda den vanliga webbapplikationens
+There is a list print view and a detailed print view.
+The print views should not use the standard web application's
 huvudlayout.
